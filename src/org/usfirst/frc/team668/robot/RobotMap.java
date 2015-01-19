@@ -38,8 +38,8 @@ public class RobotMap {
 	public static final int DRIVE_ENCODER_RIGHT = 2;
 	public static final int DRIVE_ENCODER_RIGHT2 = 3;
 	
-	public static final int CAMERA_SERVO_VERTICAL_PWM = 0;
-	public static final int CAMERA_SERVO_HORIZONTAL_PWM = 1;
+	public static final int CAMERA_SERVO_VERTICAL_PWM = 4;
+	public static final int CAMERA_SERVO_HORIZONTAL_PWM = 5;
 	
 	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION = 0;
 	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION = 1;

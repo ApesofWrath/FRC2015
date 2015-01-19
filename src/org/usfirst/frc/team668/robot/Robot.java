@@ -41,6 +41,7 @@ public class Robot extends IterativeRobot {
 	
     public void robotInit() {
     	operatorInterface = new OI();
+    	
     	joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
 		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
@@ -65,6 +66,7 @@ public class Robot extends IterativeRobot {
 		//camera = new AxisCamera();
 		
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
+		compressor1.setClosedLoopControl(false);
 		
 		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
 		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
@@ -81,7 +83,9 @@ public class Robot extends IterativeRobot {
     }
     
     public void teleopInit() {
-    	
+    	System.out.println("version: the one with the buttons, compressor should be off, servos at zero");
+    	camServoHor.set(0);
+    	camServoVert.set(0);
     }
 
     /**
@@ -100,6 +104,8 @@ public class Robot extends IterativeRobot {
     	if (isTankDrive == false){
     	robotDrive.arcadeDrive(joystickRight); //ARCADE DRIVE IS THE RIGHT STICK!
     	}
+    	
+    	
     }
 
     
