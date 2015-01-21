@@ -50,8 +50,9 @@ public class RobotMap {
 	
 	public static final int PCM_CANID = 10;
 	public static final int PDP_CANID = 20;
-	
-	
+
+	public static final int INTAKE_BUTTON_ON = 1; // These need values THEY ARE JUST TEMPORARY
+	public static final int INTAKE_BUTTON_OFF = 2;
 	
 	
 }

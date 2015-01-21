@@ -1,7 +1,7 @@
 
 package org.usfirst.frc.team668.robot;
 
-import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon; //you CANT even, alon
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -105,7 +105,22 @@ public class Robot extends IterativeRobot {
     	robotDrive.arcadeDrive(joystickRight); //ARCADE DRIVE IS THE RIGHT STICK!
     	}
     	
+    	else if (joystickOp.getRawButton(7)) {
+			Grabbing.giveAHugForFree(true);
+		}
+		
+		else if (joystickOp.getRawButton(8)) {
+			Grabbing.giveAHugForFree(false);
+		}
     	
+    	int speed = 0; // REMOVE SOON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    	
+		if (joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_ON)) {
+			Intake.comeAndGoAsYouPlease(speed);
+		}
+		if (Robot.joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_OFF)) {
+			Intake.comeAndGoAsYouPleaseOff();
+		}
     }
 
     
@@ -163,12 +178,15 @@ public class Robot extends IterativeRobot {
 //		} else {
 //			canTalonElevator2.set(0);
 //		}
-		if (joystickOp.getRawButton(7)){
-			leftHugPiston.set(DoubleSolenoid.Value.kForward);
-		}
-		else if (joystickOp.getRawButton(8)){
-			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-		}
+		
+		// Already exists in teleop (Grabbing)
+//		if (joystickOp.getRawButton(7)){
+//			leftHugPiston.set(DoubleSolenoid.Value.kForward);
+//		}
+//		else if (joystickOp.getRawButton(8)){
+//			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+//		}
+		
 		if (joystickOp.getRawButton(9)){
 			rightHugPiston.set(DoubleSolenoid.Value.kForward);
 		}
