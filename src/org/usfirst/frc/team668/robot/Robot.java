@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -28,8 +28,8 @@ public class Robot extends IterativeRobot {
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight, canTalonRearLeft,
 	canTalonRearRight, canTalonIntakeLeft, canTalonIntakeRight,
 	canTalonElevator;
-	public static Encoder encoderLeft;
-	public static Encoder encoderRight;
+	public static Encoder encoderLeft, encoderRight, encoderElevator;
+	public static DigitalInput limitTop, limitBottom;
 	public static Servo camServoVert, camServoHor;
 	public static AxisCamera camera;
 	public static Compressor compressor1;
@@ -60,6 +60,11 @@ public class Robot extends IterativeRobot {
 		encoderLeft = new  Encoder(RobotMap.DRIVE_ENCODER_LEFT, RobotMap.DRIVE_ENCODER_LEFT2);
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT, RobotMap.DRIVE_ENCODER_RIGHT2);
 
+		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+		
+		limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+		limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+		
 		camServoHor = new Servo(RobotMap.CAMERA_SERVO_HORIZONTAL_PWM);
 		camServoVert = new Servo(RobotMap.CAMERA_SERVO_VERTICAL_PWM);
 		
