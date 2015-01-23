@@ -29,18 +29,23 @@ public class Robot extends IterativeRobot {
 	canTalonRearRight, canTalonIntakeLeft, canTalonIntakeRight,
 	canTalonElevator;
 	public static Encoder encoderLeft, encoderRight, encoderElevator;
-	public static DigitalInput limitTop, limitBottom;
+	public static DigitalInput limitTop, limitBottom, toteOptic, binOptic;
 	public static Servo camServoVert, camServoHor;
 	public static AxisCamera camera;
 	public static Compressor compressor1;
 	public static DoubleSolenoid leftHugPiston, rightHugPiston, intakePiston;
 	public static RobotDrive robotDrive;
 	
+	
 	boolean isTankDrive = true;
 	
 	
     public void robotInit() {
     	operatorInterface = new OI();
+    	
+    	
+    	toteOptic =  new DigitalInput(0);
+    	binOptic = new DigitalInput(1);
     	
     	joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
@@ -73,7 +78,7 @@ public class Robot extends IterativeRobot {
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
 		compressor1.setClosedLoopControl(false);
 		
-		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
+		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
 		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
 		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
 		
@@ -121,10 +126,10 @@ public class Robot extends IterativeRobot {
     	int speed = 0; // REMOVE SOON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
     	
 		if (joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_ON)) {
-			Intake.comeAndGoAsYouPlease(speed);
+			Intake.spin(speed);
 		}
 		if (Robot.joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_OFF)) {
-			Intake.comeAndGoAsYouPleaseOff();
+			Intake.stop();
 		}
     }
 

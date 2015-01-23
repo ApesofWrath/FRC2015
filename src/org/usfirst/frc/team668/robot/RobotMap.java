@@ -67,7 +67,6 @@ public class RobotMap {
 	public static final int ELEVATOR_BUTTON_DOWN = 4;
 	
 	//Teleop State Machine Declarations
-	
 	public static final int INIT_STATE = 0;
 	public static final int ELEVATOR_HEIGHT_TOTE_STATE = 1;
 	public static final int WAIT_FOR_BUTTON_STATE = 2;
@@ -77,8 +76,9 @@ public class RobotMap {
 	public static final int CLOSE_HUG_PISTONS_STATE = 6;
 	public static final int ELEVATOR_HEIGHT_GROUND_STATE = 7;
 	public static final int ELEVATOR_HEIGHT_SCORING_STATE = 8;
-	public static final int ELEVATOR_HEIGHT_COOPERTITION_HEIGHT_STATE = 9;
+	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 9;
 	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
+	public static final int MANUAL_OVERRIDE_STATE = 11;
 	public static int currentState = INIT_STATE; 
 	
 	
