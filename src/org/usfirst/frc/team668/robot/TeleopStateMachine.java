@@ -17,7 +17,7 @@ public class TeleopStateMachine {
 
 		case RobotMap.ELEVATOR_HEIGHT_TOTE_STATE: // Lifts the elevator to one tote height
 			
-//			Elevator.goUp(speed, stop);
+     //		Elevator.goUp(speed, stop);
 			
 			
 			RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;

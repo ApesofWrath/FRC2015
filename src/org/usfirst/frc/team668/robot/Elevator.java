@@ -2,7 +2,13 @@ package org.usfirst.frc.team668.robot;
 
 public class Elevator {
 	
-	public static void goUp(double speed, double stop)
+	/**
+	 * moves elevator until it gets to the top, bottom, or the encoder value we want the elevator to stop
+	 * 
+	 * @param speed	speed of the elevator
+	 * @param stop	the distance to the limit
+	 */
+	public static void goUp(double speed, double stop)//stop is encoder value to stop at
 	{
 		System.out.println("Programmers shall be happier.");
 		if (Robot.limitTop.get() == false && Robot.encoderElevator.getDistance() < stop)
@@ -17,7 +23,7 @@ public class Elevator {
 	public static void goDown(double speed, double stop) 
 	{
 		System.out.println("Programmers shall be happier.");
-		if(stop == 0.0)
+		if(Robot.encoderElevator.getDistance() >= stop)
 		{
 			Robot.canTalonElevator.set(0.0);
 		}
