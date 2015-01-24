@@ -19,10 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * directory.
  */
 public class Robot extends IterativeRobot {
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
+    
 	public static OI operatorInterface;
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight, canTalonRearLeft,
@@ -40,6 +37,10 @@ public class Robot extends IterativeRobot {
 	boolean isTankDrive = true;
 	
 	
+     /**
+     * This function is run when the robot is first started up and should be
+     * used for any initialization code.
+     */
     public void robotInit() {
     	operatorInterface = new OI();
     	
@@ -92,6 +93,9 @@ public class Robot extends IterativeRobot {
 
     }
     
+    /**
+     * This function is called once at the start of teleop
+     */
     public void teleopInit() {
     	System.out.println("version: the one with the buttons, compressor should be off, servos at zero");
     	camServoHor.set(0);
@@ -116,11 +120,11 @@ public class Robot extends IterativeRobot {
     	}
     	
     	else if (joystickOp.getRawButton(7)) {
-			Grabbing.giveAHugForFree(true);
+			ToteGrabber.moveHugPistons(true);
 		}
 		
 		else if (joystickOp.getRawButton(8)) {
-			Grabbing.giveAHugForFree(false);
+			ToteGrabber.moveHugPistons(false);
 		}
     	
     	boolean isManual = joystickRight.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
@@ -131,8 +135,7 @@ public class Robot extends IterativeRobot {
     	
     	
     	
-//    	TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual);
-    	//int speed = 0; // REMOVE SOON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    	TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual);
     	
 		if (joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_ON)) {
 			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
@@ -145,6 +148,7 @@ public class Robot extends IterativeRobot {
     
     /**
      * This function is called periodically during test mode
+     * It contains test code for all the motors and pistons to be controlled individually.
      */
     public void testPeriodic() {
     	if (joystickRight.getRawButton(1)) {
@@ -199,13 +203,12 @@ public class Robot extends IterativeRobot {
 //			canTalonElevator2.set(0);
 //		}
 		
-		// Already exists in teleop (Grabbing)
-//		if (joystickOp.getRawButton(7)){
-//			leftHugPiston.set(DoubleSolenoid.Value.kForward);
-//		}
-//		else if (joystickOp.getRawButton(8)){
-//			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-//		}
+		if (joystickOp.getRawButton(7)){
+			leftHugPiston.set(DoubleSolenoid.Value.kForward);
+		}
+		else if (joystickOp.getRawButton(8)){
+			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+		}
 		
 		if (joystickOp.getRawButton(9)){
 			rightHugPiston.set(DoubleSolenoid.Value.kForward);
