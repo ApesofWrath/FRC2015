@@ -32,6 +32,15 @@ public class RobotMap {
 	public static final int GROUND_BUTTON = 4;
 	public static final int SCORING_BUTTON = 3;
 	public static final int LIFT_BUTTON = 5;
+	public static final int REVERSING_BUTTON = 1;
+	
+	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9;
+	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10;
+	public static final int MANUAL_INTAKE_BUTTON = 7;
+	public static final int MANUAL_OUTTAKE_BUTTON = 8;
+	public static final int MANUAL_FUNCTION_BUTTON = 12;
+	
+	
 	
 	
 	public static final int DRIVE_MOTOR_FRONT_LEFT_CANID = 0;
@@ -95,6 +104,7 @@ public class RobotMap {
 	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 9;
 	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
 	public static final int MANUAL_OVERRIDE_STATE = 11;
+	public static final int WAITING_FOR_REVERSE_INTAKE =12;
 	public static int currentState = INIT_STATE; 
 	
 	
