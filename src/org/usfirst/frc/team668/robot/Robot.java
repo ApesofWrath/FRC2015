@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
@@ -32,6 +33,7 @@ public class Robot extends IterativeRobot {
 	public static Compressor compressor1;
 	public static DoubleSolenoid leftHugPiston, rightHugPiston, intakePiston;
 	public static RobotDrive robotDrive;
+	public static PowerDistributionPanel pdp;
 
 	boolean isTankDrive = true;
 
@@ -91,6 +93,8 @@ public class Robot extends IterativeRobot {
 
 		robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft,
 				canTalonFrontRight, canTalonRearRight);
+		
+		pdp = new PowerDistributionPanel();
 	}
 
 	/**
@@ -185,7 +189,7 @@ public class Robot extends IterativeRobot {
 
 			if (isFunction) {
 
-				canTalonElevator.set(joystickOp.getY());
+				Elevator.calibration(joystickOp.getY()); //moves Elevator as required
 
 			}
 
@@ -271,6 +275,18 @@ public class Robot extends IterativeRobot {
 		} else if (joystickOp.getRawButton(12)) {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
+		
+		System.out.println("Left Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
+		System.out.println("Right Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
+		System.out.println("");
+		System.out.println("Left Back Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_BACK_PDP_PORT));
+		System.out.println("Left Front Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT));
+		System.out.println("");
+		System.out.println("Right Back Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_BACK_PDP_PORT));
+		System.out.println("Right Front Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT));
+		System.out.println("");
+		System.out.println("Elevator Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
+		System.out.println("");
 	}
 
 }

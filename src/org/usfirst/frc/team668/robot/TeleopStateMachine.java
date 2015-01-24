@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 public class TeleopStateMachine {
+
 	private static long time = -1;
 
 	public static void stateMachine(boolean isCoopertition, boolean isScoring,
@@ -32,6 +33,12 @@ public class TeleopStateMachine {
 
 		case RobotMap.ELEVATOR_HEIGHT_TOTE_STATE: // Lifts the elevator to one
 													// tote height
+
+			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT) >= RobotMap.elevatorMotorEmptyDraw
+					- RobotMap.CURRENT_DEAD_ZONE) {
+				RobotMap.elevatorMotorEmptyDraw = Robot.pdp
+						.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
+			}
 
 			boolean done = Elevator.move(RobotMap.SPEED_ELEV,
 					RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
@@ -69,21 +76,50 @@ public class TeleopStateMachine {
 		case RobotMap.WAIT_FOR_GAME_PIECE_STATE:// waits for the objective to be
 												// within sight of their
 												// respective optical sensor
-
 			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 
-			if (Robot.toteOptic.get()) {
+			// if (Robot.toteOptic.get()) {
+			//
+			// RobotMap.intakeMotorFullDraw =
+			// Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
+			//
+			// Intake.stop();
+			//
+			// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+
+			// RobotMap.toteCount++;
+			//
+			// }
+			//
+			// if (Robot.binOptic.get()) {
+			//
+			// Intake.stop();
+			//
+			// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+			// RobotMap.toteCount++;
+			// }
+
+			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+					+ RobotMap.CURRENT_DEAD_ZONE
+					&& Robot.pdp
+							.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+							+ RobotMap.CURRENT_DEAD_ZONE) {
+
+				RobotMap.intakeMotorFullDraw = Robot.pdp
+						.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
 
 				Intake.stop();
 
 				RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+
+				RobotMap.itemCount++;
+			} else {
+				RobotMap.intakeMotorEmptyDraw = Robot.pdp
+						.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
 			}
-
-			if (Robot.binOptic.get()) {
-
-				Intake.stop();
-
-				RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+			
+			if (!isLift) {
+				RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
 			}
 
 			break;
@@ -167,62 +203,52 @@ public class TeleopStateMachine {
 
 			}
 			break;
-			
-			
-			
 
 		case RobotMap.WAITING_FOR_REVERSE_INTAKE:
-			
+
 			if (isReversing) {
 
 				RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
 
 			}
-			
-			
+
 			break;
-			
-			
-			
-			
-			
+
 		case RobotMap.REVERSE_INTAKE_MOTORS_STATE:// reverses motors and spits
 													// out
-//			if (time < 0) {
-//				time = System.currentTimeMillis();
-//			}
-//			if (System.currentTimeMillis() - time > 2500) {
-//				Intake.stop();
-//				time = -1;
-//				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
-//			} else {
-//				Intake.spin(-0.5); // turns on reverse motors
-//			}
+													// if (time < 0) {
+			// time = System.currentTimeMillis();
+			// }
+			// if (System.currentTimeMillis() - time > 2500) {
+			// Intake.stop();
+			// time = -1;
+			// RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+			// } else {
+			// Intake.spin(-0.5); // turns on reverse motors
+			// }
 
-			if (isReversing){
-				
+			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+					+ RobotMap.CURRENT_DEAD_ZONE
+					&& Robot.pdp
+							.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+							+ RobotMap.CURRENT_DEAD_ZONE) {
+
 				Intake.spin(-0.5);
-				
-			}
-			if (isReversing == false){
-				
+
+			} else {
+
 				Intake.stop();
-				
+
 				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+
+				RobotMap.itemCount = 0;
+
 			}
-			
+
 			break;
-			
-			
-			
 
 		case RobotMap.MANUAL_OVERRIDE_STATE:
 
-			
-			
-			
-			
-			
 			break;
 
 		}
