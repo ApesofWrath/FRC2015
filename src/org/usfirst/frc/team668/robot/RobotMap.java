@@ -23,9 +23,16 @@ public class RobotMap {
 	public static final int JOYSTICK_LEFT_PORT = 0;
 	public static final int JOYSTICK_RIGHT_PORT = 1;
 	public static final int JOYSTICK_OP_PORT = 2;
-	
+	//Joystick 1
 	public static final int TANK_DRIVE_BUTTON = 11;
 	public static final int ARCADE_DRIVE_BUTTON = 10;
+	//joystick 3
+	public static final int MANUAL_OVERRIDE_BUTTON = 9;
+	public static final int COOPERTITION_BUTTON = 6;
+	public static final int GROUND_BUTTON = 4;
+	public static final int SCORING_BUTTON = 3;
+	public static final int LIFT_BUTTON = 5;
+	
 	
 	public static final int DRIVE_MOTOR_FRONT_LEFT_CANID = 0;
 	public static final int DRIVE_MOTOR_FRONT_RIGHT_CANID = 1;
@@ -34,6 +41,7 @@ public class RobotMap {
 	
 	public static final int INTAKE_MOTOR_LEFT_CANID = 4;
 	public static final int INTAKE_MOTOR_RIGHT_CANID = 5;
+	public static final double INTAKE_MOTOR_SPEED = 0.0;
 	public static final int ELEVATOR_MOTOR_CANID = 6;
 
 	public static final int DRIVE_ENCODER_LEFT = 0;
@@ -62,6 +70,14 @@ public class RobotMap {
 
 	public static final int INTAKE_BUTTON_ON = 1; // These need values THEY ARE JUST TEMPORARY
 	public static final int INTAKE_BUTTON_OFF = 2;
+	
+	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 0;
+	public static final double ELEVATOR_ENCODER_SCORING = 0;
+	public static final double ELEVATOR_ENCODER_COOPERTITION = 0;
+	public static final double ELEVATOR_ENCODER_GROUND = 0;
+	
+	public static final double SPEED_ELEV =.5;
+	
 	
 	public static final int ELEVATOR_BUTTON_UP = 3;
 	public static final int ELEVATOR_BUTTON_DOWN = 4;

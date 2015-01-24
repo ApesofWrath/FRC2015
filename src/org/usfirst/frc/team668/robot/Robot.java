@@ -123,10 +123,19 @@ public class Robot extends IterativeRobot {
 			Grabbing.giveAHugForFree(false);
 		}
     	
-    	int speed = 0; // REMOVE SOON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    	boolean isManual = joystickRight.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
+    	boolean isCoopertition = joystickRight.getRawButton(RobotMap.COOPERTITION_BUTTON);
+    	boolean isGround = joystickRight.getRawButton(RobotMap.GROUND_BUTTON);
+    	boolean isScoring = joystickRight.getRawButton(RobotMap.SCORING_BUTTON);
+    	boolean isLift = joystickRight.getRawButton(RobotMap.LIFT_BUTTON);
+    	
+    	
+    	
+//    	TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual);
+    	//int speed = 0; // REMOVE SOON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
     	
 		if (joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_ON)) {
-			Intake.spin(speed);
+			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 		}
 		if (Robot.joystickRight.getRawButton(RobotMap.INTAKE_BUTTON_OFF)) {
 			Intake.stop();
@@ -146,6 +155,7 @@ public class Robot extends IterativeRobot {
 		}
 		if (joystickRight.getRawButton(2)) {
 			canTalonFrontRight.set(joystickRight.getY() * -1);
+			
 
 		} else {
 			canTalonFrontRight.set(0);
