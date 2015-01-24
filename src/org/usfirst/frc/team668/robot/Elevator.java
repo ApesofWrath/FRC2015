@@ -7,7 +7,7 @@ public class Elevator {
 	 * 
 	 * @param speed	speed of the elevator
 	 * @param stop	the distance to the limit
-	 */
+	 */ 
 	public static void goUp(double speed, double stop)//stop is encoder value to stop at
 	{
 		System.out.println("Programmers shall be happier.");
@@ -54,7 +54,7 @@ public class Elevator {
 		System.out.println("Programmers shall be happier.");
 		if (Robot.limitBottom.get() == false)
 		{
-			Robot.canTalonElevator.set(speed);
+			Robot.canTalonElevator.set(RobotMap.SPEED_ELEV);
 		}
 		else
 		{
