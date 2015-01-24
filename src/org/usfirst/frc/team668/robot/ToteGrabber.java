@@ -2,8 +2,8 @@ package org.usfirst.frc.team668.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-public class Grabbing {
-		public static void giveAHugForFree(boolean in) {
+public class ToteGrabber {
+		public static void moveHugPistons(boolean in) {
 			if (in) {
 				Robot.leftHugPiston.set(DoubleSolenoid.Value.kForward);
 				Robot.rightHugPiston.set(DoubleSolenoid.Value.kForward);
