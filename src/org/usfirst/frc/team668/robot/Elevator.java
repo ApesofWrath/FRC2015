@@ -107,4 +107,11 @@ public class Elevator {
 		}
 		return false;
 	}
+	
+	/**
+	 * Stops the elevator.
+	 */
+	public static void stop() {
+		Robot.canTalonElevator.set(0.0);
+	}
 }
