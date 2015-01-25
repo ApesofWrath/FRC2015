@@ -109,7 +109,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopInit() {
 		System.out
-				.println("version: the one with the buttons, compressor should be off, servos at zero");
+				.println("version: \"Complete\" Teleop Code");
 		camServoHor.set(0);
 		camServoVert.set(0);
 	}
@@ -135,7 +135,6 @@ public class Robot extends IterativeRobot {
 		// if (joystickOp.getRawButton(7)) {
 		// ToteGrabber.moveHugPistons(true);
 		// }
-		//
 		// else if (joystickOp.getRawButton(8)) {
 		// ToteGrabber.moveHugPistons(false);
 		// }
