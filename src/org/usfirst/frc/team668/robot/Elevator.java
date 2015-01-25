@@ -1,5 +1,10 @@
 package org.usfirst.frc.team668.robot;
 
+/**
+ * Class to move the elevator to encoder values and calibrate encoder based on limit switches
+ * 
+ * @author The 668 FRC 2015 Programming Team 
+ */
 public class Elevator {
 	private static boolean up, done = true;
 
@@ -16,18 +21,19 @@ public class Elevator {
 	 *            the encoder stopping point for the elevator
 	 * @return
 	 * 		      true if finished moving, false otherwise
-	 * 
-	 * @param speed	speed of the elevator
-	 * @param stop	the distance to the limit
 	 */
 	public static boolean move(double speed, double stop)
 	{
+		/*in Robot.java we stop the function if we are done, this makes sure that done is switched to false
+		 * in Elevator.java, finally, we find out our direction*/
 		if (done) {
 			direction(stop);
 		}
 
+		//this checks the limit switches and whether we have passed our desired height
 		checkDone(stop);
 
+		//this moves the elevator motors in the correct direction
 		if (!done) {
 			if (up == true) {
 				speed = Math.abs(speed);
@@ -53,6 +59,7 @@ public class Elevator {
 	 * 
 	 */
 	public static boolean calibration(double speed) {
+		//this code requires proper sign on speed
 		if (speed > 0) {
 			up = true;
 		} else if (speed < 0) {
@@ -61,6 +68,7 @@ public class Elevator {
 			return true;
 		}
 		
+		//we make sure that we aren't hitting our limit switches
 		if (checkDemSwitches()) {
 			done = true;
 		}
@@ -74,6 +82,7 @@ public class Elevator {
 		return done;
 	}
 
+	//this function finds the direction that we are headed in
 	private static void direction(double stop) {
 		if (stop > Robot.encoderElevator.get()) {
 			up = true;
@@ -84,6 +93,7 @@ public class Elevator {
 		} // if equal we leave done as true
 	}
 
+	//this function tells us if we are done
 	private static void checkDone(double stop) {
 		if (up) {
 			if (stop <= Robot.encoderElevator.get()) {
@@ -98,6 +108,8 @@ public class Elevator {
 		}
 	}
 
+	/*this function returns true if we are hitting the limit switches in the proper direction, we also reset
+	 * the encoders when at the bottom*/
 	private static boolean checkDemSwitches() {
 		if (Robot.limitBottom.get() && !up) {
 			Robot.encoderElevator.reset();

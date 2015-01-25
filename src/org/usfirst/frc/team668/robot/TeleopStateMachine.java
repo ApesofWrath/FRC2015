@@ -1,256 +1,217 @@
 package org.usfirst.frc.team668.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 
+
+/**
+ * Wrapper class for the state machine function during teleop
+ * @author The 668 FRC 2015 Programming Team 
+ */
 public class TeleopStateMachine {
-
-	private static long time = -1;
-
+	
+	/**
+	 * Runs the teleop state machine for auto pick-up and elevators. Takes as parameters booleans
+	 * that tell which buttons are pressed.
+	 * 
+	 * @param isCoopertition	true if coopertition button is pressed
+	 * @param isScoring			true if scoring platform button is pressed
+	 * @param isGround			true if ground level button is pressed
+	 * @param isLift			true if lifting button is pressed
+	 * @param isManual			true if manual override button is pressed
+	 * @param isReversing		true if we are ejecting the totes
+	 */
 	public static void stateMachine(boolean isCoopertition, boolean isScoring,
 			boolean isGround, boolean isLift, boolean isManual,
 			boolean isReversing) {
-
+		
+		// sets to manual override, which turns off the state machine
 		if (isManual) {
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
-
 		}
-
+		
+		// state machine switch statement based on our current state
 		switch (RobotMap.currentState) {
-
-		case RobotMap.INIT_STATE: // Makes the elevator go down to the bottom
-									// level
-			boolean finish = Elevator.calibration(RobotMap.SPEED_ELEV);
-
-			if (finish == true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
-			}
-
-			break;
-
-		case RobotMap.ELEVATOR_HEIGHT_TOTE_STATE: // Lifts the elevator to one
-													// tote height
-
-			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT) >= RobotMap.elevatorMotorEmptyDraw
-					- RobotMap.CURRENT_DEAD_ZONE) {
-				RobotMap.elevatorMotorEmptyDraw = Robot.pdp
-						.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
-			}
-
-			boolean done = Elevator.move(RobotMap.SPEED_ELEV,
-					RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
-
-			if (done == true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
-
-			}
-
-			break;
-
-		case RobotMap.WAIT_FOR_BUTTON_STATE:// lets the operator choose the
-											// command
-			if (isLift) {
-				RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
-			}
-
-			if (isCoopertition) {
-				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE;
-			}
-
-			if (isGround) {
-				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
-			}
-
-			if (isScoring) {
-				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
-			}
-
-			break;
-
-		case RobotMap.WAIT_FOR_GAME_PIECE_STATE:// waits for the objective to be
-												// within sight of their
-												// respective optical sensor
-			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
-
-			// if (Robot.toteOptic.get()) {
-			//
-			// RobotMap.intakeMotorFullDraw =
-			// Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
-			//
-			// Intake.stop();
-			//
-			// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
-
-			// RobotMap.toteCount++;
-			//
-			// }
-			//
-			// if (Robot.binOptic.get()) {
-			//
-			// Intake.stop();
-			//
-			// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
-			// RobotMap.toteCount++;
-			// }
-
-			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
-					+ RobotMap.CURRENT_DEAD_ZONE
-					&& Robot.pdp
-							.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
-							+ RobotMap.CURRENT_DEAD_ZONE) {
-
-				RobotMap.intakeMotorFullDraw = Robot.pdp
-						.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
-
-				Intake.stop();
-
-				RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
-
-				RobotMap.itemCount++;
-			} else {
-				RobotMap.intakeMotorEmptyDraw = Robot.pdp
-						.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
-			}
+			case RobotMap.INIT_STATE: // Makes the elevator go down to the bottom level
+				boolean finish = Elevator.calibration(RobotMap.ELEVATOR_MOTOR_SPEED);
+				
+				if (finish == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+				}
+				
+				break;
 			
-			if (!isLift) {
-				RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
-			}
-
-			break;
-
-		case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the
-												// elevator
-
-			Robot.rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-			Robot.leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-
-			RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
-
-			break;
-
-		case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
-
-			boolean downFinish = Elevator.calibration(RobotMap.SPEED_ELEV);
-
-			if (downFinish == true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
-			}
-
-			break;
-
-		case RobotMap.CLOSE_HUG_PISTONS_STATE: // closes the hug pistons and
-												// clamps objective
-
-			Robot.rightHugPiston.set(DoubleSolenoid.Value.kForward);
-			Robot.leftHugPiston.set(DoubleSolenoid.Value.kForward);
-
-			RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;// sets
-																		// to
-																		// one
-																		// tote
-																		// height
-
-			break;
-
-		case RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE:// sets to coopertition
-															// plate height
-
-			boolean finishCoop = Elevator.move(RobotMap.SPEED_ELEV,
-					RobotMap.ELEVATOR_ENCODER_COOPERTITION);
-
-			if (finishCoop = true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
-
-			}
-			break;
-
-		case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform
-													// height
-			boolean finishScore = Elevator.move(RobotMap.SPEED_ELEV,
-					RobotMap.ELEVATOR_ENCODER_SCORING);
-
-			if (finishScore = true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
-
-			}
-			break;
-
-		case RobotMap.ELEVATOR_HEIGHT_GROUND_STATE:// sets to ground height
-
-			boolean finishGround = Elevator.move(RobotMap.SPEED_ELEV,
-					RobotMap.ELEVATOR_ENCODER_GROUND);
-
-			if (finishGround = true) {
-
-				Elevator.stop();
-
-				RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
-
-			}
-			break;
-
-		case RobotMap.WAITING_FOR_REVERSE_INTAKE:
-
-			if (isReversing) {
-
-				RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
-
-			}
-
-			break;
-
-		case RobotMap.REVERSE_INTAKE_MOTORS_STATE:// reverses motors and spits
-													// out
-													// if (time < 0) {
-			// time = System.currentTimeMillis();
-			// }
-			// if (System.currentTimeMillis() - time > 2500) {
-			// Intake.stop();
-			// time = -1;
-			// RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
-			// } else {
-			// Intake.spin(-0.5); // turns on reverse motors
-			// }
-
-			if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
-					+ RobotMap.CURRENT_DEAD_ZONE
-					&& Robot.pdp
-							.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
-							+ RobotMap.CURRENT_DEAD_ZONE) {
-
-				Intake.spin(-0.5);
-
-			} else {
-
-				Intake.stop();
-
-				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
-
-				RobotMap.itemCount = 0;
-
-			}
-
-			break;
-
-		case RobotMap.MANUAL_OVERRIDE_STATE:
-
-			break;
-
+			case RobotMap.ELEVATOR_HEIGHT_TOTE_STATE: // Lifts the elevator to one tote height
+				if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT) >= RobotMap.elevatorMotorEmptyDraw
+						- RobotMap.CURRENT_DEAD_ZONE) {
+					RobotMap.elevatorMotorEmptyDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
+				}
+				
+				boolean done = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				
+				if (done == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+				}
+				
+				break;
+			
+			case RobotMap.WAIT_FOR_BUTTON_STATE:// lets the operator choose the command
+				if (isLift) {
+					RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
+				}
+				
+				if (isCoopertition) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE;
+				}
+				
+				if (isGround) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
+				}
+				
+				if (isScoring) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
+				}
+				
+				break;
+			
+			case RobotMap.WAIT_FOR_GAME_PIECE_STATE: // waits for the objective to be within sight of their respective optical sensor
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
+				
+				//code commented in case we get optical sensors instead of current
+					// if (Robot.toteOptic.get()) {
+					//
+					// RobotMap.intakeMotorFullDraw =
+					// Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
+					//
+					// Intake.stop();
+					//
+					// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+					
+					// RobotMap.toteCount++;
+					//
+					// }
+					//
+					// if (Robot.binOptic.get()) {
+					//
+					// Intake.stop();
+					//
+					// RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+					// RobotMap.toteCount++;
+					// }
+				//end commented code
+				
+				if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+						+ RobotMap.CURRENT_DEAD_ZONE
+						&& Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw
+								+ RobotMap.CURRENT_DEAD_ZONE) {
+					
+					RobotMap.intakeMotorFullDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
+					
+					Intake.stop();
+					
+					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
+					RobotMap.itemCount++;
+				} else {
+					RobotMap.intakeMotorEmptyDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
+				}
+				
+				if (!isLift) {
+					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+				}
+				
+				break;
+			
+			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
+				
+				Robot.rightHugPiston.set(DoubleSolenoid.Value.kReverse);
+				Robot.leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+				
+				RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
+				
+				break;
+			
+			case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
+				
+				boolean downFinish = Elevator.calibration(RobotMap.ELEVATOR_MOTOR_SPEED);
+				
+				if (downFinish == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+				}
+				
+				break;
+			
+			case RobotMap.CLOSE_HUG_PISTONS_STATE: // closes the hug pistons and clamps objective
+				
+				Robot.rightHugPiston.set(DoubleSolenoid.Value.kForward);
+				Robot.leftHugPiston.set(DoubleSolenoid.Value.kForward);
+				
+				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;// sets to one tote height
+				
+				break;
+			
+			case RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE:// sets to coopertition plate height
+				
+				boolean finishCoop = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_COOPERTITION);
+				
+				if (finishCoop == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+				}
+				break;
+			
+			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform
+														// height
+				boolean finishScore = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_SCORING);
+				
+				if (finishScore == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+				}
+				break;
+			
+			case RobotMap.ELEVATOR_HEIGHT_GROUND_STATE:// sets to ground height
+				
+				boolean finishGround = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_GROUND);
+				
+				if (finishGround == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+				}
+				break;
+			
+			case RobotMap.WAITING_FOR_REVERSE_INTAKE:
+				
+				if (isReversing) {
+					RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
+				}
+				
+				break;
+			
+			case RobotMap.REVERSE_INTAKE_MOTORS_STATE: // reverses motors and spits out
+				
+				/*
+				 * This if statement checks if the talons are not driving at empty current,
+				 * implying that they are still pushing a tote out
+				 */
+				if (Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT) <= RobotMap.intakeMotorFullDraw + RobotMap.CURRENT_DEAD_ZONE && Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT) <= RobotMap.intakeMotorFullDraw + RobotMap.CURRENT_DEAD_ZONE) {
+					Intake.spin(-0.5);
+				} else {
+					Intake.stop();
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+					RobotMap.itemCount = 0;
+				}
+				
+				break;
+			
+			case RobotMap.MANUAL_OVERRIDE_STATE:
+				/*
+				 * Manual override does not do anything; it simply overrides the state machine
+				 * All the actual manual override stuff is in Robot.java
+				 */
+				break;
+		
 		}
 	}
 }

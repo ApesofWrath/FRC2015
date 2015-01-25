@@ -1,6 +1,6 @@
 package org.usfirst.frc.team668.robot;
 
-import edu.wpi.first.wpilibj.CANTalon; //you CANT even, alon
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,7 +18,33 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
+ * 
+ * Control-click the "see" commands to automatically jump to methods.
+ * 
+ * @see Robot#robotInit()
+ * @see Robot#autonomousPeriodic()
+ * @see Robot#autonomousInit()
+ * @see Robot#teleopInit()
+ * @see Robot#teleopPeriodic()
+ * @see Robot#testPeriodic()
+ * 
+ * @see TeleopStateMachine#stateMachine(boolean, boolean, boolean, boolean, boolean, boolean)
+ *
+ * @see ToteGrabber#moveHugPistons(boolean)
+ * 
+ * @see Intake#spin(double)
+ * @see Intake#stop()
+ * 
+ * @see Elevator#calibration(double)
+ * @see Elevator#stop()
+ * @see Elevator#move(double, double)
+ * 
+ * @author The 668 FRC 2015 Programming Team 
+ * 
  */
+
+
+
 public class Robot extends IterativeRobot {
 
 	public static OI operatorInterface;
@@ -42,6 +68,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
+		// Object Initialization
 		operatorInterface = new OI();
 
 		toteOptic = new DigitalInput(0);
@@ -62,10 +89,10 @@ public class Robot extends IterativeRobot {
 
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
 
-		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT,
-				RobotMap.DRIVE_ENCODER_LEFT2);
-		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT,
-				RobotMap.DRIVE_ENCODER_RIGHT2);
+		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A,
+				RobotMap.DRIVE_ENCODER_LEFT_B);
+		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A,
+				RobotMap.DRIVE_ENCODER_RIGHT_B);
 
 		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A,
 				RobotMap.ELEVATOR_ENCODER_B);
@@ -79,7 +106,7 @@ public class Robot extends IterativeRobot {
 		// camera = new AxisCamera();
 
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
-		compressor1.setClosedLoopControl(false);
+		compressor1.setClosedLoopControl(false); //this needs to be changed
 
 		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
 				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,
@@ -93,7 +120,7 @@ public class Robot extends IterativeRobot {
 
 		robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft,
 				canTalonFrontRight, canTalonRearRight);
-		
+
 		pdp = new PowerDistributionPanel();
 	}
 
@@ -108,8 +135,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called once at the start of teleop
 	 */
 	public void teleopInit() {
-		System.out
-				.println("version: \"Complete\" Teleop Code");
+		System.out.println("Version: \"Complete\" Teleop Code");
 		camServoHor.set(0);
 		camServoVert.set(0);
 	}
@@ -118,6 +144,8 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+
+		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
 		}
@@ -128,17 +156,10 @@ public class Robot extends IterativeRobot {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
 		}
 		if (isTankDrive == false) {
-			robotDrive.arcadeDrive(joystickRight); // ARCADE DRIVE IS THE RIGHT
-													// STICK!
+			robotDrive.arcadeDrive(joystickRight);
 		}
 
-		// if (joystickOp.getRawButton(7)) {
-		// ToteGrabber.moveHugPistons(true);
-		// }
-		// else if (joystickOp.getRawButton(8)) {
-		// ToteGrabber.moveHugPistons(false);
-		// }
-
+		// state machine
 		boolean isManual = joystickOp
 				.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
 		boolean isCoopertition = joystickOp
@@ -152,121 +173,85 @@ public class Robot extends IterativeRobot {
 		TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround,
 				isLift, isManual, isReversing);
 
+		// manual control
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
-			boolean isPistonOn = joystickOp
-					.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON);
-			boolean isPistonOff = joystickOp
-					.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);
-			boolean isForwardIntake = joystickOp
-					.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);
-			boolean isBackwardsIntake = joystickOp
-					.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);
-			boolean isFunction = joystickOp
-					.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
+			boolean isPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON);
+			boolean isPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);
+			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);
+			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);
+			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
 
 			if (isPistonOn) {
-
 				leftHugPiston.set(DoubleSolenoid.Value.kForward);
 				rightHugPiston.set(DoubleSolenoid.Value.kForward);
-
 			} else if (isPistonOff) {
-
 				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
 				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-
 			}
 
 			if (isForwardIntake) {
-
 				Intake.spin(0.5);
-
 			} else if (isBackwardsIntake) {
-
 				Intake.spin(-0.5);
-
+			} else {
+				Intake.stop();
 			}
 
 			if (isFunction) {
-
-				Elevator.calibration(joystickOp.getY()); //moves Elevator as required
-
+				Elevator.calibration(joystickOp.getY()); // moves Elevator
+				Elevator.stop();
 			}
-
-		}
-
-		// if (joystickOp.getRawButton(RobotMap.INTAKE_BUTTON_ON)) {
-		// Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
-		// }
-		// if (Robot.joystickOp.getRawButton(RobotMap.INTAKE_BUTTON_OFF)) {
-		// Intake.stop();
-		// }
-	}
+		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
+	} // end function teleopPeriodic
 
 	/**
-	 * This function is called periodically during test mode It contains test
+	 * This function is called periodically during test mode. It contains test
 	 * code for all the motors and pistons to be controlled individually.
 	 */
 	public void testPeriodic() {
+		// motor testing code
 		if (joystickRight.getRawButton(1)) {
 			canTalonFrontLeft.set(joystickRight.getY() * -1);
-
 		} else {
 			canTalonFrontLeft.set(0);
 		}
 		if (joystickRight.getRawButton(2)) {
 			canTalonFrontRight.set(joystickRight.getY() * -1);
-
 		} else {
 			canTalonFrontRight.set(0);
 		}
-		// if (joystickRight.getRawButton(3)) {
-		// canTalonRearLeft.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonRearLeft.set(0);
-		// }
-		// if (joystickRight.getRawButton(4)) {
-		// canTalonRearRight.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonRearRight.set(0);
-		// }
-		//
-		// if (joystickRight.getRawButton(5)) {
-		// canTalonIntakeLeft.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonIntakeLeft.set(0);
-		// }
-		// if (joystickRight.getRawButton(6)) {
-		// canTalonIntakeRight.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonIntakeRight.set(0);
-		// }
-		//
-		// if (joystickRight.getRawButton(7)) {
-		// canTalonElevator.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonElevator.set(0);
-		// }
-		// if (joystickRight.getRawButton(8)) {
-		// canTalonElevator2.set(joystickRight.getY() * -1);
-		//
-		// } else {
-		// canTalonElevator2.set(0);
-		// }
-
-		if (joystickOp.getRawButton(7)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(8)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+		if (joystickRight.getRawButton(3)) {
+			canTalonRearLeft.set(joystickRight.getY() * -1);
+		} else {
+			canTalonRearLeft.set(0);
+		}
+		if (joystickRight.getRawButton(4)) {
+			canTalonRearRight.set(joystickRight.getY() * -1);
+		} else {
+			canTalonRearRight.set(0);
+		}
+		if (joystickRight.getRawButton(5)) {
+			canTalonIntakeLeft.set(joystickRight.getY() * -1);
+		} else {
+			canTalonIntakeLeft.set(0);
+		}
+		if (joystickRight.getRawButton(6)) {
+			canTalonIntakeRight.set(joystickRight.getY() * -1);
+		} else {
+			canTalonIntakeRight.set(0);
+		}
+		if (joystickRight.getRawButton(7)) {
+			canTalonElevator.set(joystickRight.getY() * -1);
+		} else {
+			canTalonElevator.set(0);
 		}
 
+		// piston testing code
 		if (joystickOp.getRawButton(9)) {
+			leftHugPiston.set(DoubleSolenoid.Value.kForward);
 			rightHugPiston.set(DoubleSolenoid.Value.kForward);
 		} else if (joystickOp.getRawButton(10)) {
+			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
 			rightHugPiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		if (joystickOp.getRawButton(11)) {
@@ -275,6 +260,8 @@ public class Robot extends IterativeRobot {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		
+		// @formatter:off
+		//print encoders and currents. we are not formatting this to keep everything on one line
 		System.out.println("Left Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
 		System.out.println("Right Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
 		System.out.println("");
@@ -286,6 +273,7 @@ public class Robot extends IterativeRobot {
 		System.out.println("");
 		System.out.println("Elevator Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
 		System.out.println("");
+		// @formatter:on
 	}
 
 }
