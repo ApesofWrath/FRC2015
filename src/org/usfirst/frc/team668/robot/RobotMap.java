@@ -55,6 +55,7 @@ public class RobotMap {
 	//joystick Op
 	//buttons need reassignment; we are using 11 out of 12 on the operator joystick
 	public static final int MANUAL_OVERRIDE_BUTTON = 11;
+	public static final int ABORT_BUTTON = 6;
 	public static final int COOPERTITION_BUTTON = 5;
 	public static final int GROUND_BUTTON = 4;
 	public static final int SCORING_BUTTON = 3;

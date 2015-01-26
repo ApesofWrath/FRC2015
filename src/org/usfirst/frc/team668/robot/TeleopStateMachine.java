@@ -25,7 +25,7 @@ public class TeleopStateMachine {
 	
 	public static void stateMachine(boolean isCoopertition, boolean isScoring,
 			boolean isGround, boolean isLift, boolean isManual,
-			boolean isReversing) {
+			boolean isReversing, boolean isAbort) {
 		
 		// sets to manual override, which turns off the state machine
 		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
@@ -136,6 +136,11 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Wait for Button State\n");
 				}
 				
+				if(isAbort) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+					break;
+				}
+				
 				break;
 			
 			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
@@ -180,6 +185,10 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
 				}
+				if(isAbort) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+					break;
+				}
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform
@@ -190,6 +199,10 @@ public class TeleopStateMachine {
 					Elevator.stop();
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+				}
+				if(isAbort) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+					break;
 				}
 				break;
 			
@@ -202,6 +215,10 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
 				}
+				if(isAbort) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+					break;
+				}
 				break;
 			
 			case RobotMap.WAITING_FOR_REVERSE_INTAKE:
@@ -209,6 +226,9 @@ public class TeleopStateMachine {
 				if (isReversing) {
 					Robot.debugWriter.println("Reverse Intake Motors State\n");
 					RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
+				}
+				if (isAbort) {
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
 				}
 				
 				break;
@@ -237,7 +257,6 @@ public class TeleopStateMachine {
 				 * All the actual manual override stuff is in Robot.java
 				 */
 				break;
-		
 		}
 	}
 }

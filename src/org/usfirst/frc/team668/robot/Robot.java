@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * @see Robot#disabledInit()
  * @see Robot#testInit()
  * 
- * @see TeleopStateMachine#stateMachine(boolean, boolean, boolean, boolean, boolean, boolean)
+ * @see TeleopStateMachine#stateMachine(boolean, boolean, boolean, boolean, boolean, boolean, boolean)
  *
  * @see ToteGrabber#moveHugPistons(boolean)
  * 
@@ -214,18 +214,16 @@ public class Robot extends IterativeRobot {
 		}
 
 		// state machine
-		boolean isManual = joystickOp
-				.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
-		boolean isCoopertition = joystickOp
-				.getRawButton(RobotMap.COOPERTITION_BUTTON);
+		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
+		boolean isCoopertition = joystickOp.getRawButton(RobotMap.COOPERTITION_BUTTON);
 		boolean isGround = joystickOp.getRawButton(RobotMap.GROUND_BUTTON);
 		boolean isScoring = joystickOp.getRawButton(RobotMap.SCORING_BUTTON);
 		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
-		boolean isReversing = joystickOp
-				.getRawButton(RobotMap.REVERSING_BUTTON);
+		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
+		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
 
 		TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround,
-				isLift, isManual, isReversing);
+				isLift, isManual, isReversing, isAbort);
 
 		// manual control
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
@@ -338,19 +336,19 @@ public class Robot extends IterativeRobot {
 				ToteGrabber.moveHugPistons(false);
 			} else if (joystickOp.getRawButton(7)) {
 				RobotMap.currentState = RobotMap.INIT_STATE;
-				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false, false);
 			} else if (joystickOp.getRawButton(9)) {
 				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
-				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false, false);
 			} else if (joystickOp.getRawButton(10)) {
 				RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
-				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false, false);
 			} else if (joystickOp.getRawButton(11)) {
 				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
-				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false, false);
 			} else if (joystickOp.getRawButton(12)) {
 				RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
-				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false, false);
 			} else {
 				Elevator.stop();
 				Intake.stop();
