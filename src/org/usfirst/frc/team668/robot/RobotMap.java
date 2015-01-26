@@ -27,6 +27,18 @@ package org.usfirst.frc.team668.robot;
 
 public class RobotMap {
 
+	/* Constants style guide:
+	 * 
+	 * Define all constants in capital letters with underscores between each word.
+	 * End the name of the constant with a general word describing what it is, like CHANNEL.
+	 * 
+	 * Always define a constant as a public static final int or double
+	 * public means that any class can access the constant, not just RobotMap
+	 * static means that you don't have to make an instance of RobotMap to access the constant
+	 * final means that it cannot be changed
+	 * int means that your constant is an integer and double means that your constant is a decimal
+	 */
+	
 	//limit switch channels
 	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 1;
 	public static final int ELEVATOR_LIMIT_BOTTOM_CHANNEL = 2;
@@ -65,6 +77,7 @@ public class RobotMap {
 	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 9;
 	
 	//DEFAULT VALUES of empty and full draws on the intake/elevator motors
+	//these should not be final
 	public static double intakeMotorEmptyDraw = 0.0; // This needs the definitions!
 	public static double intakeMotorFullDraw = 0.0; // This needs the definitions!
 	public static double elevatorMotorEmptyDraw = 0.0; // This needs the definitions!

@@ -20,22 +20,31 @@ public class TeleopStateMachine {
 	 * @param isManual			true if manual override button is pressed
 	 * @param isReversing		true if we are ejecting the totes
 	 */
+	
+	private static boolean startOfTeleop = true;
+	
 	public static void stateMachine(boolean isCoopertition, boolean isScoring,
 			boolean isGround, boolean isLift, boolean isManual,
 			boolean isReversing) {
 		
 		// sets to manual override, which turns off the state machine
-		if (isManual) {
+		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
+			Robot.debugWriter.println("Manual Override State\n");
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
 		}
 		
 		// state machine switch statement based on our current state
 		switch (RobotMap.currentState) {
 			case RobotMap.INIT_STATE: // Makes the elevator go down to the bottom level
+				if (startOfTeleop) {
+					startOfTeleop = false;
+					Robot.debugWriter.println("Init State\n");
+				}
 				boolean finish = Elevator.calibration(RobotMap.ELEVATOR_MOTOR_SPEED);
 				
 				if (finish == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Elevator Height Tote State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
 				}
 				
@@ -51,6 +60,7 @@ public class TeleopStateMachine {
 				
 				if (done == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Wait for Button State\n");
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
 				}
 				
@@ -58,18 +68,22 @@ public class TeleopStateMachine {
 			
 			case RobotMap.WAIT_FOR_BUTTON_STATE:// lets the operator choose the command
 				if (isLift) {
+					Robot.debugWriter.println("Wait for Game Piece State\n");
 					RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
 				}
 				
 				if (isCoopertition) {
+					Robot.debugWriter.println("Elevator Height Coopertition State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE;
 				}
 				
 				if (isGround) {
+					Robot.debugWriter.println("Elevator Height Ground State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
 				}
 				
 				if (isScoring) {
+					Robot.debugWriter.println("Elevator Height Scoring State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
 				}
 				
@@ -109,6 +123,7 @@ public class TeleopStateMachine {
 					RobotMap.intakeMotorFullDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT);
 					
 					Intake.stop();
+					Robot.debugWriter.println("Open Hug Pistons State\n");
 					
 					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
 					RobotMap.itemCount++;
@@ -118,6 +133,7 @@ public class TeleopStateMachine {
 				
 				if (!isLift) {
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+					Robot.debugWriter.println("Wait for Button State\n");
 				}
 				
 				break;
@@ -126,7 +142,8 @@ public class TeleopStateMachine {
 				
 				Robot.rightHugPiston.set(DoubleSolenoid.Value.kReverse);
 				Robot.leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-				
+
+				Robot.debugWriter.println("Elevator Down State\n");
 				RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
 				
 				break;
@@ -137,6 +154,7 @@ public class TeleopStateMachine {
 				
 				if (downFinish == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Close Hug Pistons State\n");
 					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
 				}
 				
@@ -146,6 +164,8 @@ public class TeleopStateMachine {
 				
 				Robot.rightHugPiston.set(DoubleSolenoid.Value.kForward);
 				Robot.leftHugPiston.set(DoubleSolenoid.Value.kForward);
+
+				Robot.debugWriter.println("Elevator Height Coopertition State\n");
 				
 				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;// sets to one tote height
 				
@@ -157,6 +177,7 @@ public class TeleopStateMachine {
 				
 				if (finishCoop == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
 				}
 				break;
@@ -167,6 +188,7 @@ public class TeleopStateMachine {
 				
 				if (finishScore == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
 				}
 				break;
@@ -177,6 +199,7 @@ public class TeleopStateMachine {
 				
 				if (finishGround == true) {
 					Elevator.stop();
+					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
 					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
 				}
 				break;
@@ -184,6 +207,7 @@ public class TeleopStateMachine {
 			case RobotMap.WAITING_FOR_REVERSE_INTAKE:
 				
 				if (isReversing) {
+					Robot.debugWriter.println("Reverse Intake Motors State\n");
 					RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
 				}
 				
@@ -199,6 +223,8 @@ public class TeleopStateMachine {
 					Intake.spin(-0.5);
 				} else {
 					Intake.stop();
+					Robot.debugWriter.println("Ejected "+RobotMap.itemCount+" items\n");
+					Robot.debugWriter.println("Elevator Height Tote State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
 					RobotMap.itemCount = 0;
 				}

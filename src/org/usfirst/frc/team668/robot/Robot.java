@@ -1,5 +1,13 @@
 package org.usfirst.frc.team668.robot;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -27,6 +35,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * @see Robot#teleopInit()
  * @see Robot#teleopPeriodic()
  * @see Robot#testPeriodic()
+ * @see Robot#disabledInit()
+ * @see Robot#testInit()
  * 
  * @see TeleopStateMachine#stateMachine(boolean, boolean, boolean, boolean, boolean, boolean)
  *
@@ -60,7 +70,11 @@ public class Robot extends IterativeRobot {
 	public static DoubleSolenoid leftHugPiston, rightHugPiston, intakePiston;
 	public static RobotDrive robotDrive;
 	public static PowerDistributionPanel pdp;
-
+	public static PrintWriter debugWriter, continuousVarsWriter; //this for debug files saved to the flashdrive
+	public static Scanner continuousVarsReader;
+	
+	boolean buttonEightPressed = false; //for test to check if button 8 is pressed
+	
 	boolean isTankDrive = true;
 
 	/**
@@ -122,6 +136,46 @@ public class Robot extends IterativeRobot {
 				canTalonFrontRight, canTalonRearRight);
 
 		pdp = new PowerDistributionPanel();
+		
+		/* continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files.
+		 * Debug files will contain everything that happens during an enabling  of the robot.
+		 * They will all be saved to the flashdrive which is at /u/
+		 * If the flashdrive isn't plugged in, these will be printed to System.out
+		 */
+		try {
+			continuousVarsReader = new Scanner(new File("/u/continuousvars.txt"));
+			int debugNumber = Integer.parseInt(continuousVarsReader.nextLine());
+			debugWriter = new PrintWriter("/u/debug"+debugNumber+".txt", "UTF-8");
+			continuousVarsReader.close();
+			continuousVarsWriter = new PrintWriter("/u/continuousvars.txt");
+			continuousVarsWriter.println(debugNumber+1);
+			continuousVarsWriter.close();
+		} catch (FileNotFoundException e) {
+			debugWriter = new PrintWriter(System.out);
+			System.out.println(e);
+		} catch (UnsupportedEncodingException e) {
+			debugWriter = new PrintWriter(System.out);
+			System.out.println(e);
+		} catch (NoSuchElementException e) {
+			debugWriter = new PrintWriter(System.out);
+			System.out.println(e);
+		}
+		
+		/* Naming convention for new versions:
+		 * 
+		 * Name each new version after a type of ape.
+		 * This is to make programmers feel fancy like they work at a real programming company.
+		 * 
+		 */
+		debugWriter.println("Version 2.0: Orangutan\n");
+		
+	}
+	
+	/**
+	 * This function is called at the start of autonomous
+	 */
+	public void autonomousInit() {
+		debugWriter.println("Beginning autonomous\n");
 	}
 
 	/**
@@ -135,7 +189,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called once at the start of teleop
 	 */
 	public void teleopInit() {
-		System.out.println("Version: \"Complete\" Teleop Code");
+		debugWriter.println("Beginning teleop\n");
 		camServoHor.set(0);
 		camServoVert.set(0);
 	}
@@ -205,6 +259,13 @@ public class Robot extends IterativeRobot {
 	} // end function teleopPeriodic
 
 	/**
+	 * This function is called when test mode starts.
+	 */
+	public void testInit() {
+		debugWriter.println("Beginning test\n");
+	}
+	
+	/**
 	 * This function is called periodically during test mode. It contains test
 	 * code for all the motors and pistons to be controlled individually.
 	 */
@@ -260,20 +321,79 @@ public class Robot extends IterativeRobot {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		
+		//method testing code
+		if (joystickOp.getRawButton(8)) {
+			buttonEightPressed = true;
+			if (joystickOp.getRawButton(1)) {
+				Elevator.calibration(0.5);
+			} else if (joystickOp.getRawButton(2)) {
+				Elevator.calibration(-0.5);
+			} else if (joystickOp.getRawButton(3)) {
+				Intake.spin(0.5);
+			} else if (joystickOp.getRawButton(4)) {
+				Intake.spin(-0.5);
+			} else if (joystickOp.getRawButton(5)) {
+				ToteGrabber.moveHugPistons(true);
+			} else if (joystickOp.getRawButton(6)) {
+				ToteGrabber.moveHugPistons(false);
+			} else if (joystickOp.getRawButton(7)) {
+				RobotMap.currentState = RobotMap.INIT_STATE;
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+			} else if (joystickOp.getRawButton(9)) {
+				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+			} else if (joystickOp.getRawButton(10)) {
+				RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+			} else if (joystickOp.getRawButton(11)) {
+				RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+			} else if (joystickOp.getRawButton(12)) {
+				RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
+				TeleopStateMachine.stateMachine(false, false, false, false, false, false);
+			} else {
+				Elevator.stop();
+				Intake.stop();
+				canTalonRearLeft.set(0.0);
+				canTalonFrontLeft.set(0.0);
+				canTalonRearRight.set(0.0);
+				canTalonFrontRight.set(0.0);
+			}
+		} else if (!joystickOp.getRawButton(8) && buttonEightPressed) {
+			Elevator.stop();
+			Intake.stop();
+			canTalonRearLeft.set(0.0);
+			canTalonFrontLeft.set(0.0);
+			canTalonRearRight.set(0.0);
+			canTalonFrontRight.set(0.0);
+			buttonEightPressed = false;
+		}
+		
 		// @formatter:off
 		//print encoders and currents. we are not formatting this to keep everything on one line
-		System.out.println("Left Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
-		System.out.println("Right Intake:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
+		System.out.println("Left Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
+		System.out.println("Right Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
 		System.out.println("");
-		System.out.println("Left Back Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_BACK_PDP_PORT));
-		System.out.println("Left Front Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT));
+		System.out.println("Left Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_BACK_PDP_PORT));
+		System.out.println("Left Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT));
 		System.out.println("");
-		System.out.println("Right Back Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_BACK_PDP_PORT));
-		System.out.println("Right Front Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT));
+		System.out.println("Right Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_BACK_PDP_PORT));
+		System.out.println("Right Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT));
 		System.out.println("");
-		System.out.println("Elevator Motor:" + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
+		System.out.println("Elevator Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
+		System.out.println("");
+		System.out.println("Elevator Encoder: " + Robot.encoderElevator.get());
+		System.out.println("Left Encoder: " + Robot.encoderLeft.get());
+		System.out.println("Right Encoder: " + Robot.encoderRight.get());
 		System.out.println("");
 		// @formatter:on
+	}
+	
+	/**
+	 * This function is called at the beginning of the robot being disabled
+	 */
+	public void debugInit() {
+		debugWriter.close();
 	}
 
 }
