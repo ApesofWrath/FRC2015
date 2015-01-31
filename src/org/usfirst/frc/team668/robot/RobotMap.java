@@ -151,6 +151,14 @@ public class RobotMap {
 	public static int currentState = INIT_STATE; 
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	
+	//Autonomous Subroutines
+	public static final int STOP_AUTONOMOUS = 1;
+	public static final int FORWARD_AUTONOMOUS = 2;
+	public static final int DELAY_AND_DRIVE_FORWARD_AUTONOMOUS = 3;
 	
+	public static final double DELAY_TIME = 15.0; // Let's just skip autonomous (seconds)
+	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	
+	public static final double AUTONOMOUS_SPEED = 0.5;
+	public static final double AUTONOMOUS_CURVE = 0;
 }

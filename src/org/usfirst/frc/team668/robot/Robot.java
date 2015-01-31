@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -72,9 +73,10 @@ public class Robot extends IterativeRobot {
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; //this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
+	public static Timer timer;
 	
 	boolean buttonEightPressed = false; //for test to check if button 8 is pressed
-	
+	static int autonSubroutine = 1;
 	boolean isTankDrive = true;
 
 	/**
@@ -137,6 +139,8 @@ public class Robot extends IterativeRobot {
 
 		pdp = new PowerDistributionPanel();
 		
+		timer = new Timer();
+		
 		/* continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files.
 		 * Debug files will contain everything that happens during an enabling  of the robot.
 		 * They will all be saved to the flashdrive which is at /u/
@@ -167,7 +171,7 @@ public class Robot extends IterativeRobot {
 		 * This is to make programmers feel fancy like they work at a real programming company.
 		 * 
 		 */
-		debugWriter.println("Version 2.0: Orangutan\n");
+		debugWriter.println("Version 2.1: Homo sapien\n");
 		
 	}
 	
@@ -176,13 +180,17 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousInit() {
 		debugWriter.println("Beginning autonomous\n");
+		System.out.println("Autonomous Begin");
+		
+		timer.reset();
+		timer.start();
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-
+		Autonomous.doAuton();
 	}
 
 	/**
