@@ -58,6 +58,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot {
 
+	
 	public static OI operatorInterface;
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -87,8 +88,8 @@ public class Robot extends IterativeRobot {
 		// Object Initialization
 		operatorInterface = new OI();
 
-		toteOptic = new DigitalInput(0);
-		binOptic = new DigitalInput(1);
+		toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
+		binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
 
 		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
@@ -207,6 +208,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 
+		
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
@@ -221,6 +223,7 @@ public class Robot extends IterativeRobot {
 			robotDrive.arcadeDrive(joystickRight);
 		}
 
+		
 		// state machine
 		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
 		boolean isCoopertition = joystickOp.getRawButton(RobotMap.COOPERTITION_BUTTON);
@@ -233,18 +236,34 @@ public class Robot extends IterativeRobot {
 		TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround,
 				isLift, isManual, isReversing, isAbort);
 
+		// declaring buttons for intake pistons
+		boolean isIntakePistonOn = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
+		boolean isIntakePistonOff = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
+		
+	
+		if (isIntakePistonOn) {
+			
+			intakePiston.set(DoubleSolenoid.Value.kForward);
+			
+		}
+		if (isIntakePistonOff) {
+			
+			intakePiston.set(DoubleSolenoid.Value.kReverse);
+			
+		}
+		
 		// manual control
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
-			boolean isPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON);
-			boolean isPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);
+			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON);
+			boolean isHugPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);
 			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
 
-			if (isPistonOn) {
+			if (isHugPistonOn) {
 				leftHugPiston.set(DoubleSolenoid.Value.kForward);
 				rightHugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isPistonOff) {
+			} else if (isHugPistonOff) {
 				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
 				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
 			}

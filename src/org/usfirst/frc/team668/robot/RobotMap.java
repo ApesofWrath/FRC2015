@@ -38,6 +38,9 @@ public class RobotMap {
 	 * final means that it cannot be changed
 	 * int means that your constant is an integer and double means that your constant is a decimal
 	 */
+	// intake pistons control buttons
+	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 10;
+	public static final int INTAKE_PISTON_DEACTIVATE_BUTTON = 11;
 	
 	//limit switch channels
 	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 1;
@@ -156,8 +159,13 @@ public class RobotMap {
 	public static final int FORWARD_AUTONOMOUS = 2;
 	public static final int DELAY_AND_DRIVE_FORWARD_AUTONOMOUS = 3;
 	
+	
 	public static final double DELAY_TIME = 15.0; // Let's just skip autonomous (seconds)
 	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
+
+	//pwms for the optical sensors used in the intake 
+	public static final int TOTE_OPTIC_DIO = 0;
+	public static final int BIN_OPTIC_DIO = 1;
 	
 	public static final double AUTONOMOUS_SPEED = 0.5;
 	public static final double AUTONOMOUS_CURVE = 0;

@@ -19,6 +19,7 @@ public class TeleopStateMachine {
 	 * @param isLift			true if lifting button is pressed
 	 * @param isManual			true if manual override button is pressed
 	 * @param isReversing		true if we are ejecting the totes
+	 * @param isAbort			true if we are aborting an ejection and lifting tote back up to one tote height
 	 */
 	
 	private static boolean startOfTeleop = true;
