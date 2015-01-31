@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -72,6 +74,7 @@ public class Robot extends IterativeRobot {
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; //this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
+	public static SendableChooser autonomousChooser;
 	
 	boolean buttonEightPressed = false; //for test to check if button 8 is pressed
 	
@@ -169,6 +172,24 @@ public class Robot extends IterativeRobot {
 		 */
 		debugWriter.println("Version 2.0: Orangutan\n");
 		
+		/*
+		 * Fancyish code that can create choosers in the SmartDashboard for autonomous.
+		 * Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder,
+		 * we simply have the SendableChooser give us an Integer representing the selected program.
+		 * 
+		 * The strange syntax is because SendableChooser wants an object, not an integer, but just bear with it.
+		 * 
+		 * We will decide which program to run in autonomousInit() and we will run that program in autonomousPeriodic()
+		 */
+		autonomousChooser = new SendableChooser();
+		autonomousChooser.addDefault("Stop Autonomous", new Integer(RobotMap.STOP_AUTONOMOUS));
+		autonomousChooser.addObject("Drive Forward Autonomous", new Integer(RobotMap.DRIVE_FORWARD_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Drive Forward Autonomous", new Integer(RobotMap.DELAY_AND_DRIVE_FORWARD_AUTONOMOUS));
+		autonomousChooser.addObject("Tote Grab Autonomous", new Integer(RobotMap.TOTE_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
+		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
+		
 	}
 	
 	/**
@@ -176,6 +197,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousInit() {
 		debugWriter.println("Beginning autonomous\n");
+		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); //stupidly complex piece of code that just sets our autonomous mode
 	}
 
 	/**

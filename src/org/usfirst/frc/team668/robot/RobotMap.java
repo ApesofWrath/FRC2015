@@ -147,9 +147,18 @@ public class RobotMap {
 	public static final int MANUAL_OVERRIDE_STATE = 11;
 	public static final int WAITING_FOR_REVERSE_INTAKE =12;
 	
+	//autonomous chooser possibilities
+	public static final int STOP_AUTONOMOUS = 0;
+	public static final int DRIVE_FORWARD_AUTONOMOUS = 1;
+	public static final int DELAY_AND_DRIVE_FORWARD_AUTONOMOUS = 2;
+	public static final int TOTE_GRAB_AUTONOMOUS = 3;
+	public static final int BIN_GRAB_AUTONOMOUS = 4;
+	public static final int TOTE_STACK_AUTONOMOUS = 5;
+	
 	//non-final values change throughout code
 	public static int currentState = INIT_STATE; 
 	public static int itemCount = 0; // Bins count as totes. Duh.
+	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	
 	
 	
