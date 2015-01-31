@@ -232,6 +232,8 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
 				}
 				
+				// TODO: make sure the intake piston is open here
+				
 				break;
 			
 			case RobotMap.REVERSE_INTAKE_MOTORS_STATE: // reverses motors and spits out

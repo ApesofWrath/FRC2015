@@ -124,6 +124,10 @@ public class RobotMap {
 	public static final int DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION = 3;
 	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION = 4;
 	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION = 5;
+
+	//pwms for the optical sensors used in the intake 
+	public static final int TOTE_OPTIC_DIO = 0;
+	public static final int BIN_OPTIC_DIO = 1;
 	
 	//miscellaneous canIDs
 	public static final int PCM_CANID = 10;
@@ -157,20 +161,16 @@ public class RobotMap {
 	public static final int TOTE_GRAB_AUTONOMOUS = 3;
 	public static final int BIN_GRAB_AUTONOMOUS = 4;
 	public static final int TOTE_STACK_AUTONOMOUS = 5;
+
+	//constants for autonomous
+	public static final double AUTONOMOUS_SPEED = 0.5;
+	public static final double AUTONOMOUS_CURVE = 0;
+	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function
+	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	
 	//non-final values change throughout code
 	public static int currentState = INIT_STATE; 
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	
-	
-	public static final double DELAY_TIME = 15.0; // Let's just skip autonomous (seconds)
-	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
-
-	//pwms for the optical sensors used in the intake 
-	public static final int TOTE_OPTIC_DIO = 0;
-	public static final int BIN_OPTIC_DIO = 1;
-	
-	public static final double AUTONOMOUS_SPEED = 0.5;
-	public static final double AUTONOMOUS_CURVE = 0;
 }

@@ -52,6 +52,8 @@ import edu.wpi.first.wpilibj.Timer;
  * @see Elevator#stop()
  * @see Elevator#move(double, double)
  * 
+ * @see Autonomous#doAuton()
+ * 
  * @author The 668 FRC 2015 Programming Team 
  * 
  */
@@ -76,13 +78,9 @@ public class Robot extends IterativeRobot {
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; //this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
-
-	public static Timer timer;
-
-	public static SendableChooser autonomousChooser;
+	public static SendableChooser autonomousChooser; //for autonomous selection
 	
 	boolean buttonEightPressed = false; //for test to check if button 8 is pressed
-	static int autonSubroutine = 1;
 	boolean isTankDrive = true;
 
 	/**
@@ -145,8 +143,6 @@ public class Robot extends IterativeRobot {
 
 		pdp = new PowerDistributionPanel();
 		
-		timer = new Timer();
-		
 		/* continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files.
 		 * Debug files will contain everything that happens during an enabling  of the robot.
 		 * They will all be saved to the flashdrive which is at /u/
@@ -204,9 +200,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousInit() {
 		debugWriter.println("Beginning autonomous\n");
-		
-		timer.reset();
-		timer.start();
+
 		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); //stupidly complex piece of code that just sets our autonomous mode
 	}
 
@@ -263,16 +257,14 @@ public class Robot extends IterativeRobot {
 		boolean isIntakePistonOn = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
 		boolean isIntakePistonOff = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
 		
-	
+		/* NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine
+		 * This is because we want to be able to open and close the pistons whether or not we are running statemachine
+		 */
 		if (isIntakePistonOn) {
-			
 			intakePiston.set(DoubleSolenoid.Value.kForward);
-			
 		}
 		if (isIntakePistonOff) {
-			
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
-			
 		}
 		
 		// manual control
