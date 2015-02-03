@@ -173,4 +173,7 @@ public class RobotMap {
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	
+	//debugging constant for test robot
+	public static boolean TEST_ROBOT = true;
+	
 }

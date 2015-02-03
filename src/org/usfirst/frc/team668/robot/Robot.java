@@ -24,11 +24,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
+ * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as described in the IterativeRobot documentation. If you change the name of this class or the package after creating this project, you must also update the manifest file in the resource directory.
  * 
  * Control-click the "see" commands to automatically jump to methods.
  * 
@@ -54,14 +50,11 @@ import edu.wpi.first.wpilibj.Timer;
  * 
  * @see Autonomous#doAuton()
  * 
- * @author The 668 FRC 2015 Programming Team 
+ * @author The 668 FRC 2015 Programming Team
  * 
  */
 
-
-
 public class Robot extends IterativeRobot {
-
 	
 	public static OI operatorInterface;
 	public static Joystick joystickLeft, joystickRight, joystickOp;
@@ -76,85 +69,75 @@ public class Robot extends IterativeRobot {
 	public static DoubleSolenoid leftHugPiston, rightHugPiston, intakePiston;
 	public static RobotDrive robotDrive;
 	public static PowerDistributionPanel pdp;
-	public static PrintWriter debugWriter, continuousVarsWriter; //this for debug files saved to the flashdrive
+	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
-	public static SendableChooser autonomousChooser; //for autonomous selection
+	public static SendableChooser autonomousChooser; // for autonomous selection
 	
-	boolean buttonEightPressed = false; //for test to check if button 8 is pressed
+	boolean buttonEightPressed = false; // for test to check if button 8 is pressed
 	boolean isTankDrive = true;
-
+	
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	public void robotInit() {
 		// Object Initialization
 		operatorInterface = new OI();
-
-		toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
-		binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
-
+		
 		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
 		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
-
+		
 		canTalonFrontLeft = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID);
-		canTalonFrontRight = new CANTalon(
-				RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
-		canTalonRearLeft = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_LEFT_CANID);
-		canTalonRearRight = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_RIGHT_CANID);
-
-		canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
-		canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
-
-		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
-
-		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A,
-				RobotMap.DRIVE_ENCODER_LEFT_B);
-		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A,
-				RobotMap.DRIVE_ENCODER_RIGHT_B);
-
-		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A,
-				RobotMap.ELEVATOR_ENCODER_B);
-
-		limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
-		limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
-
-		camServoHor = new Servo(RobotMap.CAMERA_SERVO_HORIZONTAL_PWM);
-		camServoVert = new Servo(RobotMap.CAMERA_SERVO_VERTICAL_PWM);
-
+		canTalonFrontRight = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
+		
+		if (!RobotMap.TEST_ROBOT) {
+			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
+			binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
+			
+			canTalonRearLeft = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_LEFT_CANID);
+			canTalonRearRight = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_RIGHT_CANID);
+			
+			canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
+			canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
+			
+			canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
+			
+			encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
+			encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
+			
+			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+			
+			limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+			limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+			
+			camServoHor = new Servo(RobotMap.CAMERA_SERVO_HORIZONTAL_PWM);
+			camServoVert = new Servo(RobotMap.CAMERA_SERVO_VERTICAL_PWM);
+		}
 		// camera = new AxisCamera();
-
+		
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
-		compressor1.setClosedLoopControl(false); //this needs to be changed
-
-		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
-		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
-		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
-
-		robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft,
-				canTalonFrontRight, canTalonRearRight);
-
+		compressor1.setClosedLoopControl(false); // this needs to be changed
+		
+		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
+		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
+		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
+		if (!RobotMap.TEST_ROBOT) {
+			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft, canTalonFrontRight, canTalonRearRight);
+		} else {
+			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonFrontRight);
+		}
 		pdp = new PowerDistributionPanel();
 		
-		/* continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files.
-		 * Debug files will contain everything that happens during an enabling  of the robot.
-		 * They will all be saved to the flashdrive which is at /u/
-		 * If the flashdrive isn't plugged in, these will be printed to System.out
+		/*
+		 * continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files. Debug files will contain everything that happens during an enabling of the robot. They will all be saved to the flashdrive which is at /u/ If the flashdrive isn't plugged in, these will be printed to System.out
 		 */
 		try {
 			continuousVarsReader = new Scanner(new File("/u/continuousvars.txt"));
 			int debugNumber = Integer.parseInt(continuousVarsReader.nextLine());
-			debugWriter = new PrintWriter("/u/debug"+debugNumber+".txt", "UTF-8");
+			debugWriter = new PrintWriter("/u/debug" + debugNumber + ".txt", "UTF-8");
 			continuousVarsReader.close();
 			continuousVarsWriter = new PrintWriter("/u/continuousvars.txt");
-			continuousVarsWriter.println(debugNumber+1);
+			continuousVarsWriter.println(debugNumber + 1);
 			continuousVarsWriter.close();
 		} catch (FileNotFoundException e) {
 			debugWriter = new PrintWriter(System.out);
@@ -167,18 +150,15 @@ public class Robot extends IterativeRobot {
 			System.out.println(e);
 		}
 		
-		/* Naming convention for new versions:
+		/*
+		 * Naming convention for new versions:
 		 * 
-		 * Name each new version after a type of ape.
-		 * This is to make programmers feel fancy like they work at a real programming company.
-		 * 
+		 * Name each new version after a type of ape. This is to make programmers feel fancy like they work at a real programming company.
 		 */
-		debugWriter.println("Version 2.1: Homo sapien\n");
+		debugWriter.println("Version 2.2: Gorilla\n");
 		
 		/*
-		 * Fancyish code that can create choosers in the SmartDashboard for autonomous.
-		 * Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder,
-		 * we simply have the SendableChooser give us an Integer representing the selected program.
+		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder, we simply have the SendableChooser give us an Integer representing the selected program.
 		 * 
 		 * The strange syntax is because SendableChooser wants an object, not an integer, but just bear with it.
 		 * 
@@ -200,31 +180,30 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousInit() {
 		debugWriter.println("Beginning autonomous\n");
-
-		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); //stupidly complex piece of code that just sets our autonomous mode
+		
+		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); // stupidly complex piece of code that just sets our autonomous mode
 	}
-
+	
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
 		Autonomous.doAuton();
 	}
-
+	
 	/**
 	 * This function is called once at the start of teleop
 	 */
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
-		camServoHor.set(0);
-		camServoVert.set(0);
+//		camServoHor.set(0);
+//		camServoVert.set(0);
 	}
-
+	
 	/**
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-
 		
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
@@ -236,10 +215,9 @@ public class Robot extends IterativeRobot {
 		if (isTankDrive) {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
 		}
-		if (isTankDrive == false) {
+		else {
 			robotDrive.arcadeDrive(joystickRight);
 		}
-
 		
 		// state machine
 		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
@@ -249,16 +227,16 @@ public class Robot extends IterativeRobot {
 		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
 		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
 		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
-
-		TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround,
-				isLift, isManual, isReversing, isAbort);
-
+		if (!RobotMap.TEST_ROBOT) {
+			TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isAbort);
+		}
+		
 		// declaring buttons for intake pistons
 		boolean isIntakePistonOn = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
 		boolean isIntakePistonOff = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
 		
-		/* NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine
-		 * This is because we want to be able to open and close the pistons whether or not we are running statemachine
+		/*
+		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
 		if (isIntakePistonOn) {
 			intakePiston.set(DoubleSolenoid.Value.kForward);
@@ -274,7 +252,7 @@ public class Robot extends IterativeRobot {
 			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
-
+			
 			if (isHugPistonOn) {
 				leftHugPiston.set(DoubleSolenoid.Value.kForward);
 				rightHugPiston.set(DoubleSolenoid.Value.kForward);
@@ -282,7 +260,7 @@ public class Robot extends IterativeRobot {
 				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
 				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
-
+			
 			if (isForwardIntake) {
 				Intake.spin(0.5);
 			} else if (isBackwardsIntake) {
@@ -290,14 +268,14 @@ public class Robot extends IterativeRobot {
 			} else {
 				Intake.stop();
 			}
-
+			
 			if (isFunction) {
 				Elevator.calibration(joystickOp.getY()); // moves Elevator
 				Elevator.stop();
 			}
 		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
 	} // end function teleopPeriodic
-
+	
 	/**
 	 * This function is called when test mode starts.
 	 */
@@ -306,8 +284,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	/**
-	 * This function is called periodically during test mode. It contains test
-	 * code for all the motors and pistons to be controlled individually.
+	 * This function is called periodically during test mode. It contains test code for all the motors and pistons to be controlled individually.
 	 */
 	public void testPeriodic() {
 		// motor testing code
@@ -346,7 +323,7 @@ public class Robot extends IterativeRobot {
 		} else {
 			canTalonElevator.set(0);
 		}
-
+		
 		// piston testing code
 		if (joystickOp.getRawButton(9)) {
 			leftHugPiston.set(DoubleSolenoid.Value.kForward);
@@ -361,7 +338,7 @@ public class Robot extends IterativeRobot {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		
-		//method testing code
+		// method testing code
 		if (joystickOp.getRawButton(8)) {
 			buttonEightPressed = true;
 			if (joystickOp.getRawButton(1)) {
@@ -435,5 +412,5 @@ public class Robot extends IterativeRobot {
 	public void debugInit() {
 		debugWriter.close();
 	}
-
+	
 }
