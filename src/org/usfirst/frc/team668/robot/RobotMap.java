@@ -91,14 +91,14 @@ public class RobotMap {
 	public static final double CURRENT_DEAD_ZONE = 0.0; //This needs some help.
 	
 	//motor canIDs
-	public static final int DRIVE_MOTOR_FRONT_LEFT_CANID = 0;
-	public static final int DRIVE_MOTOR_FRONT_RIGHT_CANID = 1;
-	public static final int DRIVE_MOTOR_REAR_LEFT_CANID = 2;
-	public static final int DRIVE_MOTOR_REAR_RIGHT_CANID = 3;
+	public static final int DRIVE_MOTOR_FRONT_LEFT_CANID = 1;
+	public static final int DRIVE_MOTOR_FRONT_RIGHT_CANID = 2;
+	public static final int DRIVE_MOTOR_REAR_LEFT_CANID = 3;
+	public static final int DRIVE_MOTOR_REAR_RIGHT_CANID = 4;
 	
-	public static final int INTAKE_MOTOR_LEFT_CANID = 4;
-	public static final int INTAKE_MOTOR_RIGHT_CANID = 5;
-	public static final int ELEVATOR_MOTOR_CANID = 6;
+	public static final int INTAKE_MOTOR_LEFT_CANID = 5;
+	public static final int INTAKE_MOTOR_RIGHT_CANID = 6;
+	public static final int ELEVATOR_MOTOR_CANID = 7;
 
 	//motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.0;
@@ -118,12 +118,12 @@ public class RobotMap {
 	public static final int CAMERA_SERVO_HORIZONTAL_PWM = 5;
 	
 	//piston pcmIDs
-	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION = 0;
-	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION = 1;
+	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION = 0;
+	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION = 1;
 	public static final int DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION = 2;
 	public static final int DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION = 3;
-	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION = 4;
-	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION = 5;
+	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION = 4;
+	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION = 5;
 
 	//pwms for the optical sensors used in the intake 
 	public static final int TOTE_OPTIC_DIO = 0;

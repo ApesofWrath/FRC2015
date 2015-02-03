@@ -2,6 +2,7 @@ package org.usfirst.frc.team668.robot;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -116,7 +117,7 @@ public class Robot extends IterativeRobot {
 		// camera = new AxisCamera();
 		
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
-		compressor1.setClosedLoopControl(false); // this needs to be changed
+		compressor1.setClosedLoopControl(true);
 		
 		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
 		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
@@ -140,13 +141,13 @@ public class Robot extends IterativeRobot {
 			continuousVarsWriter.println(debugNumber + 1);
 			continuousVarsWriter.close();
 		} catch (FileNotFoundException e) {
-			debugWriter = new PrintWriter(System.out);
+			debugWriter = new PrintWriter(System.out, true);
 			System.out.println(e);
 		} catch (UnsupportedEncodingException e) {
-			debugWriter = new PrintWriter(System.out);
+			debugWriter = new PrintWriter(System.out, true);
 			System.out.println(e);
 		} catch (NoSuchElementException e) {
-			debugWriter = new PrintWriter(System.out);
+			debugWriter = new PrintWriter(System.out, true);
 			System.out.println(e);
 		}
 		
@@ -196,8 +197,8 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
-//		camServoHor.set(0);
-//		camServoVert.set(0);
+		// camServoHor.set(0);
+		// camServoVert.set(0);
 	}
 	
 	/**
@@ -214,8 +215,7 @@ public class Robot extends IterativeRobot {
 		}
 		if (isTankDrive) {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
-		}
-		else {
+		} else {
 			robotDrive.arcadeDrive(joystickRight);
 		}
 		
