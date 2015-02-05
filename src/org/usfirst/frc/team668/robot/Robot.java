@@ -9,6 +9,11 @@ import java.nio.file.Files;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.Image;
+import com.ni.vision.NIVision.ImageType;
+import com.ni.vision.NIVision.RGBValue;
+
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -65,7 +70,6 @@ public class Robot extends IterativeRobot {
 	public static Encoder encoderLeft, encoderRight, encoderElevator;
 	public static DigitalInput limitTop, limitBottom, toteOptic, binOptic;
 	public static Servo camServoVert, camServoHor;
-	public static AxisCamera camera;
 	public static Compressor compressor1;
 	public static DoubleSolenoid leftHugPiston, rightHugPiston, intakePiston;
 	public static RobotDrive robotDrive;
@@ -73,6 +77,9 @@ public class Robot extends IterativeRobot {
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
 	public static SendableChooser autonomousChooser; // for autonomous selection
+	
+	//camera variables
+	public static int camera_session;
 	
 	boolean buttonEightPressed = false; // for test to check if button 8 is pressed
 	boolean isTankDrive = true;
@@ -114,11 +121,25 @@ public class Robot extends IterativeRobot {
 			camServoHor = new Servo(RobotMap.CAMERA_SERVO_HORIZONTAL_PWM);
 			camServoVert = new Servo(RobotMap.CAMERA_SERVO_VERTICAL_PWM);
 		}
-		// camera = new AxisCamera();
 		
+		// creating images
+		Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+
+        // the camera name can be found through the roboRIO web interface
+        camera_session = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(camera_session);
+        NIVision.IMAQdxStartAcquisition(camera_session);
+        
+        //compressor initialization and turning on
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
-		compressor1.setClosedLoopControl(true);
+		if (RobotMap.TEST_ROBOT) {
+			compressor1.setClosedLoopControl(false);
+		} else {
+			compressor1.setClosedLoopControl(true);
+		}
 		
+		//piston initialization
 		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
 		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
 		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
@@ -126,13 +147,17 @@ public class Robot extends IterativeRobot {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft, canTalonFrontRight, canTalonRearRight);
 		} else {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonFrontRight);
+			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		}
+		
 		pdp = new PowerDistributionPanel();
 		
 		/*
 		 * continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files. Debug files will contain everything that happens during an enabling of the robot. They will all be saved to the flashdrive which is at /u/ If the flashdrive isn't plugged in, these will be printed to System.out
 		 */
 		try {
+			//reads  a file for the name of our debug final and creates it
 			continuousVarsReader = new Scanner(new File("/u/continuousvars.txt"));
 			int debugNumber = Integer.parseInt(continuousVarsReader.nextLine());
 			debugWriter = new PrintWriter("/u/debug" + debugNumber + ".txt", "UTF-8");
@@ -140,7 +165,14 @@ public class Robot extends IterativeRobot {
 			continuousVarsWriter = new PrintWriter("/u/continuousvars.txt");
 			continuousVarsWriter.println(debugNumber + 1);
 			continuousVarsWriter.close();
-		} catch (FileNotFoundException e) {
+			
+			//takes a startup picture and saves to the flashdrive
+			//if the flashdrive isn't plugged in, the error SHOULD have already been caught
+			//so it won't take a picture if the flashdrive isn't there
+			NIVision.IMAQdxGrab(camera_session, frame, 1);
+			NIVision.imaqWriteFile(frame, "/u/startup"+debugNumber+".png", new RGBValue());
+			
+		} catch (FileNotFoundException e) { //goes here if flashdrive isn't plugged in
 			debugWriter = new PrintWriter(System.out, true);
 			System.out.println(e);
 		} catch (UnsupportedEncodingException e) {
@@ -409,8 +441,10 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called at the beginning of the robot being disabled
 	 */
-	public void debugInit() {
+	public void disabledInit() {
+		debugWriter.println("Disabling");
 		debugWriter.close();
+        NIVision.IMAQdxStopAcquisition(camera_session);
 	}
 	
 }
