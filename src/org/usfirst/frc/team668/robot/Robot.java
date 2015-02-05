@@ -97,6 +97,9 @@ public class Robot extends IterativeRobot {
 		
 		canTalonFrontLeft = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID);
 		canTalonFrontRight = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
+
+		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
+		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 		
 		if (!RobotMap.TEST_ROBOT) {
 			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
@@ -109,9 +112,6 @@ public class Robot extends IterativeRobot {
 			canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
 			
 			canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
-			
-			encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
-			encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 			
 			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 			
