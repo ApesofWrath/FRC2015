@@ -76,7 +76,7 @@ public class Robot extends IterativeRobot {
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
-	public static SendableChooser autonomousChooser; // for autonomous selection
+	public static SendableChooser autonomousChooser, elevatorChooser; // for autonomous selection
 	
 	//camera variables
 	public static int camera_session;
@@ -188,7 +188,7 @@ public class Robot extends IterativeRobot {
 		 * 
 		 * Name each new version after a type of ape. This is to make programmers feel fancy like they work at a real programming company.
 		 */
-		debugWriter.println("Version 2.2: Gorilla\n");
+		debugWriter.println("Version 2.2.1: Spider Monkey\n");
 		
 		/*
 		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder, we simply have the SendableChooser give us an Integer representing the selected program.
@@ -205,6 +205,9 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
 		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
+		for(double i = 0.1; i <= 1; i += 0.1)
+			elevatorChooser.addObject(i + "", i); // Ignore the + ""
+		SmartDashboard.putData("Elevator Speed Selector", elevatorChooser);
 		
 	}
 	
@@ -237,7 +240,8 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-		
+		RobotMap.ELEVATOR_MOTOR_SPEED = ((Double) (elevatorChooser.getSelected())).doubleValue(); // stupidly complex piece of code that just sets our autonomous mode
+
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
