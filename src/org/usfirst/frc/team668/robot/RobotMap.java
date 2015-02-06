@@ -102,7 +102,7 @@ public class RobotMap {
 
 	//motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.0;
-	public static final double ELEVATOR_MOTOR_SPEED = 0.5;
+	public static double elevatorMotorSpeed = 0.5; // I made it not final because it shouldn't be a constant : we change this value in out code
 
 	//encoder PWMs
 	public static final int DRIVE_ENCODER_LEFT_A = 0;

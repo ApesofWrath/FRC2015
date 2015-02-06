@@ -41,7 +41,7 @@ public class TeleopStateMachine {
 					startOfTeleop = false;
 					Robot.debugWriter.println("Init State\n");
 				}
-				boolean finish = Elevator.calibration(RobotMap.ELEVATOR_MOTOR_SPEED);
+				boolean finish = Elevator.calibration(RobotMap.elevatorMotorSpeed);
 				
 				if (finish == true) {
 					Elevator.stop();
@@ -57,7 +57,7 @@ public class TeleopStateMachine {
 					RobotMap.elevatorMotorEmptyDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
 				}
 				
-				boolean done = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				boolean done = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
 				
 				if (done == true) {
 					Elevator.stop();
@@ -156,7 +156,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
 				
-				boolean downFinish = Elevator.calibration(RobotMap.ELEVATOR_MOTOR_SPEED);
+				boolean downFinish = Elevator.calibration(RobotMap.elevatorMotorSpeed);
 				
 				if (downFinish == true) {
 					Elevator.stop();
@@ -179,7 +179,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE:// sets to coopertition plate height
 				
-				boolean finishCoop = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_COOPERTITION);
+				boolean finishCoop = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_COOPERTITION);
 				
 				if (finishCoop == true) {
 					Elevator.stop();
@@ -194,7 +194,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform
 														// height
-				boolean finishScore = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_SCORING);
+				boolean finishScore = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_SCORING);
 				
 				if (finishScore == true) {
 					Elevator.stop();
@@ -209,7 +209,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_HEIGHT_GROUND_STATE:// sets to ground height
 				
-				boolean finishGround = Elevator.move(RobotMap.ELEVATOR_MOTOR_SPEED, RobotMap.ELEVATOR_ENCODER_GROUND);
+				boolean finishGround = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
 				
 				if (finishGround == true) {
 					Elevator.stop();
