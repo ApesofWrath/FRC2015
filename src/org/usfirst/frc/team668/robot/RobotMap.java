@@ -10,7 +10,8 @@ package org.usfirst.frc.team668.robot;
  * @author The 668 FRC 2015 Programming Team 
  */
 
-/* THESE VALUES NEED TO BE CHANGED WHEN WE GET A ROBOT:
+/* TODO: Change these values
+ * THESE VALUES NEED TO BE CHANGED WHEN WE GET A ROBOT:
  * 
  * Limit switch channels
  * Buttons
@@ -102,7 +103,7 @@ public class RobotMap {
 
 	//motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.0;
-	public static double elevatorMotorSpeed = 0.5; // I made it not final because it shouldn't be a constant : we change this value in out code
+	public static double elevatorMotorSpeed = 0.5; // This is not final because we change it based on the SmartDashboard
 
 	//encoder PWMs
 	public static final int DRIVE_ENCODER_LEFT_A = 0;

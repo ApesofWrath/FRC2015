@@ -219,7 +219,7 @@ public class Robot extends IterativeRobot {
 		elevatorChooser = new SendableChooser();
 		
 		elevatorChooser.addObject("0.1", 0.1);
-		elevatorChooser.addDefault("0.2", 0.2);
+		elevatorChooser.addDefault("0.2", 0.2); //the default speed will be 0.2
 		elevatorChooser.addObject("0.3", 0.3);
 		elevatorChooser.addObject("0.4", 0.4);
 		elevatorChooser.addObject("0.5", 0.5);
@@ -246,7 +246,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		Autonomous.doAuton();
+		Autonomous.doAuton(); //runs the selected autonomous mode
 	}
 	
 	/**
@@ -262,13 +262,13 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
-		// Gets the proper elevator motor speed
 		
+		// gets required elevator motor value from SmartDashboard
 		RobotMap.elevatorMotorSpeed = ((Double) (elevatorChooser.getSelected())).doubleValue();
-		// get speed of elevator motor
+		// to ensure that radio buttons work
 		SmartDashboard.putNumber("elevator motor speed", RobotMap.elevatorMotorSpeed);
-		// drive switch
 		
+		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
 		}
@@ -283,10 +283,12 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// this takes pictures while driving but it's still experimental
+		// essentially it makes a lag so don't use it for right now
+		// there is an additional branch for experimenting with threads to do this
+		// TODO: multithread this
 		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON)
 				&& RobotMap.TEST_ROBOT && joystickOp.getRawButton(1)
 				&& !buttonOnePressed) {
-			buttonOnePressed = true;
 			Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 			NIVision.IMAQdxStartAcquisition(camera_session);
 			NIVision.IMAQdxGrab(camera_session, frame, 1);
@@ -295,12 +297,14 @@ public class Robot extends IterativeRobot {
 			try {
 				NIVision.imaqWriteFile(frame, "/u/teleop" + System.currentTimeMillis() + ".png", new RGBValue());
 			} catch (VisionException e) {
-				// /home/admin/pictures/
-				debugWriter.println("no usb for picture");
+				System.out.println("no usb for picture");
 			}
-			
+		}
+		// to make sure we don't take too many pictures in one press
+		if (joystickOp.getRawButton(1)) {
+			buttonOnePressed = true;
 		} else {
-			buttonOnePressed = false;
+			buttonOnePressed = false; 
 		}
 		
 		// state machine
@@ -371,6 +375,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during test mode. It contains test code for all the motors and pistons to be controlled individually.
 	 */
 	public void testPeriodic() {
+		
 		// motor testing code
 		
 		if (joystickRight.getRawButton(1)) {
@@ -495,6 +500,8 @@ public class Robot extends IterativeRobot {
 	 * This function is called at the beginning of the robot being disabled
 	 */
 	public void disabledInit() {
+		//turns off camera and closes debug writer after disable
+		// TODO: make this work with enable/disabling multiple times
 		debugWriter.println("Disabling");
 		debugWriter.close();
 		NIVision.IMAQdxStopAcquisition(camera_session);
