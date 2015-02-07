@@ -85,8 +85,11 @@ public class Robot extends IterativeRobot {
 	public static SendableChooser autonomousChooser, elevatorChooser; // for autonomous selection and elevator speed choosing We added elevator speed selection radio buttons. This doesn't work yet.
 			
 	boolean buttonEightPressed = false; // for test to check if button 8 is pressed
-	boolean buttonOnePressed = false; // for toggle picture taking
+	boolean picture_taking = false;
+	boolean picture_writing = false;
+	long cameraTimer = 0;
 	boolean isTankDrive = true;
+	boolean buttonOnePressed = false;;
 	
 	// end declarations
 	
@@ -283,19 +286,42 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// this takes pictures while driving but it's still experimental
-		// essentially it makes a lag so don't use it for right now
-		// there is an additional branch for experimenting with threads to do this
-		// TODO: multithread this
-		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON)
-				&& RobotMap.TEST_ROBOT && joystickOp.getRawButton(1)
-				&& !buttonOnePressed) {
-			Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-			NIVision.IMAQdxStartAcquisition(camera_session);
-			NIVision.IMAQdxGrab(camera_session, frame, 1);
-			NIVision.IMAQdxStopAcquisition(camera_session);
-			
+
+		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.TEST_ROBOT && joystickOp.getRawButton(1) && !picture_taking && !picture_writing && !buttonOnePressed) {
+			picture_taking = true;
+			buttonOnePressed = true;
+		}
+		if (joystickOp.getRawButton(1)) {
+			buttonOnePressed = true;
+		} else {
+			buttonOnePressed = false;
+		}
+		Image frame = null;
+		if (picture_taking) {
+			if(cameraTimer==0) {
+				cameraTimer = System.currentTimeMillis();
+			}
+			frame = CameraThreads.takePicture(camera_session);
+			if (frame!=null) {
+				picture_writing = true;
+				picture_taking = false;
+				System.out.println("Take picture in "+new Long(System.currentTimeMillis()-cameraTimer));
+				cameraTimer = 0;
+			}
+		}
+		if (picture_writing) {
 			try {
-				NIVision.imaqWriteFile(frame, "/u/teleop" + System.currentTimeMillis() + ".png", new RGBValue());
+				if(cameraTimer==0) {
+					cameraTimer = System.currentTimeMillis();
+				}
+				boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+				if (finished) {
+					System.out.println("Save picture in "+new Long(System.currentTimeMillis()-cameraTimer));
+					picture_writing = false;
+					picture_taking = false;
+					cameraTimer = 0;
+					frame = null;
+				}
 			} catch (VisionException e) {
 				System.out.println("no usb for picture");
 			}
@@ -305,7 +331,14 @@ public class Robot extends IterativeRobot {
 			buttonOnePressed = true;
 		} else {
 			buttonOnePressed = false; 
-		}
+				debugWriter.println("no usb for picture");
+				picture_taking = false;
+				picture_writing = false;
+				cameraTimer = 0;
+				frame = null;
+			}
+		
+
 		
 		// state machine
 		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
