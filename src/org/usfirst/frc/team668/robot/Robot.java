@@ -85,8 +85,11 @@ public class Robot extends IterativeRobot {
 	public static SendableChooser autonomousChooser, elevatorChooser; // for autonomous selection and elevator speed choosing We added elevator speed selection radio buttons. This doesn't work yet.
 			
 	boolean buttonEightPressed = false; // for test to check if button 8 is pressed
-	boolean buttonOnePressed = false; // for toggle picture taking
+	boolean picture_taking = false;
+	boolean picture_writing = false;
+	long cameraTimer = 0;
 	boolean isTankDrive = true;
+	boolean buttonOnePressed = false;;
 	
 	// end declarations
 	
@@ -283,26 +286,48 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// this takes pictures while driving but it's still experimental
-		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.TEST_ROBOT && joystickOp.getRawButton(1) && !buttonOnePressed) {
-			long timer1 = System.currentTimeMillis();
-			Image frame = CameraThreads.takePicture(camera_session);
-			System.out.println("Take picture in "+new Long(System.currentTimeMillis()-timer1));
-			if (frame != null) {
-				try {
-					long timer = System.currentTimeMillis();
-					CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
-					System.out.println("Save picture in "+new Long(System.currentTimeMillis()-timer));
-				} catch (VisionException e) {
-					// /home/admin/pictures/
-					debugWriter.println("no usb for picture");
-				}
-			}
-			
-		} 
+		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.TEST_ROBOT && joystickOp.getRawButton(1) && !picture_taking && !picture_writing && !buttonOnePressed) {
+			picture_taking = true;
+			buttonOnePressed = true;
+		}
 		if (joystickOp.getRawButton(1)) {
 			buttonOnePressed = true;
 		} else {
 			buttonOnePressed = false;
+		}
+		Image frame = null;
+		if (picture_taking) {
+			if(cameraTimer==0) {
+				cameraTimer = System.currentTimeMillis();
+			}
+			frame = CameraThreads.takePicture(camera_session);
+			if (frame!=null) {
+				picture_writing = true;
+				picture_taking = false;
+				System.out.println("Take picture in "+new Long(System.currentTimeMillis()-cameraTimer));
+				cameraTimer = 0;
+			}
+		}
+		if (picture_writing) {
+			try {
+				if(cameraTimer==0) {
+					cameraTimer = System.currentTimeMillis();
+				}
+				boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+				if (finished) {
+					System.out.println("Save picture in "+new Long(System.currentTimeMillis()-cameraTimer));
+					picture_writing = false;
+					picture_taking = false;
+					cameraTimer = 0;
+					frame = null;
+				}
+			} catch (VisionException e) {
+				debugWriter.println("no usb for picture");
+				picture_taking = false;
+				picture_writing = false;
+				cameraTimer = 0;
+				frame = null;
+			}
 		}
 		
 		// state machine

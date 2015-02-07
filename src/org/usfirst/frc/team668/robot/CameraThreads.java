@@ -28,7 +28,7 @@ public class CameraThreads {
 		if (picture_thread_running == null) {
 			TakePictureThread tpt = new TakePictureThread(camera_session);
 			picture_thread_running = tpt;
-			tpt.run();
+			new Thread(tpt).start();
 		} else if (picture_thread_running.picture_taken) {
 			Image temp = picture_thread_running.pic;
 			picture_thread_running = null;
@@ -51,7 +51,7 @@ public class CameraThreads {
 		if (write_thread_running == null) {
 			WritePictureThread wpt = new WritePictureThread(picture, path);
 			write_thread_running = wpt;
-			wpt.run();
+			new Thread(wpt).start();
 			return false;
 		} else if (write_thread_running.picture_written) {
 			write_thread_running = null;
