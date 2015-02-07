@@ -283,22 +283,24 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// this takes pictures while driving but it's still experimental
-		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON)
-				&& RobotMap.TEST_ROBOT && joystickOp.getRawButton(1)
-				&& !buttonOnePressed) {
-			buttonOnePressed = true;
-			Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-			NIVision.IMAQdxStartAcquisition(camera_session);
-			NIVision.IMAQdxGrab(camera_session, frame, 1);
-			NIVision.IMAQdxStopAcquisition(camera_session);
-			
-			try {
-				NIVision.imaqWriteFile(frame, "/u/teleop" + System.currentTimeMillis() + ".png", new RGBValue());
-			} catch (VisionException e) {
-				// /home/admin/pictures/
-				debugWriter.println("no usb for picture");
+		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.TEST_ROBOT && joystickOp.getRawButton(1) && !buttonOnePressed) {
+			long timer1 = System.currentTimeMillis();
+			Image frame = CameraThreads.takePicture(camera_session);
+			System.out.println("Take picture in "+new Long(System.currentTimeMillis()-timer1));
+			if (frame != null) {
+				try {
+					long timer = System.currentTimeMillis();
+					CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+					System.out.println("Save picture in "+new Long(System.currentTimeMillis()-timer));
+				} catch (VisionException e) {
+					// /home/admin/pictures/
+					debugWriter.println("no usb for picture");
+				}
 			}
 			
+		} 
+		if (joystickOp.getRawButton(1)) {
+			buttonOnePressed = true;
 		} else {
 			buttonOnePressed = false;
 		}
