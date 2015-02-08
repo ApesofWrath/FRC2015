@@ -32,6 +32,7 @@ public class USBCamera {
 	}
 	
 	public Image takePicture() {
+		System.out.println("Trying to take");
 		picture = CameraThreads.takePicture(camera_session);
 		return picture;
 	}

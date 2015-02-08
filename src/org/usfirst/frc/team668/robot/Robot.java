@@ -176,10 +176,10 @@ public class Robot extends IterativeRobot {
 		Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
 		// the camera name can be found through the roboRIO web interface
-//		camera_session = NIVision.IMAQdxOpenCamera("cam0",
-//				NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-//		NIVision.IMAQdxConfigureGrab(camera_session);
-//		NIVision.IMAQdxStartAcquisition(camera_session);
+		// camera_session = NIVision.IMAQdxOpenCamera("cam0",
+		// NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+		// NIVision.IMAQdxConfigureGrab(camera_session);
+		// NIVision.IMAQdxStartAcquisition(camera_session);
 
 		// compressor initialization and turning on
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
@@ -235,12 +235,13 @@ public class Robot extends IterativeRobot {
 			// if the flashdrive isn't plugged in, the error SHOULD have already
 			// been caught
 			// so it won't take a picture if the flashdrive isn't there
-			
-//			NIVision.IMAQdxGrab(camera_session, frame, 1);
-			
+
+			// NIVision.IMAQdxGrab(camera_session, frame, 1);
+
 			frame = camera.takePicture();
-//			NIVision.imaqWriteFile(frame, "/u/startup" + debugNumber + ".png",
-//					new RGBValue());
+			// NIVision.imaqWriteFile(frame, "/u/startup" + debugNumber +
+			// ".png",
+			// new RGBValue());
 
 		} catch (FileNotFoundException e) { // goes here if flashdrive isn't
 											// plugged in
@@ -365,6 +366,8 @@ public class Robot extends IterativeRobot {
 
 		// this takes pictures while driving but it's still experimental
 
+		// TODO: IMAGES
+		
 		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON)
 				&& RobotMap.TEST_ROBOT && joystickOp.getRawButton(1)
 				&& !picture_taking && !picture_writing && !buttonOnePressed) {
@@ -376,12 +379,15 @@ public class Robot extends IterativeRobot {
 		} else {
 			buttonOnePressed = false;
 		}
+
 		Image frame = null;
 		if (picture_taking) {
+			System.out.println("PICTURE_TAKING is TRUE");
 			if (cameraTimer == 0) {
 				cameraTimer = System.currentTimeMillis();
 			}
 			frame = camera.takePicture();
+			System.out.println("ATTEMPTING TAKE PICTURE");
 			if (frame != null) {
 				picture_writing = true;
 				picture_taking = false;
@@ -390,7 +396,9 @@ public class Robot extends IterativeRobot {
 				cameraTimer = 0;
 			}
 		}
+		
 		if (picture_writing) {
+			System.out.println("PICTURE_WRITING is TRUE");
 			try {
 				if (cameraTimer == 0) {
 					cameraTimer = System.currentTimeMillis();
@@ -398,7 +406,9 @@ public class Robot extends IterativeRobot {
 				boolean finished = camera.savePicture(frame, "/u/teleop"
 						+ System.currentTimeMillis() + ".png");
 				if (finished) {
-					System.out.println("Save picture in " + new Long(System.currentTimeMillis()
+					System.out
+							.println("Save picture in "
+									+ new Long(System.currentTimeMillis()
 											- cameraTimer));
 					picture_writing = false;
 					picture_taking = false;
@@ -477,7 +487,7 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (isForwardIntake) {
-				Intake.spin(0.5);  // TODO magic numbers?
+				Intake.spin(0.5); // TODO magic numbers?
 			} else if (isBackwardsIntake) {
 				Intake.spin(-0.5);
 			} else {

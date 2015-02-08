@@ -3,6 +3,9 @@ package org.usfirst.frc.team668.robot;
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.RGBValue;
+import com.ni.vision.VisionException;
+
+import edu.wpi.first.wpilibj.image.NIVisionException;
 
 /**
  * The class CameraThreads can run threads for taking and saving pictures to allow us to
@@ -25,16 +28,26 @@ public class CameraThreads {
 	 */
 	public static Image takePicture(int camera_session) {
 		// TODO: Actually make this work.
-		if (picture_thread_running == null) {
-			TakePictureThread tpt = new TakePictureThread(camera_session);
-			picture_thread_running = tpt;
-			new Thread(tpt).start();
-		} else if (picture_thread_running.picture_taken) {
-			Image temp = picture_thread_running.pic;
-			picture_thread_running = null;
-			return temp;
+		try {
+			System.out.println("TRYING");
+			if (picture_thread_running == null) {
+				TakePictureThread tpt = new TakePictureThread(camera_session);
+				picture_thread_running = tpt;
+				new Thread(tpt).start();
+				System.out.println("PICTURETHREADRUNNING NULL");
+			} else if (picture_thread_running.picture_taken) {
+				Image temp = picture_thread_running.pic;
+				picture_thread_running = null;
+				System.out.println("NOT NULL");
+				return temp;
+			}
+			System.out.println("CODEZ: " + picture_thread_running);
 		}
-		
+		catch(VisionException e) {
+			System.out.println("CATCHING");
+			System.out.println("TAKE PICTURE" + e);
+		}
+		System.out.println("Sadface Null");
 		return null;
 	}
 	
@@ -91,8 +104,13 @@ class WritePictureThread implements Runnable {
 	 * Runs the thread
 	 */
 	public void run() {
-		NIVision.imaqWriteFile(pic, picture_path, new RGBValue());
-		picture_written = true;
+		try {
+			NIVision.imaqWriteFile(pic, picture_path, new RGBValue());
+			picture_written = true;
+		}
+		catch (VisionException e) {
+			System.out.println("WRITE ERROR " + e);
+		}
 	}
 	
 }
@@ -112,18 +130,28 @@ class TakePictureThread implements Runnable {
 	 */
 	public TakePictureThread(int camera_session) {
 		pic = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		if(pic == null) {
+			System.out.println("PIC IS NULL");
+		} else {System.out.println("PIC ISNOT NULL");}
 		picture_taken = false;
 		this.camera_session = camera_session;
+		System.out.println("Session: " + camera_session);
+		System.out.println("YAY ME GOTS A THREADS !@!#!@#");
 	}
 	
 	/**
 	 * Runs the thread containing the camera.
 	 */
 	public void run() {
-		NIVision.IMAQdxStartAcquisition(camera_session);
-		NIVision.IMAQdxGrab(camera_session, pic, 1);
-		NIVision.IMAQdxStopAcquisition(camera_session);
-		picture_taken = true;
+		try {
+			NIVision.IMAQdxStartAcquisition(camera_session);
+			NIVision.IMAQdxGrab(camera_session, pic, 1);
+			NIVision.IMAQdxStopAcquisition(camera_session);
+			picture_taken = true;
+		}
+		catch (VisionException e) {
+			System.out.println("RUN ERROR " + e);
+		}
 	}
 	
 }
