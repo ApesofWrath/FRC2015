@@ -144,9 +144,13 @@ class TakePictureThread implements Runnable {
 	 */
 	public void run() {
 		try {
+			System.out.println("Trying to run");
 			NIVision.IMAQdxStartAcquisition(camera_session);
+			System.out.println("A");
 			NIVision.IMAQdxGrab(camera_session, pic, 1);
+			System.out.println("B");
 			NIVision.IMAQdxStopAcquisition(camera_session);
+			System.out.println("C");
 			picture_taken = true;
 		}
 		catch (VisionException e) {

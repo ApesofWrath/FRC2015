@@ -191,15 +191,15 @@ public class Robot extends IterativeRobot {
 		}
 
 		// piston initialization
-		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
-		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
-		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID,
-				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION,
-				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
+//		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
+//				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION,
+//				RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
+//		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID,
+//				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION,
+//				RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
+//		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID,
+//				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION,
+//				RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
 
 		if (!RobotMap.TEST_ROBOT) {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft,
@@ -219,29 +219,28 @@ public class Robot extends IterativeRobot {
 		 * to the flashdrive which is at /u/ If the flashdrive isn't plugged in,
 		 * these will be printed to System.out
 		 */
+		System.out.println("Go!");
 		try {
 			// reads a file for the name of our debug final and creates it
-			continuousVarsReader = new Scanner(
-					new File("/u/continuousvars.txt"));
+			continuousVarsReader = new Scanner(new File("/u/continuousvars.txt"));
 			int debugNumber = Integer.parseInt(continuousVarsReader.nextLine());
-			debugWriter = new PrintWriter("/u/debug" + debugNumber + ".txt",
-					"UTF-8");
+			debugWriter = new PrintWriter("/u/debug" + debugNumber + ".txt", "UTF-8");
 			continuousVarsReader.close();
 			continuousVarsWriter = new PrintWriter("/u/continuousvars.txt");
 			continuousVarsWriter.println(debugNumber + 1);
 			continuousVarsWriter.close();
-
+			
+			// TODO Look at this maybe?
+			
 			// takes a startup picture and saves to the flashdrive
-			// if the flashdrive isn't plugged in, the error SHOULD have already
-			// been caught
+			// if the flashdrive isn't plugged in, the error SHOULD have already been caught
 			// so it won't take a picture if the flashdrive isn't there
-
-			// NIVision.IMAQdxGrab(camera_session, frame, 1);
-
-			frame = camera.takePicture();
-			// NIVision.imaqWriteFile(frame, "/u/startup" + debugNumber +
-			// ".png",
-			// new RGBValue());
+			NIVision.IMAQdxGrab(camera.getCameraSession(), frame, 1);
+			String location = "/u/startup" + debugNumber + ".png";
+			NIVision.imaqWriteFile(frame, location, new RGBValue());
+			
+			System.out.println("YAY!!!!!!!!!!!!!!!!!!!!!! IT SHOULD HAVE WORKED!!!!!!!!!!");
+			System.out.println("THE LOCATION SHOULD BE: " + location + "!!!!!!!!!!!!");
 
 		} catch (FileNotFoundException e) { // goes here if flashdrive isn't
 											// plugged in
@@ -424,7 +423,6 @@ public class Robot extends IterativeRobot {
 			buttonOnePressed = true;
 		} else {
 			buttonOnePressed = false;
-			debugWriter.println("no usb for picture");
 			picture_taking = false;
 			picture_writing = false;
 			cameraTimer = 0;
@@ -459,10 +457,10 @@ public class Robot extends IterativeRobot {
 		 * close the pistons whether or not we are running statemachine
 		 */
 		if (isIntakePistonOn) {
-			intakePiston.set(DoubleSolenoid.Value.kForward);
+//			intakePiston.set(DoubleSolenoid.Value.kForward);
 		}
 		if (isIntakePistonOff) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse);
+//			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 
 		// manual control
@@ -478,13 +476,13 @@ public class Robot extends IterativeRobot {
 			boolean isFunction = joystickOp
 					.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
 
-			if (isHugPistonOn) {
-				leftHugPiston.set(DoubleSolenoid.Value.kForward);
-				rightHugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isHugPistonOff) {
-				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-			}
+//			if (isHugPistonOn) {
+//				leftHugPiston.set(DoubleSolenoid.Value.kForward);
+//				rightHugPiston.set(DoubleSolenoid.Value.kForward);
+//			} else if (isHugPistonOff) {
+//				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+//				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
+//			}
 
 			if (isForwardIntake) {
 				Intake.spin(0.5); // TODO magic numbers?
@@ -553,18 +551,18 @@ public class Robot extends IterativeRobot {
 		}
 
 		// piston testing code
-		if (joystickOp.getRawButton(9)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kForward);
-			rightHugPiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(10)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-			rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-		}
-		if (joystickOp.getRawButton(11)) {
-			intakePiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(12)) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse);
-		}
+//		if (joystickOp.getRawButton(9)) {
+//			leftHugPiston.set(DoubleSolenoid.Value.kForward);
+//			rightHugPiston.set(DoubleSolenoid.Value.kForward);
+//		} else if (joystickOp.getRawButton(10)) {
+//			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+//			rightHugPiston.set(DoubleSolenoid.Value.kReverse);
+//		}
+//		if (joystickOp.getRawButton(11)) {
+//			intakePiston.set(DoubleSolenoid.Value.kForward);
+//		} else if (joystickOp.getRawButton(12)) {
+//			intakePiston.set(DoubleSolenoid.Value.kReverse);
+//		}
 
 		// method testing code
 		if (joystickOp.getRawButton(8)) {
@@ -664,9 +662,9 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		// turns off camera and closes debug writer after disable
 		// TODO: make this work with enable/disabling multiple times
-		debugWriter.println("Disabling");
-		debugWriter.close();
-		camera.off();
+//		debugWriter.println("Disabling");
+//		debugWriter.close();
+//		camera.off();
 	}
 
 }

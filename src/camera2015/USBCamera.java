@@ -13,6 +13,7 @@ public class USBCamera {
 	public USBCamera() {
 		camera_session = NIVision.IMAQdxOpenCamera("cam0", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		NIVision.IMAQdxConfigureGrab(camera_session);
+		NIVision.IMAQdxStartAcquisition(camera_session);
 	}
 	
 	public boolean isFreshImage() {
@@ -21,6 +22,10 @@ public class USBCamera {
 	
 	public void clearImage() {
 		picture = null;
+	}
+	
+	public int getCameraSession() {
+		return camera_session;
 	}
 	
 	public void on() {
