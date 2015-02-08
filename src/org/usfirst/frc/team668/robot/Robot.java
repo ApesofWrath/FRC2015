@@ -493,8 +493,9 @@ public class Robot extends IterativeRobot {
 			}
 
 			if (isFunction) {
-				Elevator.calibration(joystickOp.getY()); // moves Elevator
-				Elevator.stop();
+				if(!Elevator.calibration(joystickOp.getY())) { // moves Elevator and checks if
+					Elevator.stop();
+				}
 			}
 		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
 	} // end function teleopPeriodic
