@@ -89,7 +89,7 @@ public class Robot extends IterativeRobot {
 	boolean picture_writing = false;
 	long cameraTimer = 0;
 	boolean isTankDrive = true;
-	boolean buttonOnePressed = false;;
+	boolean buttonOnePressed = false;
 	
 	// end declarations
 	
@@ -107,21 +107,21 @@ public class Robot extends IterativeRobot {
 		canTalonFrontLeft = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID);
 		canTalonFrontRight = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
 		
+		canTalonRearLeft = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_LEFT_CANID);
+		canTalonRearRight = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_RIGHT_CANID);
+		
+		canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
+		canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
+		
+		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
+
 		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 		
 		if (!RobotMap.TEST_ROBOT) {
 			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
 			binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
-			
-			canTalonRearLeft = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_LEFT_CANID);
-			canTalonRearRight = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_RIGHT_CANID);
-			
-			canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
-			canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
-			
-			canTalonElevator = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID); // MOVE THIS BACK WHEN DONE
-			
+						
 			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 			
 			limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
@@ -149,10 +149,10 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// piston initialization
-		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
-		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
-		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
-		
+//		leftHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION);
+//		rightHugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION);
+//		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
+//		
 		if (!RobotMap.TEST_ROBOT) {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft, canTalonFrontRight, canTalonRearRight);
 		} else {
@@ -359,13 +359,13 @@ public class Robot extends IterativeRobot {
 		/*
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
-		if (isIntakePistonOn) {
-			intakePiston.set(DoubleSolenoid.Value.kForward);
-		}
-		if (isIntakePistonOff) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse);
-		}
-		
+//		if (isIntakePistonOn) {
+//			intakePiston.set(DoubleSolenoid.Value.kForward);
+//		}
+//		if (isIntakePistonOff) {
+//			intakePiston.set(DoubleSolenoid.Value.kReverse);
+//		}
+//		
 		// manual control
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
 			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON);
@@ -374,14 +374,14 @@ public class Robot extends IterativeRobot {
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);
 			
-			if (isHugPistonOn) {
-				leftHugPiston.set(DoubleSolenoid.Value.kForward);
-				rightHugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isHugPistonOff) {
-				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-			}
-			
+//			if (isHugPistonOn) {
+//				leftHugPiston.set(DoubleSolenoid.Value.kForward);
+//				rightHugPiston.set(DoubleSolenoid.Value.kForward);
+//			} else if (isHugPistonOff) {
+//				leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+//				rightHugPiston.set(DoubleSolenoid.Value.kReverse);
+//			}
+//			
 			if (isForwardIntake) {
 				Intake.spin(0.5);
 			} else if (isBackwardsIntake) {
@@ -448,19 +448,19 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// piston testing code
-		if (joystickOp.getRawButton(9)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kForward);
-			rightHugPiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(10)) {
-			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
-			rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-		}
-		if (joystickOp.getRawButton(11)) {
-			intakePiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(12)) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse);
-		}
-		
+//		if (joystickOp.getRawButton(9)) {
+//			leftHugPiston.set(DoubleSolenoid.Value.kForward);
+//			rightHugPiston.set(DoubleSolenoid.Value.kForward);
+//		} else if (joystickOp.getRawButton(10)) {
+//			leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+//			rightHugPiston.set(DoubleSolenoid.Value.kReverse);
+//		}
+//		if (joystickOp.getRawButton(11)) {
+//			intakePiston.set(DoubleSolenoid.Value.kForward);
+//		} else if (joystickOp.getRawButton(12)) {
+//			intakePiston.set(DoubleSolenoid.Value.kReverse);
+//		}
+//		
 		// method testing code
 		if (joystickOp.getRawButton(8)) {
 			buttonEightPressed = true;
@@ -511,21 +511,21 @@ public class Robot extends IterativeRobot {
 		
 		// @formatter:off
 		//print encoders and currents. we are not formatting this to keep everything on one line
-		System.out.println("Left Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
-		System.out.println("Right Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
-		System.out.println("");
-		System.out.println("Left Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_BACK_PDP_PORT));
-		System.out.println("Left Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT));
-		System.out.println("");
-		System.out.println("Right Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_BACK_PDP_PORT));
-		System.out.println("Right Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT));
-		System.out.println("");
-		System.out.println("Elevator Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
-		System.out.println("");
-		System.out.println("Elevator Encoder: " + Robot.encoderElevator.get());
-		System.out.println("Left Encoder: " + Robot.encoderLeft.get());
-		System.out.println("Right Encoder: " + Robot.encoderRight.get());
-		System.out.println("");
+//		System.out.println("Left Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_LEFT_PDP_PORT));
+//		System.out.println("Right Intake: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_INTAKE_RIGHT_PDP_PORT));
+//		System.out.println("");
+//		System.out.println("Left Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_BACK_PDP_PORT));
+//		System.out.println("Left Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT));
+//		System.out.println("");
+//		System.out.println("Right Back Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_BACK_PDP_PORT));
+//		System.out.println("Right Front Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT));
+//		System.out.println("");
+//		System.out.println("Elevator Motor: " + Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
+//		System.out.println("");
+//		System.out.println("Elevator Encoder: " + Robot.encoderElevator.get());
+//		System.out.println("Left Encoder: " + Robot.encoderLeft.get());
+//		System.out.println("Right Encoder: " + Robot.encoderRight.get());
+//		System.out.println("");
 		// @formatter:on
 	}
 	
