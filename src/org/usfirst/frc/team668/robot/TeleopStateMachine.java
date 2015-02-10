@@ -146,8 +146,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
 				
-				Robot.rightHugPiston.set(DoubleSolenoid.Value.kReverse);
-				Robot.leftHugPiston.set(DoubleSolenoid.Value.kReverse);
+				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 
 				Robot.debugWriter.println("Elevator Down State\n");
 				RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
@@ -168,8 +167,7 @@ public class TeleopStateMachine {
 			
 			case RobotMap.CLOSE_HUG_PISTONS_STATE: // closes the hug pistons and clamps objective
 				
-				Robot.rightHugPiston.set(DoubleSolenoid.Value.kForward);
-				Robot.leftHugPiston.set(DoubleSolenoid.Value.kForward);
+				Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 
 				Robot.debugWriter.println("Elevator Height Coopertition State\n");
 				

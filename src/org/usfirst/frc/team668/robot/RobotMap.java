@@ -106,25 +106,26 @@ public class RobotMap {
 	public static double elevatorMotorSpeed = 0.5; // This is not final because we change it based on the SmartDashboard
 
 	//encoder PWMs
-	public static final int DRIVE_ENCODER_LEFT_A = 0;
-	public static final int DRIVE_ENCODER_LEFT_B = 1;
-	public static final int DRIVE_ENCODER_RIGHT_A = 2;
-	public static final int DRIVE_ENCODER_RIGHT_B = 3;
+	public static final int DRIVE_ENCODER_LEFT_A = 8;
+	public static final int DRIVE_ENCODER_LEFT_B = 9;
+	public static final int DRIVE_ENCODER_RIGHT_A = 0;
+	public static final int DRIVE_ENCODER_RIGHT_B = 1;
 	
-	public static final int ELEVATOR_ENCODER_A = 0;
-	public static final int ELEVATOR_ENCODER_B = 1;
+	public static final int ELEVATOR_ENCODER_A = 2;
+	public static final int ELEVATOR_ENCODER_B = 3;
+	
+	public static final int CORRECTION_INPUT = 6; // TODO Optical
+	public static final int LIMIT_INPUT = 7;
 	
 	//servo PWMs
 	public static final int CAMERA_SERVO_VERTICAL_PWM = 4;
 	public static final int CAMERA_SERVO_HORIZONTAL_PWM = 5;
 	
 	//piston pcmIDs
-	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION = 0;
-	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION = 1;
-	public static final int DOUBLE_SOLENOID_RIGHT_HUG_PCMID_RETRACTION = 2;
-	public static final int DOUBLE_SOLENOID_RIGHT_HUG_PCMID_EXPANSION = 3;
-	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_RETRACTION = 4;
-	public static final int DOUBLE_SOLENOID_LEFT_HUG_PCMID_EXPANSION = 5;
+	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION = 2;
+	public static final int DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION = 3;
+	public static final int DOUBLE_SOLENOID_HUG_PCMID_RETRACTION = 0; // TODO: Check & maybe flip
+	public static final int DOUBLE_SOLENOID_HUG_PCMID_EXPANSION = 1;
 
 	//pwms for the optical sensors used in the intake 
 	public static final int TOTE_OPTIC_DIO = 0;
@@ -139,6 +140,8 @@ public class RobotMap {
 	public static final double ELEVATOR_ENCODER_SCORING = 0;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 0;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
+	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
+	public static final double ELEVATOR_ENCODER_DEADZONE = 1.0; // TODO: LOS ERRORES SON AQUI (CON ACCENTO SOBRE EL I)
 		
 	//Teleop State Machine Declarations
 	public static final int INIT_STATE = 0;
@@ -170,11 +173,14 @@ public class RobotMap {
 	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	
 	//non-final values change throughout code
-	public static int currentState = INIT_STATE; 
+	public static int currentState = MANUAL_OVERRIDE_STATE; //TODO: Change to initial 
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	
 	//debugging constant for test robot
-	public static boolean TEST_ROBOT = true;
+	public static boolean isTestRobot = false;
+	public static boolean cameraConnected = false;
 	
+	
+	public static double ELEVATOR_CURRENT_STOP = 0;
 }
