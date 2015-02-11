@@ -74,7 +74,7 @@ public class Robot extends IterativeRobot {
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
 	public static Scanner continuousVarsReader;
 	public static Timer t;
-	public static DigitalInput correctionOptical, limitOptical; // TODO: Uncomment this
+	public static DigitalInput correctionOptical, limitOptical;
 
 	// camera variables
 	public static int camera_session;
@@ -114,11 +114,13 @@ public class Robot extends IterativeRobot {
 
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
 
+		// TODO: Wait for this to blow up when you uncomment it
 		// encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
-		// encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
+		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
+		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 
-		correctionOptical = new DigitalInput(RobotMap.CORRECTION_INPUT); // TODO: Uncomment this
-		limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
+//		correctionOptical = new DigitalInput(RobotMap.CORRECTION_INPUT);
+//		limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
 
 		if (!RobotMap.isTestRobot) {
 			// toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
@@ -297,6 +299,10 @@ public class Robot extends IterativeRobot {
 		// // to ensure that radio buttons work
 		// SmartDashboard.putNumber("elevator motor speed", RobotMap.elevatorMotorSpeed);
 
+		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
+		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
+//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
@@ -307,14 +313,15 @@ public class Robot extends IterativeRobot {
 
 		if (isTankDrive) {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
-		} else {
+		}
+		else {
 			robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
 		}
 
 		// this takes pictures while driving but it's still experimental
 
 		// Camera code
-		
+
 		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.isTestRobot && joystickOp.getRawButton(1) && !picture_taking && !picture_writing && !buttonOnePressed) {
 			picture_taking = true;
 			buttonOnePressed = true;
@@ -384,8 +391,8 @@ public class Robot extends IterativeRobot {
 		} // TODO: Uncomment State Machine
 
 		// declaring buttons for intake pistons
-		boolean isIntakePistonOn = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
-		boolean isIntakePistonOff = joystickRight.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
+		boolean isIntakePistonOn = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
+		boolean isIntakePistonOff = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
 
 		/*
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
@@ -401,8 +408,8 @@ public class Robot extends IterativeRobot {
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
 			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON); // button 9
 			boolean isHugPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);// button 10
-			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);// button 7
-			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
+			// boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);// button 7
+			// boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
 
 			if (isHugPistonOn) {
@@ -411,13 +418,73 @@ public class Robot extends IterativeRobot {
 				hugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
 
-			if (isForwardIntake) {
-				Intake.spin(1.0);
-			} else if (isBackwardsIntake) {
-				Intake.spin(-1.0);
+//			canTalonIntakeLeft.set(joystickOp.getRawAxis(6) * -1); //TODO: remove magic numbers
+//			canTalonIntakeRight.set(joystickOp.getRawAxis(6));
+//			System.out.println(joystickOp.getRawAxis(6));
+			
+			if (joystickOp.getRawButton(6)) { //TODO: make this good
+				canTalonIntakeLeft.set(-1.0);
+				canTalonIntakeRight.set(1.0);
+			} else if (joystickOp.getRawButton(4)) {
+				canTalonIntakeLeft.set(1.0);
+				canTalonIntakeRight.set(-1.0);
 			} else {
-				Intake.stop();
+				canTalonIntakeLeft.set(0);
+				canTalonIntakeRight.set(0);
 			}
+			
+			// TODO: ENCODER STOP:
+			// if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_DEADZONE &&
+			// encoderElevator.getDistance() <
+			// RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// SmartDashboard.putString("Hit Encoder Limit?", "No");
+			// if (isFunction) {
+			// canTalonElevator.set(joystickRight.getY() * -1);
+			// } else {
+			// canTalonElevator.set(0);
+			// }
+			// } else {
+			// System.out.println("HIT ENCODER LIMIT!!!");
+			// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// SmartDashboard.putString("Hit Encoder Limit?", "Bottom");
+			// encoderElevator.reset();
+			// double rightJoyVal = joystickRight.getY() * -1;
+			// if (isFunction && rightJoyVal > 0) {
+			// canTalonElevator.set(rightJoyVal);
+			// }
+			// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// SmartDashboard.putString("Hit Encoder Limit?", "Top");
+			// double rightJoyVal = joystickRight.getY() * -1;
+			// if (isFunction && rightJoyVal < 0) {
+			// canTalonElevator.set(rightJoyVal);
+			// }
+			// }
+			// }
+			// TODO: OPTICAL STOP
+			// if (!limitOptical.get()) {
+			// SmartDashboard.putString("Hit Optical Limit?", "No");
+			// if (isFunction) {
+			// canTalonElevator.set(joystickRight.getY() * -1);
+			// } else {
+			// canTalonElevator.set(0);
+			// }
+			// } else {
+			// System.out.println("HIT OPTICAL LIMIT!!!");
+			// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// SmartDashboard.putString("Hit Optical Limit?", "Bottom");
+			// encoderElevator.reset();
+			// double rightJoyVal = joystickRight.getY() * -1;
+			// if (isFunction && rightJoyVal > 0) {
+			// canTalonElevator.set(rightJoyVal);
+			// }
+			// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// SmartDashboard.putString("Hit Encoder Limit?", "Top");
+			// double rightJoyVal = joystickRight.getY() * -1;
+			// if (isFunction && rightJoyVal < 0) {
+			// canTalonElevator.set(rightJoyVal);
+			// }
+			// }
+			// }
 
 			if (isFunction) {
 				canTalonElevator.set(joystickOp.getY());
@@ -446,66 +513,62 @@ public class Robot extends IterativeRobot {
 		// motor testing code
 
 		SmartDashboard.putNumber("Joystick Y Axis", joystickRight.getY());
+		// TODO: Wait for this to blow up upon uncommenting
+		// SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.getDistance());
+		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.getDistance());
+		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
+//		SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
 
 		for (int i = 0; i < 7; i++) { // Prints out currents for these CAN IDs
 			SmartDashboard.putNumber("Current for CAN ID " + i, pdp.getCurrent(i));
 		}
 
-		if (joystickRight.getRawButton(1)) {
+		if (joystickOp.getRawButton(1)) {
 			canTalonFrontLeft.set(joystickRight.getY() * -1);
 		} else {
 			canTalonFrontLeft.set(0);
 		}
-		if (joystickRight.getRawButton(2)) {
+		if (joystickOp.getRawButton(2)) {
 			canTalonFrontRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonFrontRight.set(0);
 		}
-		if (joystickRight.getRawButton(3)) {
+		if (joystickOp.getRawButton(3)) {
 			canTalonRearLeft.set(joystickRight.getY() * -1);
 		} else {
 			canTalonRearLeft.set(0);
 		}
-		if (joystickRight.getRawButton(4)) {
+		if (joystickOp.getRawButton(4)) {
 			canTalonRearRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonRearRight.set(0);
 		}
-		if (joystickRight.getRawButton(5)) {
+		if (joystickOp.getRawButton(5)) {
 			canTalonIntakeLeft.set(joystickRight.getY() * -1);
 		} else {
 			canTalonIntakeLeft.set(0);
 		}
-		if (joystickRight.getRawButton(6)) {
+		if (joystickOp.getRawButton(6)) {
 			canTalonIntakeRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonIntakeRight.set(0);
 		}
-		// TODO: OPTICAL SENSOR
-		// if (!limitOptical.get()) {
-		// SmartDashboard.putString("Hit Limit?", "No");
-		if (joystickRight.getRawButton(7)) {
+
+//		if (limitOptical.get()) {
+//			SmartDashboard.putString("Hit Limit?", "No");
+//		} else {
+//			SmartDashboard.putString("Hit Limit?", "Yes");
+//		}
+
+		// TODO: LIMIT SENSOR IS HERE ^^^
+
+		if (joystickOp.getRawButton(7)) {
 			canTalonElevator.set(joystickRight.getY() * -1);
 		} else {
 			canTalonElevator.set(0);
 		}
-		// } else {
-		// System.out.println("HIT OPTICAL LIMIT!!!");
-		// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
-		// SmartDashboard.putString("Hit Limit?", "Bottom");
-		// double rightJoyVal = joystickRight.getY() * -1;
-		// if (joystickRight.getRawButton(7) && rightJoyVal > 0) {
-		// canTalonElevator.set(rightJoyVal);
-		// }
-		// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
-		// SmartDashboard.putString("Hit Limit?", "Top");
-		// double rightJoyVal = joystickRight.getY() * -1;
-		// if (joystickRight.getRawButton(7) && rightJoyVal < 0) {
-		// canTalonElevator.set(rightJoyVal);
-		// }
-		// }
-		// }
-		if (joystickRight.getRawButton(8)) {
+
+		if (joystickOp.getRawButton(8)) {
 			canTalonFrontLeft.set(0);
 			canTalonFrontRight.set(0);
 			canTalonRearLeft.set(0);

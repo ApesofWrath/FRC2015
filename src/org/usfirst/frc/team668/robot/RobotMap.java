@@ -39,9 +39,6 @@ public class RobotMap {
 	 * final means that it cannot be changed
 	 * int means that your constant is an integer and double means that your constant is a decimal
 	 */
-	// intake pistons control buttons
-	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 10;
-	public static final int INTAKE_PISTON_DEACTIVATE_BUTTON = 11;
 	
 	//limit switch channels
 	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 1;
@@ -66,10 +63,13 @@ public class RobotMap {
 	public static final int LIFT_BUTTON = 2;
 	public static final int REVERSING_BUTTON = 1;
 	
-	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9;
+	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // TODO: make one button (2)
 	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10;
-	public static final int MANUAL_INTAKE_BUTTON = 7;
-	public static final int MANUAL_OUTTAKE_BUTTON = 8;
+//	public static final int MANUAL_INTAKE_BUTTON = 7;
+//	public static final int MANUAL_OUTTAKE_BUTTON = 8;
+	//no longer used as intake wheels are on hat
+	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 7;
+	public static final int INTAKE_PISTON_DEACTIVATE_BUTTON = 8;
 	public static final int MANUAL_FUNCTION_BUTTON = 12;
 	
 	//pdp ports for current finding; THESE MUST BE CHANGED
