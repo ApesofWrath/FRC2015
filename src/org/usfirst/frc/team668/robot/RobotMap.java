@@ -64,11 +64,11 @@ public class RobotMap {
 	public static final int REVERSING_BUTTON = 1;
 	
 	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // TODO: make one button (2)
-	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10;
+	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10; // HUG PISTON
 //	public static final int MANUAL_INTAKE_BUTTON = 7;
 //	public static final int MANUAL_OUTTAKE_BUTTON = 8;
 	//no longer used as intake wheels are on hat
-	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 7;
+	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 7; // SWEEPER ARM
 	public static final int INTAKE_PISTON_DEACTIVATE_BUTTON = 8;
 	public static final int MANUAL_FUNCTION_BUTTON = 12;
 	
@@ -114,8 +114,8 @@ public class RobotMap {
 	public static final int ELEVATOR_ENCODER_A = 2;
 	public static final int ELEVATOR_ENCODER_B = 3;
 	
-	public static final int CORRECTION_INPUT = 6; // TODO Optical
-	public static final int LIMIT_INPUT = 7;
+	public static final int CORRECTION_INPUT = 4; // TODO Optical
+	public static final int LIMIT_INPUT = 5;
 	
 	//servo PWMs
 	public static final int CAMERA_SERVO_VERTICAL_PWM = 4;

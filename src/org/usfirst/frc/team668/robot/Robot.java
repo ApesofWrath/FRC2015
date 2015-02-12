@@ -91,7 +91,6 @@ public class Robot extends IterativeRobot {
 	boolean buttonOnePressed = false;
 
 	// end declarations
-	
 
 	/**
 	 * This function is run when the robot is first started up and should be used for any initialization code.
@@ -120,8 +119,8 @@ public class Robot extends IterativeRobot {
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 
-//		correctionOptical = new DigitalInput(RobotMap.CORRECTION_INPUT);
-//		limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
+		// correctionOptical = new DigitalInput(RobotMap.CORRECTION_INPUT);
+		// limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
 
 		if (!RobotMap.isTestRobot) {
 			// toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
@@ -170,7 +169,7 @@ public class Robot extends IterativeRobot {
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		} else {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonFrontRight);
-			
+
 		}
 
 		pdp = new PowerDistributionPanel();
@@ -303,7 +302,7 @@ public class Robot extends IterativeRobot {
 
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
 		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
-//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		// SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
 
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
@@ -315,10 +314,9 @@ public class Robot extends IterativeRobot {
 
 		if (isTankDrive) {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
-		}
-		else {
-		//	robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
-			
+		} else {
+			// robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
+
 			robotDrive.drive(joystickRight.getY(), joystickLeft.getX());
 		}
 
@@ -422,11 +420,11 @@ public class Robot extends IterativeRobot {
 				hugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
 
-//			canTalonIntakeLeft.set(joystickOp.getRawAxis(6) * -1); //TODO: remove magic numbers
-//			canTalonIntakeRight.set(joystickOp.getRawAxis(6));
-//			System.out.println(joystickOp.getRawAxis(6));
-			
-			if (joystickOp.getRawButton(6)) { //TODO: make this good
+			// canTalonIntakeLeft.set(joystickOp.getRawAxis(6) * -1); //TODO: remove magic numbers
+			// canTalonIntakeRight.set(joystickOp.getRawAxis(6));
+			// System.out.println(joystickOp.getRawAxis(6));
+
+			if (joystickOp.getRawButton(6)) { // TODO: make this good
 				canTalonIntakeLeft.set(-1.0);
 				canTalonIntakeRight.set(1.0);
 			} else if (joystickOp.getRawButton(4)) {
@@ -436,11 +434,9 @@ public class Robot extends IterativeRobot {
 				canTalonIntakeLeft.set(0);
 				canTalonIntakeRight.set(0);
 			}
-			
+
 			// TODO: ENCODER STOP:
-			// if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_DEADZONE &&
-			// encoderElevator.getDistance() <
-			// RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_DEADZONE && encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "No");
 			// if (isFunction) {
 			// canTalonElevator.set(joystickRight.getY() * -1);
@@ -492,8 +488,6 @@ public class Robot extends IterativeRobot {
 
 			if (isFunction) {
 				canTalonElevator.set(joystickOp.getY());
-				// Elevator.calibration(joystickOp.getY()); // moves Elevator
-				// Elevator.stop();
 			} else {
 				canTalonElevator.set(0);
 			}
@@ -521,7 +515,7 @@ public class Robot extends IterativeRobot {
 		// SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.getDistance());
 		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.getDistance());
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
-//		SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
+		// SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
 
 		for (int i = 0; i < 7; i++) { // Prints out currents for these CAN IDs
 			SmartDashboard.putNumber("Current for CAN ID " + i, pdp.getCurrent(i));
@@ -558,11 +552,11 @@ public class Robot extends IterativeRobot {
 			canTalonIntakeRight.set(0);
 		}
 
-//		if (limitOptical.get()) {
-//			SmartDashboard.putString("Hit Limit?", "No");
-//		} else {
-//			SmartDashboard.putString("Hit Limit?", "Yes");
-//		}
+		// if (limitOptical.get()) {
+		// SmartDashboard.putString("Hit Limit?", "No");
+		// } else {
+		// SmartDashboard.putString("Hit Limit?", "Yes");
+		// }
 
 		// TODO: LIMIT SENSOR IS HERE ^^^
 
