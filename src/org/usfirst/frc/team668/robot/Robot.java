@@ -125,10 +125,10 @@ public class Robot extends IterativeRobot {
 		if (!RobotMap.isTestRobot) {
 //			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
 //			binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
-			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+//			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 
-			 limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
-			 limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+//			 limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+//			 limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
 		}
 
 		
@@ -355,50 +355,50 @@ public class Robot extends IterativeRobot {
 			buttonOnePressed = false;
 		}
 
-		if (RobotMap.cameraConnected) { // only run if we have a cameras
-
-			Image frame = null;
-			if (picture_taking) {
-				if (cameraTimer == 0) {
-					cameraTimer = System.currentTimeMillis();
-				}
-				frame = CameraThreads.takePicture(camera_session);
-				if (frame != null) {
-					picture_writing = true;
-					picture_taking = false;
-					System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-					cameraTimer = 0;
-				}
-			}
-			if (picture_writing) {
-				try {
-					if (cameraTimer == 0) {
-						cameraTimer = System.currentTimeMillis();
-					}
-					boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
-					if (finished) {
-						System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-						picture_writing = false;
-						picture_taking = false;
-						cameraTimer = 0;
-						frame = null;
-					}
-				} catch (VisionException e) {
-					System.out.println("no usb for picture");
-				}
-			}
-			// to make sure we don't take too many pictures in one press
-			if (joystickOp.getRawButton(1)) {
-				buttonOnePressed = true;
-			} else {
-				buttonOnePressed = false;
-				debugWriter.println("no usb for picture");
-				picture_taking = false;
-				picture_writing = false;
-				cameraTimer = 0;
-				frame = null;
-			}
-		} // end if(cameraConnected)
+//		if (RobotMap.cameraConnected) { // only run if we have a cameras
+//
+//			Image frame = null;
+//			if (picture_taking) {
+//				if (cameraTimer == 0) {
+//					cameraTimer = System.currentTimeMillis();
+//				}
+//				frame = CameraThreads.takePicture(camera_session);
+//				if (frame != null) {
+//					picture_writing = true;
+//					picture_taking = false;
+//					System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+//					cameraTimer = 0;
+//				}
+//			}
+//			if (picture_writing) {
+//				try {
+//					if (cameraTimer == 0) {
+//						cameraTimer = System.currentTimeMillis();
+//					}
+//					boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+//					if (finished) {
+//						System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+//						picture_writing = false;
+//						picture_taking = false;
+//						cameraTimer = 0;
+//						frame = null;
+//					}
+//				} catch (VisionException e) {
+//					System.out.println("no usb for picture");
+//				}
+//			}
+//			// to make sure we don't take too many pictures in one press
+//			if (joystickOp.getRawButton(1)) {
+//				buttonOnePressed = true;
+//			} else {
+//				buttonOnePressed = false;
+//				debugWriter.println("no usb for picture");
+//				picture_taking = false;
+//				picture_writing = false;
+//				cameraTimer = 0;
+//				frame = null;
+//			}
+//		} // end if(cameraConnected)
 
 		// state machine
 		boolean isManual = true; // joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
