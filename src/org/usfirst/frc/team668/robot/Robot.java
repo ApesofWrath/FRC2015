@@ -91,6 +91,7 @@ public class Robot extends IterativeRobot {
 	boolean buttonOnePressed = false;
 
 	// end declarations
+	
 
 	/**
 	 * This function is run when the robot is first started up and should be used for any initialization code.
@@ -169,6 +170,7 @@ public class Robot extends IterativeRobot {
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		} else {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonFrontRight);
+			
 		}
 
 		pdp = new PowerDistributionPanel();
@@ -315,7 +317,9 @@ public class Robot extends IterativeRobot {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
 		}
 		else {
-			robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
+		//	robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
+			
+			robotDrive.drive(joystickRight.getY(), joystickLeft.getX());
 		}
 
 		// this takes pictures while driving but it's still experimental
