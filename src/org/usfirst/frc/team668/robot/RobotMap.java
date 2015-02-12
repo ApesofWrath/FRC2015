@@ -178,7 +178,7 @@ public class RobotMap {
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	
 	//debugging constant for test robot
-	public static boolean isTestRobot = false;
+	public static boolean isTestRobot = true;
 	public static boolean cameraConnected = false;
 	
 	

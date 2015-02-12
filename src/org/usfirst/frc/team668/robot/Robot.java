@@ -123,15 +123,16 @@ public class Robot extends IterativeRobot {
 		// limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
 
 		if (!RobotMap.isTestRobot) {
-			// toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
-			// binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
-			//
-			// encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
-			//
-			// limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
-			// limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+//			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
+//			binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
+			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+
+			 limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+			 limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
 		}
 
+		
+		
 		// creating images
 		// this is the start of the image that taking a picture will write into
 		Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
@@ -302,7 +303,27 @@ public class Robot extends IterativeRobot {
 
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
 		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
-		// SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		
+		
+//		while (joystickRight.getRawButton(3)){
+//			
+//			canTalonFrontRight.set(-.75);
+//			canTalonRearRight.set(-.75);
+//			
+//			canTalonFrontLeft.set(.75);
+//			canTalonRearLeft.set(.75);
+//		}
+//		
+//		while (joystickLeft.getRawButton(3)){
+//			
+//			canTalonFrontRight.set(.75);
+//			canTalonRearRight.set(.75);
+//			
+//			canTalonFrontLeft.set(-.75);
+//			canTalonRearLeft.set(-.75);
+//			
+//		}
 
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
