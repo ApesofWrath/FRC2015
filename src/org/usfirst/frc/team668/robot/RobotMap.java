@@ -63,10 +63,10 @@ public class RobotMap {
 	public static final int LIFT_BUTTON = 2;
 	public static final int REVERSING_BUTTON = 1;
 	
-	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // TODO: make one button (2)
-	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10; // HUG PISTON
-//	public static final int MANUAL_INTAKE_BUTTON = 7; // 6 in teleop
-//	public static final int MANUAL_OUTTAKE_BUTTON = 8;
+	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // close hug pistons
+	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10; // open hug pistons
+	public static final int MANUAL_INTAKE_BUTTON = 4; // we reuse buttons between manual and teleop
+	public static final int MANUAL_OUTTAKE_BUTTON = 6; // at the request of Sean
 	//no longer used as intake wheels are on hat
 	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 7; // SWEEPER ARM
 	public static final int INTAKE_PISTON_DEACTIVATE_BUTTON = 8;
@@ -102,8 +102,8 @@ public class RobotMap {
 	public static final int ELEVATOR_MOTOR_CANID = 7;
 
 	//motor speeds
-	public static final double INTAKE_MOTOR_SPEED = 0.0;
-	public static double elevatorMotorSpeed = 0.5; // This is not final because we change it based on the SmartDashboard
+	public static final double INTAKE_MOTOR_SPEED = 0.5;
+	public static double elevatorMotorSpeed = -0.5; // This is not final because we change it based on the SmartDashboard
 
 	//encoder PWMs
 	public static final int DRIVE_ENCODER_LEFT_A = 8;
@@ -136,7 +136,7 @@ public class RobotMap {
 	public static final int PDP_CANID = 20;
 
 	//encoder heights
-	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 0;
+	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 325;
 	public static final double ELEVATOR_ENCODER_SCORING = 0;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 0;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
@@ -149,14 +149,22 @@ public class RobotMap {
 	public static final int WAIT_FOR_BUTTON_STATE = 2;
 	public static final int WAIT_FOR_GAME_PIECE_STATE = 3;
 	public static final int OPEN_HUG_PISTONS_STATE = 4;
+	public static final int DRIVE_BACKWARDS_STATE = 1000;
 	public static final int ELEVATOR_DOWN_STATE = 5;
+	public static final int DRIVE_FORWARDS_STATE = 1001;
 	public static final int CLOSE_HUG_PISTONS_STATE = 6;
 	public static final int ELEVATOR_HEIGHT_GROUND_STATE = 7;
 	public static final int ELEVATOR_HEIGHT_SCORING_STATE = 8;
 	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 9;
 	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
 	public static final int MANUAL_OVERRIDE_STATE = 11;
-	public static final int WAITING_FOR_REVERSE_INTAKE =12;
+	public static final int WAITING_FOR_REVERSE_INTAKE = 12;
+
+	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
+	
+	// State machine values
+	public static final int DRIVE_BACKWARDS_DISTANCE = 5;
+	public static final int DRIVE_FORWARDS_DISTANCE = 5;
 	
 	//autonomous chooser possibilities
 	public static final int STOP_AUTONOMOUS = 0;
@@ -173,7 +181,7 @@ public class RobotMap {
 	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	
 	//non-final values change throughout code
-	public static int currentState = MANUAL_OVERRIDE_STATE; //TODO: Change to initial 
+	public static int currentState = DEFAULT_STATE;
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
 	

@@ -26,6 +26,7 @@ public class Elevator {
 	{
 		/*in Robot.java we stop the function if we are done, this makes sure that done is switched to false
 		 * in Elevator.java, finally, we find out our direction*/
+		speed = -speed; //elevator: down is positive
 		if (done) {
 			direction(stop);
 		}
@@ -60,6 +61,7 @@ public class Elevator {
 	 */
 	public static boolean calibration(double speed) {
 		//this code requires proper sign on speed
+		speed = -speed; //elevator: down is positive
 		if (speed > 0) {
 			up = true;
 		} else if (speed < 0) {
@@ -67,6 +69,7 @@ public class Elevator {
 		} else {
 			return true;
 		}
+		System.out.println("calibrating " + up);
 		
 		//we make sure that we aren't hitting our limit switches
 		if (checkDemSwitches()) {
@@ -108,15 +111,17 @@ public class Elevator {
 		}
 	}
 
-	/*this function returns true if we are hitting the limit switches in the proper direction, we also reset
-	 * the encoders when at the bottom*/
+	/*
+	 * this function returns true if we are hitting the limit switches in the proper direction, we also reset
+	 * the encoders when at the bottom
+	 */
 	private static boolean checkDemSwitches() {
-		if (Robot.limitBottom.get() && !up) {
+		if (!Robot.limitBottom.get() && !up) {
 			Robot.encoderElevator.reset();
 			return true;
-		} else if (Robot.limitTop.get() && up) {
+		} else if (!Robot.limitTop.get() && up) {
 			return true;
-		} else if (Robot.limitBottom.get() && up) {
+		} else if (!Robot.limitBottom.get() && up) {
 			Robot.encoderElevator.reset();
 		}
 		return false;
