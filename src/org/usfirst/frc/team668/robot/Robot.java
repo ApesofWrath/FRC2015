@@ -58,9 +58,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 
 public class Robot extends IterativeRobot {
-
+	
 	// start robot variable declarations
-	public static OI operatorInterface;
+	
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
 			canTalonRearLeft, canTalonRearRight, canTalonIntakeLeft,
@@ -75,13 +75,13 @@ public class Robot extends IterativeRobot {
 	public static Scanner continuousVarsReader;
 	public static Timer t;
 	public static DigitalInput correctionOptical, limitOptical;
-
+	
 	// camera variables
 	public static int camera_session;
-
+	
 	public static SendableChooser autonomousChooser, elevatorChooser;
 	// for autonomous selection and elevator speed choosing. We added elevator speed selection radio buttons. This doesn't work yet.
-
+	
 	boolean buttonEightPressed = false; // for test to check if button 8 is
 										// pressed
 	boolean picture_taking = false;
@@ -89,54 +89,55 @@ public class Robot extends IterativeRobot {
 	long cameraTimer = 0;
 	boolean isTankDrive = true;
 	boolean buttonOnePressed = false;
-
+	
 	// end declarations
-
+	
 	/**
 	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	public void robotInit() {
 		// Object Initialization
-		operatorInterface = new OI();
-
+		
 		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
 		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
-
+		
 		canTalonFrontLeft = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID);
 		canTalonFrontRight = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
-
+		
 		canTalonRearLeft = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_LEFT_CANID);
 		canTalonRearRight = new CANTalon(RobotMap.DRIVE_MOTOR_REAR_RIGHT_CANID);
-
+		
 		canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
 		canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
-
+		
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
-
-		// TODO: Wait for this to blow up when you uncomment it
-		// encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
+		
+		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
-
+		
+		// TODO: Opticals
 		// correctionOptical = new DigitalInput(RobotMap.CORRECTION_INPUT);
 		// limitOptical = new DigitalInput(RobotMap.LIMIT_INPUT);
-
-		if (!RobotMap.isTestRobot) {
-//			toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
-//			binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
-//			encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
-
-//			 limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
-//			 limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
-		}
-
 		
+		// TODO: Physical Limit Switches
+		limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+		limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+		
+		if (!RobotMap.isTestRobot) {
+			// toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
+			// binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
+			// encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+			
+			// limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
+			// limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+		}
 		
 		// creating images
 		// this is the start of the image that taking a picture will write into
 		Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-
+		
 		// the camera name can be found through the roboRIO web interface
 		// checks if the camera is connected; if it's not, then set cameraConnected to false
 		// that way, we won't get an error if we forget to plug in the camera
@@ -148,20 +149,20 @@ public class Robot extends IterativeRobot {
 		} catch (VisionException e) {
 			RobotMap.cameraConnected = false;
 		}
-
+		
 		// compressor initialization and turning on
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
-
+		
 		if (RobotMap.isTestRobot) {
 			compressor1.setClosedLoopControl(false);
 		} else {
 			compressor1.setClosedLoopControl(true);
 		}
-
+		
 		// // piston initialization
 		hugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_RETRACTION);
 		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
-
+		
 		if (!RobotMap.isTestRobot) {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft, canTalonFrontRight, canTalonRearRight);
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true); // TODO: Inverse
@@ -170,11 +171,11 @@ public class Robot extends IterativeRobot {
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		} else {
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonFrontRight);
-
+			
 		}
-
+		
 		pdp = new PowerDistributionPanel();
-
+		
 		/*
 		 * Save debug files to the flashdrive. continuousVarsReader contains the debugNumber, which is a counter for the filenames of debug files. Debug files will contain everything that happens during an enabling of the robot. They will all be saved to the flashdrive which is at /u/ If the flashdrive isn't plugged in, these will be printed to System.out
 		 */
@@ -187,7 +188,7 @@ public class Robot extends IterativeRobot {
 			continuousVarsWriter = new PrintWriter("/u/continuousvars.txt");
 			continuousVarsWriter.println(debugNumber + 1);
 			continuousVarsWriter.close();
-
+			
 			// takes a startup picture and saves to the flashdrive
 			// if the flashdrive isn't plugged in, the error SHOULD have already
 			// been caught
@@ -196,7 +197,7 @@ public class Robot extends IterativeRobot {
 				NIVision.IMAQdxGrab(camera_session, frame, 1);
 				NIVision.imaqWriteFile(frame, "/u/startup" + debugNumber + ".png", new RGBValue());
 			}
-
+			
 		} catch (FileNotFoundException e) { // goes here if flashdrive isn't plugged in
 			debugWriter = new PrintWriter(System.out, true);
 			System.out.println(e);
@@ -209,15 +210,15 @@ public class Robot extends IterativeRobot {
 		} catch (VisionException e) {
 			System.out.println(e);
 		}
-
+		
 		/*
 		 * Naming convention for new versions:
 		 * 
 		 * Name each new version after a type of ape. This is to make programmers feel fancy like they work at a real programming company.
 		 */
-		debugWriter.println("Version 3.0: Lucy\n");
-		SmartDashboard.putString("Version", "3.0 -- Lucy");
-
+		debugWriter.println("Version 3.1: Wombat Ape\n");
+		SmartDashboard.putString("Version", "3.1 -- Wombat Ape");
+		
 		/*
 		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder, we simply have the SendableChooser give us an Integer representing the selected program.
 		 * 
@@ -226,7 +227,7 @@ public class Robot extends IterativeRobot {
 		 * We will decide which program to run in autonomousInit() and we will run that program in autonomousPeriodic()
 		 */
 		autonomousChooser = new SendableChooser();
-
+		
 		autonomousChooser.addDefault("Stop Autonomous", new Integer(RobotMap.STOP_AUTONOMOUS));
 		autonomousChooser.addObject("Drive Forward Autonomous", new Integer(RobotMap.DRIVE_FORWARD_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Drive Forward Autonomous", new Integer(RobotMap.DELAY_AND_DRIVE_FORWARD_AUTONOMOUS));
@@ -234,11 +235,11 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
 		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
-
+		
 		// Same with Elevator speed chooser. We will use this to find the
 		// optimal elevator speed
 		elevatorChooser = new SendableChooser();
-
+		
 		elevatorChooser.addObject("0.1", 0.1);
 		elevatorChooser.addDefault("0.2", 0.2); // the default speed will be 0.2
 		elevatorChooser.addObject("0.3", 0.3);
@@ -249,41 +250,41 @@ public class Robot extends IterativeRobot {
 		elevatorChooser.addObject("0.8", 0.8);
 		elevatorChooser.addObject("0.9", 0.9);
 		elevatorChooser.addObject("1.0", 1.0);
-
+		
 		SmartDashboard.putData("Elevator Speed Chooser", elevatorChooser);
-
+		
 	}
-
+	
 	/**
 	 * This function is called at the start of autonomous
 	 */
 	public void autonomousInit() {
 		debugWriter.println("Beginning autonomous\n");
-
+		
 		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); // stupidly complex piece of code that just sets
 																							// our autonomous mode
 	}
-
+	
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
 		Autonomous.doAuton(); // runs the selected autonomous mode
 	}
-
+	
 	/**
 	 * This function is called once at the start of teleop
 	 */
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
 	}
-
+	
 	/**
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
 		// getting current for elevator at mechanical stop
-
+		
 		// TODO: Uncomment - Elevator
 		// double elevCurrent = pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
 		//
@@ -300,31 +301,33 @@ public class Robot extends IterativeRobot {
 		// RobotMap.elevatorMotorSpeed = ((Double) (elevatorChooser.getSelected())).doubleValue();
 		// // to ensure that radio buttons work
 		// SmartDashboard.putNumber("elevator motor speed", RobotMap.elevatorMotorSpeed);
-
+		
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
+		SmartDashboard.putNumber("Left Encoder", encoderLeft.getDistance());
 		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
-//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		// SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
+		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
 		
+		// while (joystickRight.getRawButton(3)){
+		//
+		// canTalonFrontRight.set(-.75);
+		// canTalonRearRight.set(-.75);
+		//
+		// canTalonFrontLeft.set(.75);
+		// canTalonRearLeft.set(.75);
+		// }
+		//
+		// while (joystickLeft.getRawButton(3)){
+		//
+		// canTalonFrontRight.set(.75);
+		// canTalonRearRight.set(.75);
+		//
+		// canTalonFrontLeft.set(-.75);
+		// canTalonRearLeft.set(-.75);
+		//
+		// }
 		
-//		while (joystickRight.getRawButton(3)){
-//			
-//			canTalonFrontRight.set(-.75);
-//			canTalonRearRight.set(-.75);
-//			
-//			canTalonFrontLeft.set(.75);
-//			canTalonRearLeft.set(.75);
-//		}
-//		
-//		while (joystickLeft.getRawButton(3)){
-//			
-//			canTalonFrontRight.set(.75);
-//			canTalonRearRight.set(.75);
-//			
-//			canTalonFrontLeft.set(-.75);
-//			canTalonRearLeft.set(-.75);
-//			
-//		}
-
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isTankDrive = true;
@@ -332,19 +335,19 @@ public class Robot extends IterativeRobot {
 		if (joystickRight.getRawButton(RobotMap.ARCADE_DRIVE_BUTTON)) {
 			isTankDrive = false;
 		}
-
+		
 		if (isTankDrive) {
 			robotDrive.tankDrive(joystickLeft, joystickRight);
 		} else {
 			// robotDrive.arcadeDrive(joystickRight, 2, joystickLeft, 1); // TODO: split arcade must be done
-
+			
 			robotDrive.drive(joystickRight.getY(), joystickLeft.getX());
 		}
-
+		
 		// this takes pictures while driving but it's still experimental
-
+		
 		// Camera code
-
+		
 		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.isTestRobot && joystickOp.getRawButton(1) && !picture_taking && !picture_writing && !buttonOnePressed) {
 			picture_taking = true;
 			buttonOnePressed = true;
@@ -354,52 +357,52 @@ public class Robot extends IterativeRobot {
 		} else {
 			buttonOnePressed = false;
 		}
-
-//		if (RobotMap.cameraConnected) { // only run if we have a cameras
-//
-//			Image frame = null;
-//			if (picture_taking) {
-//				if (cameraTimer == 0) {
-//					cameraTimer = System.currentTimeMillis();
-//				}
-//				frame = CameraThreads.takePicture(camera_session);
-//				if (frame != null) {
-//					picture_writing = true;
-//					picture_taking = false;
-//					System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-//					cameraTimer = 0;
-//				}
-//			}
-//			if (picture_writing) {
-//				try {
-//					if (cameraTimer == 0) {
-//						cameraTimer = System.currentTimeMillis();
-//					}
-//					boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
-//					if (finished) {
-//						System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-//						picture_writing = false;
-//						picture_taking = false;
-//						cameraTimer = 0;
-//						frame = null;
-//					}
-//				} catch (VisionException e) {
-//					System.out.println("no usb for picture");
-//				}
-//			}
-//			// to make sure we don't take too many pictures in one press
-//			if (joystickOp.getRawButton(1)) {
-//				buttonOnePressed = true;
-//			} else {
-//				buttonOnePressed = false;
-//				debugWriter.println("no usb for picture");
-//				picture_taking = false;
-//				picture_writing = false;
-//				cameraTimer = 0;
-//				frame = null;
-//			}
-//		} // end if(cameraConnected)
-
+		
+		// if (RobotMap.cameraConnected) { // only run if we have a cameras
+		//
+		// Image frame = null;
+		// if (picture_taking) {
+		// if (cameraTimer == 0) {
+		// cameraTimer = System.currentTimeMillis();
+		// }
+		// frame = CameraThreads.takePicture(camera_session);
+		// if (frame != null) {
+		// picture_writing = true;
+		// picture_taking = false;
+		// System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+		// cameraTimer = 0;
+		// }
+		// }
+		// if (picture_writing) {
+		// try {
+		// if (cameraTimer == 0) {
+		// cameraTimer = System.currentTimeMillis();
+		// }
+		// boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+		// if (finished) {
+		// System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+		// picture_writing = false;
+		// picture_taking = false;
+		// cameraTimer = 0;
+		// frame = null;
+		// }
+		// } catch (VisionException e) {
+		// System.out.println("no usb for picture");
+		// }
+		// }
+		// // to make sure we don't take too many pictures in one press
+		// if (joystickOp.getRawButton(1)) {
+		// buttonOnePressed = true;
+		// } else {
+		// buttonOnePressed = false;
+		// debugWriter.println("no usb for picture");
+		// picture_taking = false;
+		// picture_writing = false;
+		// cameraTimer = 0;
+		// frame = null;
+		// }
+		// } // end if(cameraConnected)
+		
 		// state machine
 		boolean isManual = true; // joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
 		// TODO: For testing, isManual will be on
@@ -412,11 +415,11 @@ public class Robot extends IterativeRobot {
 		if (!RobotMap.isTestRobot) {
 			// TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isAbort);
 		} // TODO: Uncomment State Machine
-
+		
 		// declaring buttons for intake pistons
 		boolean isIntakePistonOn = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
 		boolean isIntakePistonOff = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
-
+		
 		/*
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
@@ -426,7 +429,7 @@ public class Robot extends IterativeRobot {
 		if (isIntakePistonOff) {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
-
+		
 		// manual control
 		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
 			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON); // button 9
@@ -434,17 +437,17 @@ public class Robot extends IterativeRobot {
 			// boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);// button 7
 			// boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
-
+			
 			if (isHugPistonOn) {
 				hugPiston.set(DoubleSolenoid.Value.kForward);
 			} else if (isHugPistonOff) {
 				hugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
-
+			
 			// canTalonIntakeLeft.set(joystickOp.getRawAxis(6) * -1); //TODO: remove magic numbers
 			// canTalonIntakeRight.set(joystickOp.getRawAxis(6));
 			// System.out.println(joystickOp.getRawAxis(6));
-
+			
 			if (joystickOp.getRawButton(6)) { // TODO: make this good
 				canTalonIntakeLeft.set(-1.0);
 				canTalonIntakeRight.set(1.0);
@@ -455,12 +458,12 @@ public class Robot extends IterativeRobot {
 				canTalonIntakeLeft.set(0);
 				canTalonIntakeRight.set(0);
 			}
-
+			
 			// TODO: ENCODER STOP:
 			// if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_DEADZONE && encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "No");
 			// if (isFunction) {
-			// canTalonElevator.set(joystickRight.getY() * -1);
+			// canTalonElevator.set(joystickOp.getY() * -1);
 			// } else {
 			// canTalonElevator.set(0);
 			// }
@@ -469,15 +472,15 @@ public class Robot extends IterativeRobot {
 			// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "Bottom");
 			// encoderElevator.reset();
-			// double rightJoyVal = joystickRight.getY() * -1;
-			// if (isFunction && rightJoyVal > 0) {
-			// canTalonElevator.set(rightJoyVal);
+			// double elevatorJoyVal = joystickOp.getY() * -1;
+			// if (isFunction && elevatorJoyVal > 0) {
+			// canTalonElevator.set(elevatorJoyVal);
 			// }
 			// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "Top");
-			// double rightJoyVal = joystickRight.getY() * -1;
-			// if (isFunction && rightJoyVal < 0) {
-			// canTalonElevator.set(rightJoyVal);
+			// double elevatorJoyVal = joystickOp.getY() * -1;
+			// if (isFunction && elevatorJoyVal < 0) {
+			// canTalonElevator.set(elevatorJoyVal);
 			// }
 			// }
 			// }
@@ -485,7 +488,7 @@ public class Robot extends IterativeRobot {
 			// if (!limitOptical.get()) {
 			// SmartDashboard.putString("Hit Optical Limit?", "No");
 			// if (isFunction) {
-			// canTalonElevator.set(joystickRight.getY() * -1);
+			// canTalonElevator.set(joystickOp.getY() * -1);
 			// } else {
 			// canTalonElevator.set(0);
 			// }
@@ -494,27 +497,45 @@ public class Robot extends IterativeRobot {
 			// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Optical Limit?", "Bottom");
 			// encoderElevator.reset();
-			// double rightJoyVal = joystickRight.getY() * -1;
-			// if (isFunction && rightJoyVal > 0) {
-			// canTalonElevator.set(rightJoyVal);
+			// double elevatorJoyVal = joystickOp.getY() * -1;
+			// if (isFunction && elevatorJoyVal > 0) {
+			// canTalonElevator.set(elevatorJoyVal);
 			// }
 			// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "Top");
-			// double rightJoyVal = joystickRight.getY() * -1;
-			// if (isFunction && rightJoyVal < 0) {
-			// canTalonElevator.set(rightJoyVal);
+			// double elevatorJoyVal = joystickOp.getY() * -1;
+			// if (isFunction && elevatorJoyVal < 0) {
+			// canTalonElevator.set(elevatorJoyVal);
 			// }
 			// }
 			// }
-
-			if (isFunction) {
-				canTalonElevator.set(joystickOp.getY());
+			// TODO: LIMIT SWITCH STOP
+			if (limitTop.get() && limitBottom.get()) { // This means none are hit
+				SmartDashboard.putString("Limit Switch Stop?", "No");
+				if (isFunction) {
+					canTalonElevator.set(joystickOp.getY() * -1);
+				} else {
+					canTalonElevator.set(0);
+				}
 			} else {
-				canTalonElevator.set(0);
+				System.out.println("HIT LIMIT SWITCH!!!");
+				if (!limitBottom.get()) { // Hit bottom
+					SmartDashboard.putString("Hit Switch Limit?", "Bottom");
+					double elevatorJoyVal = joystickOp.getY() * -1;
+					if (isFunction && elevatorJoyVal > 0) {
+						canTalonElevator.set(elevatorJoyVal);
+					}
+				} else if (!limitTop.get()) { // Hit top
+					SmartDashboard.putString("Hit Switch Limit?", "Top");
+					double elevatorJoyVal = joystickOp.getY() * -1;
+					if (isFunction && elevatorJoyVal < 0) {
+						canTalonElevator.set(elevatorJoyVal);
+					}
+				}
 			}
 		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
 	} // end function teleopPeriodic
-
+	
 	/**
 	 * This function is called when test mode starts.
 	 */
@@ -523,70 +544,72 @@ public class Robot extends IterativeRobot {
 		System.out.println("Test Initiation");
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
 	}
-
+	
 	/**
 	 * This function is called periodically during test mode. It contains test code for all the motors and pistons to be controlled individually.
 	 */
 	public void testPeriodic() {
-
+		
 		// motor testing code
-
+		
 		SmartDashboard.putNumber("Joystick Y Axis", joystickRight.getY());
 		// TODO: Wait for this to blow up upon uncommenting
-		// SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.getDistance());
+		SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.getDistance());
 		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.getDistance());
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
 		// SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
-
+		SmartDashboard.putBoolean("Top Limit", !limitTop.get()); // Inverse needed
+		SmartDashboard.putBoolean("Bottom Value", !limitBottom.get());
+		
 		for (int i = 0; i < 7; i++) { // Prints out currents for these CAN IDs
 			SmartDashboard.putNumber("Current for CAN ID " + i, pdp.getCurrent(i));
 		}
-
+		
 		if (joystickOp.getRawButton(1)) {
-			canTalonFrontLeft.set(joystickRight.getY() * -1);
+			canTalonFrontLeft.set(joystickOp.getY() * -1);
 		} else {
 			canTalonFrontLeft.set(0);
 		}
 		if (joystickOp.getRawButton(2)) {
-			canTalonFrontRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
+			canTalonFrontRight.set(joystickOp.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonFrontRight.set(0);
 		}
 		if (joystickOp.getRawButton(3)) {
-			canTalonRearLeft.set(joystickRight.getY() * -1);
+			canTalonRearLeft.set(joystickOp.getY() * -1);
 		} else {
 			canTalonRearLeft.set(0);
 		}
 		if (joystickOp.getRawButton(4)) {
-			canTalonRearRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
+			canTalonRearRight.set(joystickOp.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonRearRight.set(0);
 		}
 		if (joystickOp.getRawButton(5)) {
-			canTalonIntakeLeft.set(joystickRight.getY() * -1);
+			canTalonIntakeLeft.set(joystickOp.getY() * -1);
 		} else {
 			canTalonIntakeLeft.set(0);
 		}
 		if (joystickOp.getRawButton(6)) {
-			canTalonIntakeRight.set(joystickRight.getY()); // TODO: Motor needs to be reversed
+			canTalonIntakeRight.set(joystickOp.getY()); // TODO: Motor needs to be reversed
 		} else {
 			canTalonIntakeRight.set(0);
 		}
-
+		
 		// if (limitOptical.get()) {
 		// SmartDashboard.putString("Hit Limit?", "No");
 		// } else {
 		// SmartDashboard.putString("Hit Limit?", "Yes");
 		// }
-
+		
 		// TODO: LIMIT SENSOR IS HERE ^^^
-
+		
 		if (joystickOp.getRawButton(7)) {
-			canTalonElevator.set(joystickRight.getY() * -1);
+			canTalonElevator.set(joystickOp.getY() * -1);
 		} else {
 			canTalonElevator.set(0);
 		}
-
+		
 		if (joystickOp.getRawButton(8)) {
 			canTalonFrontLeft.set(0);
 			canTalonFrontRight.set(0);
@@ -596,7 +619,7 @@ public class Robot extends IterativeRobot {
 			canTalonIntakeLeft.set(0);
 			canTalonElevator.set(0);
 		}
-
+		
 		// piston testing code
 		if (joystickOp.getRawButton(9)) {
 			hugPiston.set(DoubleSolenoid.Value.kForward);
@@ -684,13 +707,9 @@ public class Robot extends IterativeRobot {
 		// Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
 		// // System.out.println("");
 
-		// System.out.println("Elevator Encoder: " + Robot.encoderElevator.get());
-		// System.out.println("Left Drive Encoder: " + Robot.encoderLeft.get());
-		// System.out.println("Right Drive Encoder: " + Robot.encoderRight.get());
-		// System.out.println("");
 		// @formatter:on
 	}
-
+	
 	/**
 	 * This function is called at the beginning of the robot being disabled
 	 */
@@ -699,9 +718,9 @@ public class Robot extends IterativeRobot {
 		// TODO: make this work with enable/disabling multiple times
 		debugWriter.println("Disabling");
 		debugWriter.close();
-
+		
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
 		// NIVision.IMAQdxStopAcquisition(camera_session);
 	}
-
+	
 }

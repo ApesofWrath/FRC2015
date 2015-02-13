@@ -41,8 +41,8 @@ public class RobotMap {
 	 */
 	
 	//limit switch channels
-	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 1;
-	public static final int ELEVATOR_LIMIT_BOTTOM_CHANNEL = 2;
+	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 5;
+	public static final int ELEVATOR_LIMIT_BOTTOM_CHANNEL = 4;
 	
 	//joystick ports
 	public static final int JOYSTICK_LEFT_PORT = 0;
@@ -65,7 +65,7 @@ public class RobotMap {
 	
 	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // TODO: make one button (2)
 	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10; // HUG PISTON
-//	public static final int MANUAL_INTAKE_BUTTON = 7;
+//	public static final int MANUAL_INTAKE_BUTTON = 7; // 6 in teleop
 //	public static final int MANUAL_OUTTAKE_BUTTON = 8;
 	//no longer used as intake wheels are on hat
 	public static final int INTAKE_PISTON_ACTIVATE_BUTTON = 7; // SWEEPER ARM
@@ -114,8 +114,8 @@ public class RobotMap {
 	public static final int ELEVATOR_ENCODER_A = 2;
 	public static final int ELEVATOR_ENCODER_B = 3;
 	
-	public static final int CORRECTION_INPUT = 4; // TODO Optical
-	public static final int LIMIT_INPUT = 5;
+	public static final int CORRECTION_INPUT = 6; // TODO Optical
+	public static final int LIMIT_INPUT = 7;
 	
 	//servo PWMs
 	public static final int CAMERA_SERVO_VERTICAL_PWM = 4;
@@ -128,7 +128,7 @@ public class RobotMap {
 	public static final int DOUBLE_SOLENOID_HUG_PCMID_EXPANSION = 1;
 
 	//pwms for the optical sensors used in the intake 
-	public static final int TOTE_OPTIC_DIO = 0;
+	public static final int TOTE_OPTIC_DIO = 0; // TODO: Kill?
 	public static final int BIN_OPTIC_DIO = 1;
 	
 	//miscellaneous canIDs
