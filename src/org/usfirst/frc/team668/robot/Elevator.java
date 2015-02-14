@@ -61,7 +61,6 @@ public class Elevator {
 	 */
 	public static boolean calibration(double speed) {
 		//this code requires proper sign on speed
-		speed = -speed; //elevator: down is positive
 		if (speed > 0) {
 			up = true;
 		} else if (speed < 0) {
@@ -76,6 +75,7 @@ public class Elevator {
 			done = true;
 		}
 
+		System.out.println("speed " + speed);
 		if (!done) {
 			Robot.canTalonElevator.set(speed);
 		} else {

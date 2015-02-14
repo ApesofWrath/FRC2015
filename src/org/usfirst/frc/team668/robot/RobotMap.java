@@ -136,7 +136,7 @@ public class RobotMap {
 	public static final int PDP_CANID = 20;
 
 	//encoder heights
-	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 325;
+	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 330;
 	public static final double ELEVATOR_ENCODER_SCORING = 0;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 0;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
@@ -184,7 +184,7 @@ public class RobotMap {
 	public static int currentState = DEFAULT_STATE;
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; //default is stop autonomous for now
-	
+
 	//debugging constant for test robot
 	public static boolean isTestRobot = false;
 	public static boolean cameraConnected = false;

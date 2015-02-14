@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @see Robot#testPeriodic()
  * @see Robot#disabledInit()
  * @see Robot#testInit()
+ * @see Robot#smartDashboardOutputs()
  * 
  * @see TeleopStateMachine#stateMachine(boolean, boolean, boolean, boolean, boolean, boolean, boolean)
  *
@@ -57,12 +58,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  */
 
+/*
+ * TODO List:
+ * Switch from manual mode to state machine
+ */
+
 public class Robot extends IterativeRobot {
 	
 	// start robot variable declarations
 	
 	public static double versionNumber = 3.2;
-	public static String versionName = "Spider Monkey";
+	public static String versionName = "Weresimian";
 	
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -73,6 +79,8 @@ public class Robot extends IterativeRobot {
 	// limitTop is default true, limitBottom is default true
 	public static Compressor compressor1;
 	public static DoubleSolenoid hugPiston, intakePiston;
+	//hug piston: kForward is closed
+	//intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move
 	public static RobotDrive robotDrive;
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
@@ -83,8 +91,9 @@ public class Robot extends IterativeRobot {
 	// camera variables
 	public static int camera_session;
 	
-	public static SendableChooser autonomousChooser, elevatorChooser;
+	public static SendableChooser autonomousChooser, elevatorChooser, manualChooser;
 	// for autonomous selection and elevator speed choosing. We added elevator speed selection radio buttons. This doesn't work yet.
+	// manual mode is to start teleop in manual control
 	
 	boolean buttonEightPressed = false; // for test to check if button 8 is
 										// pressed
@@ -244,6 +253,7 @@ public class Robot extends IterativeRobot {
 		// optimal elevator speed
 		elevatorChooser = new SendableChooser();
 		
+		// TODO: remove this because it's kind useless
 		elevatorChooser.addObject("0.1", 0.1);
 		elevatorChooser.addDefault("0.2", 0.2); // the default speed will be 0.2
 		elevatorChooser.addObject("0.3", 0.3);
@@ -256,6 +266,14 @@ public class Robot extends IterativeRobot {
 		elevatorChooser.addObject("1.0", 1.0);
 		
 		SmartDashboard.putData("Elevator Speed Chooser", elevatorChooser);
+		
+		manualChooser = new SendableChooser();
+		
+		manualChooser.addDefault("State Machine", RobotMap.INIT_STATE);
+		manualChooser.addObject("Manual Mode", RobotMap.MANUAL_OVERRIDE_STATE);
+		
+		SmartDashboard.putData("Manual Mode Chooser", manualChooser);
+		
 		
 	}
 	
@@ -281,7 +299,8 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
-		RobotMap.currentState = RobotMap.DEFAULT_STATE;
+		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
+		//stupid code meaning we set the start state to whatever's on the smartdashboard chooser
 	}
 	
 	/**
@@ -289,12 +308,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 		
-		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
-		SmartDashboard.putNumber("Left Encoder", encoderLeft.getDistance());
-		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
-//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
-		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
-		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
+		smartDashboardOutputs();
 		
 		// drive switch
 		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
@@ -321,50 +335,50 @@ public class Robot extends IterativeRobot {
 			buttonOnePressed = false;
 		}
 		
-		// if (RobotMap.cameraConnected) { // only run if we have a cameras
-		//
-		// Image frame = null;
-		// if (picture_taking) {
-		// if (cameraTimer == 0) {
-		// cameraTimer = System.currentTimeMillis();
-		// }
-		// frame = CameraThreads.takePicture(camera_session);
-		// if (frame != null) {
-		// picture_writing = true;
-		// picture_taking = false;
-		// System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-		// cameraTimer = 0;
-		// }
-		// }
-		// if (picture_writing) {
-		// try {
-		// if (cameraTimer == 0) {
-		// cameraTimer = System.currentTimeMillis();
-		// }
-		// boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
-		// if (finished) {
-		// System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
-		// picture_writing = false;
-		// picture_taking = false;
-		// cameraTimer = 0;
-		// frame = null;
-		// }
-		// } catch (VisionException e) {
-		// System.out.println("no usb for picture");
-		// }
-		// }
-		// // to make sure we don't take too many pictures in one press
-		// if (joystickOp.getRawButton(1)) {
-		// buttonOnePressed = true;
-		// } else {
-		// buttonOnePressed = false;
-		// debugWriter.println("no usb for picture");
-		// picture_taking = false;
-		// picture_writing = false;
-		// cameraTimer = 0;
-		// frame = null;
-		// }
-		// } // end if(cameraConnected)
+		if (RobotMap.cameraConnected) { // only run if we have a cameras
+
+			Image frame = null;
+			if (picture_taking) {
+				if (cameraTimer == 0) {
+					cameraTimer = System.currentTimeMillis();
+				}
+				frame = CameraThreads.takePicture(camera_session);
+				if (frame != null) {
+					picture_writing = true;
+					picture_taking = false;
+					System.out.println("Take picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+					cameraTimer = 0;
+				}
+			}
+			if (picture_writing) {
+				try {
+					if (cameraTimer == 0) {
+						cameraTimer = System.currentTimeMillis();
+					}
+					boolean finished = CameraThreads.savePicture(frame, "/u/teleop" + System.currentTimeMillis() + ".png");
+					if (finished) {
+						System.out.println("Save picture in " + new Long(System.currentTimeMillis() - cameraTimer));
+						picture_writing = false;
+						picture_taking = false;
+						cameraTimer = 0;
+						frame = null;
+					}
+				} catch (VisionException e) {
+					System.out.println("no usb for picture");
+				}
+			}
+			// to make sure we don't take too many pictures in one press
+			if (joystickOp.getRawButton(1)) {
+				buttonOnePressed = true;
+			} else {
+				buttonOnePressed = false;
+				debugWriter.println("no usb for picture");
+				picture_taking = false;
+				picture_writing = false;
+				cameraTimer = 0;
+				frame = null;
+			}
+		} // end if(cameraConnected)
 		
 		// state machine
 		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
@@ -376,7 +390,6 @@ public class Robot extends IterativeRobot {
 		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
 		if (!RobotMap.isTestRobot) {
 			System.out.println(RobotMap.currentState);
-			SmartDashboard.putNumber("state", RobotMap.currentState);
 			TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isAbort);
 		}
 		
@@ -388,7 +401,7 @@ public class Robot extends IterativeRobot {
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
 		// this opens and closes the intake piston
-		if (isIntakePistonOn) {
+		if (isIntakePistonOn) { 
 			intakePiston.set(DoubleSolenoid.Value.kForward);
 		}
 		if (isIntakePistonOff) {
@@ -403,9 +416,9 @@ public class Robot extends IterativeRobot {
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
 			
-			if (isHugPistonOn) {
+			if (isHugPistonOn) { //closes piston
 				hugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isHugPistonOff) {
+			} else if (isHugPistonOff) { //opens piston
 				hugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
 			
@@ -665,6 +678,22 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
 		// NIVision.IMAQdxStopAcquisition(camera_session);
+	}
+	
+	/**
+	 * This function is called in teleopPeriodic to print out all of the smartdashboard stuff
+	 */
+	public void smartDashboardOutputs() {
+		
+		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
+		SmartDashboard.putNumber("Left Encoder", encoderLeft.getDistance());
+		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
+//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
+		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
+		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().equals(DoubleSolenoid.Value.kForward));
+		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().equals(DoubleSolenoid.Value.kForward));
+		SmartDashboard.putNumber("State", RobotMap.currentState);
 	}
 	
 }
