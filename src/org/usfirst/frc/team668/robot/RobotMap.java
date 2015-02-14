@@ -50,6 +50,9 @@ public class RobotMap {
 	public static final int JOYSTICK_OP_PORT = 2;
 	
 	//Joystick Left
+	public static final int MINIMIZE_DRIVE_SPEED_BUTTON = 2;
+	
+	//Joystick Right
 	public static final int TANK_DRIVE_BUTTON = 6;
 	public static final int ARCADE_DRIVE_BUTTON = 7;
 	
@@ -62,6 +65,8 @@ public class RobotMap {
 	public static final int SCORING_BUTTON = 3;
 	public static final int LIFT_BUTTON = 2;
 	public static final int REVERSING_BUTTON = 1;
+	public static final int TOTE_HEIGHT_BUTTON = 9;
+	public static final int PRETEND_BIN_DETECTED_BUTTON = 10;
 	
 	public static final int MANUAL_PISTON_ACTIVATE_BUTTON = 9; // close hug pistons
 	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON = 10; // open hug pistons
@@ -102,7 +107,7 @@ public class RobotMap {
 	public static final int ELEVATOR_MOTOR_CANID = 7;
 
 	//motor speeds
-	public static final double INTAKE_MOTOR_SPEED = 0.75;
+	public static final double INTAKE_MOTOR_SPEED = 0.65;
 	public static double elevatorMotorSpeed = -1.0; // This is not final because we change it based on the SmartDashboard
 
 	//encoder PWMs
@@ -137,7 +142,7 @@ public class RobotMap {
 
 	//encoder heights
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 395;
-	public static final double ELEVATOR_ENCODER_SCORING = 10;
+	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 10;
 	public static final double ELEVATOR_ENCODER_GROUND = 10;
 	public static final double ELEVATOR_ENCODER_PICKUP = 10; //pickup tote height
@@ -160,7 +165,7 @@ public class RobotMap {
 	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 9;
 	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
 	public static final int MANUAL_OVERRIDE_STATE = 11;
-	public static final int WAITING_FOR_REVERSE_INTAKE = 12;
+	public static final int WAITING_FOR_REVERSE_INTAKE_STATE = 12;
 	public static final int ELEVATOR_ADJUST_UP_STATE = 14; //happens after init to keep elevator resting at encoder value slightly higher than limit switch
 
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
@@ -194,4 +199,6 @@ public class RobotMap {
 	
 	
 	public static double ELEVATOR_CURRENT_STOP = 0;
+	
+	public static final double MINIMIZING_FACTOR = 0.8;
 }

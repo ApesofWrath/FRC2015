@@ -63,6 +63,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Finished -> Fix No-Tote inefficiency
  * Manual intake piston automatic
  * Make a new state machine diagram
+ * Autonomous with one tote
  */
 
 public class Robot extends IterativeRobot {
@@ -81,8 +82,8 @@ public class Robot extends IterativeRobot {
 	// limitTop is default true, limitBottom is default true
 	public static Compressor compressor1;
 	public static DoubleSolenoid hugPiston, intakePiston;
-	//hug piston: kForward is closed
-	//intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move
+	// hug piston: kForward is closed
+	// intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move
 	public static RobotDrive robotDrive;
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
@@ -94,7 +95,8 @@ public class Robot extends IterativeRobot {
 	// camera variables
 	public static int camera_session;
 	
-	public static SendableChooser autonomousChooser, elevatorChooser, manualChooser;
+	public static SendableChooser autonomousChooser, elevatorChooser,
+			manualChooser;
 	// for autonomous selection and elevator speed choosing. We added elevator speed selection radio buttons. This doesn't work yet.
 	// manual mode is to start teleop in manual control
 	
@@ -277,7 +279,6 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putData("Manual Mode Chooser", manualChooser);
 		
-		
 	}
 	
 	/**
@@ -303,7 +304,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
 		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
-		//stupid code meaning we set the start state to whatever's on the smartdashboard chooser
+		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
 	}
 	
 	/**
@@ -322,9 +323,18 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (isTankDrive) { // tank drive
-			robotDrive.tankDrive(joystickLeft, joystickRight);
+			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_BUTTON)) {
+				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
+			} else {
+				robotDrive.tankDrive(joystickLeft, joystickRight);
+			}
 		} else { // split arcade
-			robotDrive.drive(joystickRight.getY(), joystickLeft.getX());
+			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_BUTTON)) {
+				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickLeft.getX() * RobotMap.MINIMIZING_FACTOR);
+			} else {
+				robotDrive.drive(joystickRight.getY(), joystickLeft.getX());
+			}
+			
 		}
 		
 		// camera code beginning
@@ -338,8 +348,8 @@ public class Robot extends IterativeRobot {
 			buttonOnePressed = false;
 		}
 		
-		if (RobotMap.cameraConnected) { // only run if we have a cameras
-
+		if (RobotMap.cameraConnected) { // only run if we have a camera
+		
 			Image frame = null;
 			if (picture_taking) {
 				if (cameraTimer == 0) {
@@ -390,10 +400,11 @@ public class Robot extends IterativeRobot {
 		boolean isScoring = joystickOp.getRawButton(RobotMap.SCORING_BUTTON);
 		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
 		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
+		boolean isToteHeight = joystickOp.getRawButton(RobotMap.TOTE_HEIGHT_BUTTON);
 		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
 		if (!RobotMap.isTestRobot) {
 			System.out.println(RobotMap.currentState);
-			TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isAbort);
+			TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isToteHeight, isAbort);
 		}
 		
 		// declaring buttons for intake pistons
@@ -404,7 +415,7 @@ public class Robot extends IterativeRobot {
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
 		// this opens and closes the intake piston
-		if (isIntakePistonOn) { 
+		if (isIntakePistonOn) {
 			intakePiston.set(DoubleSolenoid.Value.kForward);
 		}
 		if (isIntakePistonOff) {
@@ -419,9 +430,9 @@ public class Robot extends IterativeRobot {
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
 			
-			if (isHugPistonOn) { //closes piston
+			if (isHugPistonOn) { // closes piston
 				hugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isHugPistonOff) { //opens piston
+			} else if (isHugPistonOff) { // opens piston
 				hugPiston.set(DoubleSolenoid.Value.kReverse);
 			}
 			
@@ -517,7 +528,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.getDistance());
 		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.getDistance());
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
-//		SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
+		// SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // Inverse needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
 		
@@ -587,9 +598,9 @@ public class Robot extends IterativeRobot {
 			hugPiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		if (joystickOp.getRawButton(11)) {
-			intakePiston.set(DoubleSolenoid.Value.kForward); //close intake
+			intakePiston.set(DoubleSolenoid.Value.kForward); // close intake
 		} else if (joystickOp.getRawButton(12)) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse); //open intake
+			intakePiston.set(DoubleSolenoid.Value.kReverse); // open intake
 		}
 		//
 		// // method testing code
@@ -694,8 +705,12 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Tote Optic", toteOptic.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
-		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().equals(DoubleSolenoid.Value.kForward));
-		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().equals(DoubleSolenoid.Value.kForward));
+		try {
+			SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().equals(DoubleSolenoid.Value.kForward));
+			SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().equals(DoubleSolenoid.Value.kForward));
+		} catch (Exception e) {
+			
+		}
 		SmartDashboard.putNumber("State", RobotMap.currentState);
 	}
 	

@@ -120,11 +120,13 @@ public class Elevator {
 	 */
 	private static boolean checkDemSwitches() {
 		if (!Robot.limitBottom.get() && !up) {
+			System.out.println("elevator reset");
 			Robot.encoderElevator.reset();
 			return true;
 		} else if (!Robot.limitTop.get() && up) {
 			return true;
 		} else if (!Robot.limitBottom.get() && up) {
+			System.out.println("elevator reset");
 			Robot.encoderElevator.reset();
 		}
 		return false;

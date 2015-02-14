@@ -34,7 +34,7 @@ public class TeleopStateMachine {
 	private static double encoderCounter = -1;
 	private static long reverseTimer = -1;
 	
-	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isGround, boolean isLift, boolean isManual, boolean isReversing, boolean isAbort) {
+	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isGround, boolean isLift, boolean isManual, boolean isReversing, boolean isToteHeight, boolean isAbort) {
 		
 		// sets to manual override, which turns off the state machine
 		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
@@ -45,6 +45,7 @@ public class TeleopStateMachine {
 		// state machine switch statement based on our current state
 		switch (RobotMap.currentState) {
 			case RobotMap.INIT_STATE: // Makes the elevator go down to the bottom level
+				SmartDashboard.putString("State:", "Initializing");
 				if (!Robot.intakePiston.get().equals(DoubleSolenoid.Value.kReverse))
 					Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 				boolean finish = Elevator.calibration(-0.8); // TODO: magic number
@@ -60,8 +61,9 @@ public class TeleopStateMachine {
 				break;
 				
 			case RobotMap.ELEVATOR_ADJUST_UP_STATE: // makes elevator go up a bit after init
+				SmartDashboard.putString("State:", "Elevator Adjust Up");
 				
-				boolean moveFinish = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP); //should be about 10
+				boolean moveFinish = Elevator.move(0.5, RobotMap.ELEVATOR_ENCODER_PICKUP); //should be about 10
 				if (moveFinish == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Wait for button state\n");
@@ -75,7 +77,7 @@ public class TeleopStateMachine {
 				// - RobotMap.CURRENT_DEAD_ZONE) {
 				// RobotMap.elevatorMotorEmptyDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
 				// }
-				
+				SmartDashboard.putString("State:", "Elevator Height Tote");
 				boolean done = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
 				
 				if (done == true) {
@@ -87,6 +89,7 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.WAIT_FOR_BUTTON_STATE:// lets the operator choose the command
+				SmartDashboard.putString("State:", "Wait for Button");
 				if (isLift) {
 					Robot.debugWriter.println("Wait for Game Piece State\n");
 					RobotMap.currentState = RobotMap.WAIT_FOR_GAME_PIECE_STATE;
@@ -101,7 +104,10 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Elevator Height Ground State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
 				}
-				
+				if (isToteHeight){
+					Robot.debugWriter.println("Elevator Tote Height State\n");
+					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
+				}
 				if (isScoring) {
 					Robot.debugWriter.println("Elevator Height Scoring State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
@@ -110,9 +116,10 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.WAIT_FOR_GAME_PIECE_STATE: // waits for the objective to be within sight of their respective optical sensor
+				SmartDashboard.putString("State:", "Wait for Game Piece");
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
-				if (Robot.toteOptic.get()) {
+				if (Robot.toteOptic.get() || Robot.joystickOp.getRawButton(RobotMap.PRETEND_BIN_DETECTED_BUTTON) == true) {
 					RobotMap.itemCount++;
 					Intake.stop();
 					SmartDashboard.putNumber("Number of Items", RobotMap.itemCount);
@@ -154,6 +161,7 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.ELEVATOR_ADJUST_STATE:
+				SmartDashboard.putString("State:", "Elevator Adjust");
 				
 				if (encoderCounter < 0) { // keeps track of elevator
 					encoderCounter = Robot.encoderElevator.getDistance();
@@ -168,6 +176,7 @@ public class TeleopStateMachine {
 				}
 				
 			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
+				SmartDashboard.putString("State:", "Open Hug Pistons");
 				
 				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 				
@@ -192,6 +201,7 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
+				SmartDashboard.putString("State:", "Elevator Down");
 				
 				// sets intake piston to open if it isn't open yet
 				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
@@ -219,6 +229,7 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.CLOSE_HUG_PISTONS_STATE: // closes the hug pistons and clamps objective
+				SmartDashboard.putString("State:", "Close Hug Pistons");
 				
 				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kForward)) {
 					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
@@ -235,13 +246,14 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE:// sets to coopertition plate height
+				SmartDashboard.putString("State:", "Elevator Height Coopertition");
 				
 				boolean finishCoop = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_COOPERTITION);
 				
 				if (finishCoop == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
-					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE;
 				}
 				if (isAbort) {
 					if (RobotMap.itemCount == 0) { //if we have no totes, go down but not up
@@ -254,14 +266,15 @@ public class TeleopStateMachine {
 				}
 				break;
 			
-			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform
-														// height
+			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform height
+				SmartDashboard.putString("State:", "Elevator Height Scoring");	
+				
 				boolean finishScore = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_SCORING);
 				
 				if (finishScore == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
-					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE;
 				}
 				if (isAbort) {
 					if (RobotMap.itemCount == 0) { //if we have no totes, go down but not up
@@ -275,13 +288,14 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_GROUND_STATE:// sets to ground height
+				SmartDashboard.putString("State:", "Elevator Height Ground");
 				
 				boolean finishGround = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
 				
 				if (finishGround == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
-					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE;
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE;
 				}
 				if (isAbort) {
 					if (RobotMap.itemCount == 0) { //if we have no totes, go down but not up
@@ -294,8 +308,8 @@ public class TeleopStateMachine {
 				}
 				break;
 			
-			case RobotMap.WAITING_FOR_REVERSE_INTAKE:
-				
+			case RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE:
+				SmartDashboard.putString("State:", "Waiting for Reverse Intake");
 				if (isReversing) {
 					Robot.debugWriter.println("Reverse Intake Motors State\n");
 					RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
@@ -315,18 +329,22 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.REVERSE_INTAKE_MOTORS_STATE: // reverses motors and spits out
+				SmartDashboard.putString("State:", "Reverse Intake Motors");
 				
 				/*
 				 * This if statement checks if the talons are not driving at empty current,
 				 * implying that they are still pushing a tote out
 				 */
-				if (reverseTimer < 0) {
-					reverseTimer = System.currentTimeMillis();
-				}
+				//commenting timer out; not sure why we are using it
+				//better to have operator hold fire button
+//				if (reverseTimer < 0) {
+//					reverseTimer = System.currentTimeMillis();
+//				}
 				
-				if (System.currentTimeMillis() - reverseTimer < 3000) // 3 seconds
+//				if (System.currentTimeMillis() - reverseTimer < 3000) // 3 seconds
+				if (isReversing) //while the operator holds reverse button, outtake
 				{
-					Intake.spin(-0.4); //TODO: magic number
+					Intake.spin(-0.35); //TODO: magic number
 					//go slower when we outtake
 				} else {
 					Intake.stop();
@@ -344,6 +362,7 @@ public class TeleopStateMachine {
 				 * Manual override does not do anything; it simply overrides the state machine
 				 * All the actual manual override stuff is in Robot.java
 				 */
+				SmartDashboard.putString("State:", "Manual Override"); 
 				break;
 		}
 	}
