@@ -1,7 +1,6 @@
 package org.usfirst.frc.team668.robot;
 
 import java.io.File;
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -61,6 +60,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /*
  * TODO List:
  * Switch from manual mode to state machine
+ * Finished -> Fix No-Tote inefficiency
+ * Manual intake piston automatic
+ * Make a new state machine diagram
  */
 
 public class Robot extends IterativeRobot {
@@ -75,7 +77,7 @@ public class Robot extends IterativeRobot {
 			canTalonRearLeft, canTalonRearRight, canTalonIntakeLeft,
 			canTalonIntakeRight, canTalonElevator;
 	public static Encoder encoderLeft, encoderRight, encoderElevator;
-	public static DigitalInput limitTop, limitBottom, toteOptic, binOptic; // TODO: Remove?
+	public static DigitalInput limitTop, limitBottom;
 	// limitTop is default true, limitBottom is default true
 	public static Compressor compressor1;
 	public static DoubleSolenoid hugPiston, intakePiston;
@@ -87,6 +89,7 @@ public class Robot extends IterativeRobot {
 	public static Scanner continuousVarsReader;
 	public static Timer t;
 	public static DigitalInput correctionOptical, limitOptical;
+	public static DigitalInput toteOptic; // senses if we have tote
 	
 	// camera variables
 	public static int camera_session;
@@ -137,9 +140,9 @@ public class Robot extends IterativeRobot {
 		// TODO: Physical Limit Switches
 		limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
 		limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
+		toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
 		
 		if (!RobotMap.isTestRobot) {
-			// toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
 			// binOptic = new DigitalInput(RobotMap.BIN_OPTIC_DIO);
 			// encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
 			
@@ -423,9 +426,9 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if (isBackwardsIntake) { // outtake
-				Intake.spin(-1.0);
+				Intake.spin(-0.75);
 			} else if (isForwardIntake) { // intake
-				Intake.spin(1.0);
+				Intake.spin(0.75);
 			} else {
 				Intake.stop();
 			}
@@ -688,7 +691,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
 		SmartDashboard.putNumber("Left Encoder", encoderLeft.getDistance());
 		SmartDashboard.putNumber("Right Encoder", encoderRight.getDistance());
-//		SmartDashboard.putBoolean("Optical Limit", limitOptical.get());
+		SmartDashboard.putBoolean("Tote Optic", toteOptic.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
 		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().equals(DoubleSolenoid.Value.kForward));

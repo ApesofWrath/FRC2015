@@ -74,6 +74,9 @@ public class Elevator {
 		if (checkDemSwitches()) {
 			done = true;
 		}
+		else {
+			done = false;
+		}
 
 		System.out.println("speed " + speed);
 		if (!done) {

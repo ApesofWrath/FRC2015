@@ -102,8 +102,8 @@ public class RobotMap {
 	public static final int ELEVATOR_MOTOR_CANID = 7;
 
 	//motor speeds
-	public static final double INTAKE_MOTOR_SPEED = 0.5;
-	public static double elevatorMotorSpeed = -0.5; // This is not final because we change it based on the SmartDashboard
+	public static final double INTAKE_MOTOR_SPEED = 0.75;
+	public static double elevatorMotorSpeed = -1.0; // This is not final because we change it based on the SmartDashboard
 
 	//encoder PWMs
 	public static final int DRIVE_ENCODER_LEFT_A = 8;
@@ -113,7 +113,7 @@ public class RobotMap {
 	
 	public static final int ELEVATOR_ENCODER_A = 2;
 	public static final int ELEVATOR_ENCODER_B = 3;
-	
+
 	public static final int CORRECTION_INPUT = 6; // TODO Optical
 	public static final int LIMIT_INPUT = 7;
 	
@@ -128,7 +128,7 @@ public class RobotMap {
 	public static final int DOUBLE_SOLENOID_HUG_PCMID_EXPANSION = 1;
 
 	//pwms for the optical sensors used in the intake 
-	public static final int TOTE_OPTIC_DIO = 0; // TODO: Kill?
+	public static final int TOTE_OPTIC_DIO = 7;
 	public static final int BIN_OPTIC_DIO = 1;
 	
 	//miscellaneous canIDs
@@ -136,10 +136,11 @@ public class RobotMap {
 	public static final int PDP_CANID = 20;
 
 	//encoder heights
-	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 330;
-	public static final double ELEVATOR_ENCODER_SCORING = 0;
-	public static final double ELEVATOR_ENCODER_COOPERTITION = 0;
-	public static final double ELEVATOR_ENCODER_GROUND = 0;
+	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 395;
+	public static final double ELEVATOR_ENCODER_SCORING = 10;
+	public static final double ELEVATOR_ENCODER_COOPERTITION = 10;
+	public static final double ELEVATOR_ENCODER_GROUND = 10;
+	public static final double ELEVATOR_ENCODER_PICKUP = 10; //pickup tote height
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	public static final double ELEVATOR_ENCODER_DEADZONE = 1.0; // TODO: LOS ERRORES SON AQUI (CON ACCENTO SOBRE EL I)
 		
@@ -148,6 +149,7 @@ public class RobotMap {
 	public static final int ELEVATOR_HEIGHT_TOTE_STATE = 1;
 	public static final int WAIT_FOR_BUTTON_STATE = 2;
 	public static final int WAIT_FOR_GAME_PIECE_STATE = 3;
+	public static final int ELEVATOR_ADJUST_STATE = 13; //happens before we open hug pistons to adjust elevator 
 	public static final int OPEN_HUG_PISTONS_STATE = 4;
 	public static final int DRIVE_BACKWARDS_STATE = 1000;
 	public static final int ELEVATOR_DOWN_STATE = 5;
@@ -159,6 +161,7 @@ public class RobotMap {
 	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
 	public static final int MANUAL_OVERRIDE_STATE = 11;
 	public static final int WAITING_FOR_REVERSE_INTAKE = 12;
+	public static final int ELEVATOR_ADJUST_UP_STATE = 14; //happens after init to keep elevator resting at encoder value slightly higher than limit switch
 
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
