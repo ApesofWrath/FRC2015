@@ -42,6 +42,14 @@ public class TeleopStateMachine {
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
 		}
 		
+		if (isReversing && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) //while the operator holds reverse button, outtake
+		{
+			Intake.spin(RobotMap.OUTTAKE_MOTOR_SPEED);
+			//go slower when we outtake
+		} else {
+			Intake.stop();
+		}
+		
 		// state machine switch statement based on our current state
 		switch (RobotMap.currentState) {
 			case RobotMap.INIT_STATE: // Makes the elevator go down to the bottom level
@@ -49,11 +57,15 @@ public class TeleopStateMachine {
 				if (!Robot.intakePiston.get().equals(DoubleSolenoid.Value.kReverse)) {
 					Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 				}
+				
+				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kReverse)) {
+					ToteGrabber.moveHugPistons(false);
+				}
+				
 				boolean finish = Elevator.calibration(-0.8); // TODO: magic number
 				
 				if (finish == true) {
 					Elevator.stop();
-					ToteGrabber.moveHugPistons(false);
 					Robot.debugWriter.println("Adjust up state\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_UP_STATE;
 					//changed at request of Weissman to go down but not up when we have no totes
@@ -159,10 +171,10 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.TIME_DELAY_AFTER_TOTE_SENSE_STATE: //waits after getting a game piece
-				if (reverseTimer <= 0) { //timer to wait for 50 ms
+				if (reverseTimer < 0) { //timer to wait for 10 ms
 					reverseTimer = System.currentTimeMillis();
 				}
-				if ((System.currentTimeMillis() - reverseTimer) > 50) {
+				if ((System.currentTimeMillis() - reverseTimer) > 10) {
 					reverseTimer = -1;
 					RobotMap.itemCount++;
 					Intake.stop();
@@ -245,7 +257,7 @@ public class TeleopStateMachine {
 				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kForward)) { //closes hug pistons
 					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 				}
-				if (reverseTimer <= 0) { // using same timer to wait a little before closing intake piston
+				if (reverseTimer < 0) { // using same timer to wait a little before closing intake piston
 					reverseTimer = System.currentTimeMillis();
 				}
 				SmartDashboard.putNumber("Start Time", reverseTimer);

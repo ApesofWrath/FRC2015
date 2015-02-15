@@ -76,9 +76,9 @@ public class RobotMap {
 	public static final int MANUAL_OVERRIDE_BUTTON				= 11;
 	public static final int ABORT_BUTTON						= 12;
 	// MANUAL OVERRIDE
-	public static final int RETURN_TO_STATE_MACHINE_BUTTON		= 1;
+	public static final int EMPTY_OP_MANUAL_1_BUTTON			= 1;	// TODO: EMPTY //Don't use this though
 	public static final int EMPTY_OP_MANUAL_2_BUTTON			= 2;	// TODO: EMPTY
-	public static final int EMPTY_OP_MANUAL_3_BUTTON			= 3;	// TODO: EMPTY
+	public static final int RETURN_TO_STATE_MACHINE_BUTTON		= 3;
 	public static final int MANUAL_INTAKE_BUTTON				= 4;
 	public static final int EMPTY_OP_MANUAL_5_BUTTON			= 5;	// TODO: EMPTY
 	public static final int MANUAL_OUTTAKE_BUTTON				= 6;	// at the request of Sean
@@ -261,7 +261,7 @@ public class RobotMap {
 	
 	// motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.65;
-	public static final double OUTTAKE_MOTOR_SPEED = -0.4;
+	public static final double OUTTAKE_MOTOR_SPEED = -0.4; //Maybe -0.2?
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
