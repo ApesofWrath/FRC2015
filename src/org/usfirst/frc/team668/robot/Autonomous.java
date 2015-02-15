@@ -26,6 +26,25 @@ public class Autonomous {
 					}
 					break;
 				}
+			case RobotMap.TOTE_GRAB_AUTONOMOUS:
+				
+				
+//				switch() { // TODO: Delete this
+//					RobotMap.AUTONOMOUS_STATE = 1;
+//					case asiodjfaoisdj:
+//						djf;oiashdf;oia
+//						as;odifj;s
+//						break;
+//						
+//				}
+				break;
+			
+			case RobotMap.BIN_GRAB_AUTONOMOUS:
+				break;
+			
+			case RobotMap.TOTE_STACK_AUTONOMOUS:
+				break;
+				
 			// TODO: Write new autonomous code
 		}
 	}

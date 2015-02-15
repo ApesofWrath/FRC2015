@@ -59,19 +59,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * TODO List:
- * Switch from manual mode to state machine
- * Finished -> Fix No-Tote inefficiency
+ * Switch from manual mode to state machine <----------- Written
+ * Finished -> Fix No-Tote inefficiency <--------------- Finished
  * Manual intake piston automatic
- * Make a new state machine diagram
+ * Make a new state machine diagram <------------------- Finished
  * Autonomous with one tote
+ * Prettify
+ * -> Remove magic numbers
  */
 
 public class Robot extends IterativeRobot {
 	
 	// start robot variable declarations
 	
-	public static double versionNumber = 3.2;
-	public static String versionName = "Weresimian";
+	public static double versionNumber = 3.3;
+	public static String versionName = "Gorilla";
 	
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -107,6 +109,7 @@ public class Robot extends IterativeRobot {
 	long cameraTimer = 0;
 	boolean isTankDrive = true;
 	boolean buttonOnePressed = false;
+	boolean buttonSevenPressed = false;
 	
 	// end declarations
 	
@@ -304,6 +307,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		debugWriter.println("Beginning teleop\n");
 		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
+		RobotMap.itemCount = 0;
 		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
 	}
 	
@@ -408,17 +412,24 @@ public class Robot extends IterativeRobot {
 		}
 		
 		// declaring buttons for intake pistons
-		boolean isIntakePistonOn = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_ACTIVATE_BUTTON);
-		boolean isIntakePistonOff = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_DEACTIVATE_BUTTON);
 		
 		/*
 		 * NOTE: we are checking intakePistons out of manual control and out of teleopstatemachine This is because we want to be able to open and close the pistons whether or not we are running statemachine
 		 */
 		// this opens and closes the intake piston
-		if (isIntakePistonOn) {
+		
+//		boolean isIntake = joystickOp.getRawButton(RobotMap.INTAKE_PISTON_BUTTON); TODO: Use this.
+//		if (isIntake && !buttonSevenPressed) {
+//			if (intakePiston.get().equals(DoubleSolenoid.Value.kReverse)) {
+//				intakePiston.set(DoubleSolenoid.Value.kForward);
+//			} else {
+//				intakePiston.set(DoubleSolenoid.Value.kReverse);
+//			}
+//		}
+//		buttonSevenPressed = isIntake;
+		if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_BUTTON)) {
 			intakePiston.set(DoubleSolenoid.Value.kForward);
-		}
-		if (isIntakePistonOff) {
+		} else if (joystickOp.getRawButton(8)) {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		
@@ -506,7 +517,7 @@ public class Robot extends IterativeRobot {
 			// }
 			// end optical stop code
 		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
-	} // end function teleopPeriodic
+	}// end function teleopPeriodic
 	
 	/**
 	 * This function is called when test mode starts.

@@ -4,6 +4,8 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.RGBValue;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
  * The class CameraThreads can run threads for taking and saving pictures to allow us to
  * simultaneously run code and take pictures.
@@ -124,6 +126,19 @@ class TakePictureThread implements Runnable {
 		NIVision.IMAQdxGrab(camera_session, pic, 1);
 		NIVision.IMAQdxStopAcquisition(camera_session);
 		picture_taken = true;
+	}
+	
+}
+
+/**
+ * Run this at the beginning of teleop to put the camera feed on the dashboard
+ */
+class DashboardThread implements Runnable {
+	public boolean enabled; //tells if we are connected to the robot
+	public void run() {
+		while (!Thread.interrupted() && enabled) {
+			
+		}
 	}
 	
 }
