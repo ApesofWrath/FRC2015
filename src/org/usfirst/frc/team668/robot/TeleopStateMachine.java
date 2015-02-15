@@ -171,13 +171,15 @@ public class TeleopStateMachine {
 				break;
 			
 			case RobotMap.TIME_DELAY_AFTER_TOTE_SENSE_STATE: //waits after getting a game piece
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				if (reverseTimer < 0) { //timer to wait for 10 ms
 					reverseTimer = System.currentTimeMillis();
 				}
 				if ((System.currentTimeMillis() - reverseTimer) > 10) {
 					reverseTimer = -1;
 					RobotMap.itemCount++;
-					Intake.stop();
+//					Intake.stop();
+					//to be done in closehugpistons state
 					SmartDashboard.putNumber("Number of Items", RobotMap.itemCount);
 					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_STATE;
 				}
@@ -185,6 +187,8 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_ADJUST_STATE:
 				SmartDashboard.putString("State:", "Elevator Adjust");
+				
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
 				if (encoderCounter < 0) { // keeps track of elevator
 					encoderCounter = Robot.encoderElevator.getDistance();
@@ -200,6 +204,8 @@ public class TeleopStateMachine {
 				
 			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
 				SmartDashboard.putString("State:", "Open Hug Pistons");
+				
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
 				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 				
@@ -225,6 +231,8 @@ public class TeleopStateMachine {
 			
 			case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
 				SmartDashboard.putString("State:", "Elevator Down");
+				
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
 				// sets intake piston to open if it isn't open yet
 				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
@@ -254,6 +262,8 @@ public class TeleopStateMachine {
 			case RobotMap.CLOSE_HUG_PISTONS_STATE: // closes the hug pistons and clamps objective
 				SmartDashboard.putString("State:", "Close Hug Pistons");
 				
+				Intake.stop();
+				
 				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kForward)) { //closes hug pistons
 					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 				}
@@ -265,8 +275,8 @@ public class TeleopStateMachine {
 				if ((System.currentTimeMillis() - reverseTimer) > 100) {
 					reverseTimer = -1;
 					Robot.intakePiston.set(DoubleSolenoid.Value.kReverse); // open intake piston
-					Robot.debugWriter.println("Elevator Height Coopertition State\n");
-					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;// sets to one tote height
+					Robot.debugWriter.println("Wait for Button State\n");
+					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;// sets to one tote height
 				}
 				break;
 			
@@ -394,8 +404,17 @@ public class TeleopStateMachine {
 				}
 				break;
 				
-			case RobotMap.MANUAL_OVERRIDE_RETURN_STATE: // Init without closing the clamps
+			case RobotMap.MANUAL_OVERRIDE_RETURN_STATE: // Init with closing the clamps optional
 				SmartDashboard.putString("State:", "Returning from Override");
+				
+				boolean clampsClosed = (boolean) Robot.clampStartChooser.getSelected();
+				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kReverse) && !clampsClosed) {
+					ToteGrabber.moveHugPistons(false);
+				}
+				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kForward) && clampsClosed) {
+					ToteGrabber.moveHugPistons(true);
+				}
+				
 				if (!Robot.intakePiston.get().equals(DoubleSolenoid.Value.kReverse)) {
 					Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 				}

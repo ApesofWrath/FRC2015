@@ -68,10 +68,10 @@ public class RobotMap {
 	public static final int SCORING_BUTTON						= 3;
 	public static final int GROUND_BUTTON						= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
-	public static final int TOTE_HEIGHT_BUTTON					= 6;
+	public static final int PRETEND_BIN_DETECTED_BUTTON			= 6;
 	public static final int INTAKE_PISTON_BUTTON				= 7;	// SWEEPER ARM
 	public static final int EMPTY_OP_NORMAL_8_BUTTON			= 8;	// TODO: EMPTY
-	public static final int PRETEND_BIN_DETECTED_BUTTON			= 9;
+	public static final int TOTE_HEIGHT_BUTTON					= 9;
 	public static final int EMPTY_OP_NORMAL_10_BUTTON			= 10;	// TODO: EMPTY
 	public static final int MANUAL_OVERRIDE_BUTTON				= 11;
 	public static final int ABORT_BUTTON						= 12;
@@ -183,6 +183,11 @@ public class RobotMap {
 	public static final int CELEBRATE_SUCCESS = 5;  // spin in circles like Atlas celebrating success
 													// recursion =)
 	
+	// autonomous tote grab state machine
+	public static int autonToteGrabState = 0;
+	public static final int AUTON_TOTE_GRAB_INTAKE_STATE = 0;
+	public static final int AUTON_TOTE_GRAB_DRIVE_STATE = 1;
+	
 	// @formatter:off
 	
 	/*
@@ -246,13 +251,16 @@ public class RobotMap {
 	public static final double CURRENT_DEAD_ZONE = 0.0; // This needs some help.
 	
 	public static double ELEVATOR_CURRENT_STOP = 0;
-	// }
 	
 	// constants for autonomous
 	public static final double AUTONOMOUS_SPEED = 0.5;
 	public static final double AUTONOMOUS_CURVE = 0;
-	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function
-	public static final int STOP = 10; // This is how far the robot should go in FORWARD_AUTONOMOUS
+	public static final double TOTE_CURVE = 0.0;
+	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function || Milliseconds
+	public static final int STOP = 100; // This is how far the robot should go in FORWARD_AUTONOMOUS
+	public static final int TOTE_STOP = 125; //this is the distance in tote auton
+	public static final int TOTE_GRAB_TIME = 3000; // milliseconds TODO: move this
+
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;

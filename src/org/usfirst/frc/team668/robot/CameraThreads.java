@@ -5,6 +5,7 @@ import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.RGBValue;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The class CameraThreads can run threads for taking and saving pictures to allow us to
@@ -18,17 +19,18 @@ public class CameraThreads {
 	public static TakePictureThread picture_thread_running;
 	public static WritePictureThread write_thread_running;
 	
-	/** 
+	/**
 	 * Creates a new thread to take pictures in the camera session. Continuously call this
 	 * to get the picture once the process has been completed.
 	 * 
-	 * @param camera_session The session of the camera, obtainable from NIVision.IMAQdxOpenCamera
+	 * @param camera_session
+	 *            The session of the camera, obtainable from NIVision.IMAQdxOpenCamera
 	 * @return The Image that it took or null if the Image hasn't been taken yet
 	 */
-	public static Image takePicture(int camera_session) {
+	public static Image takePicture(USBCamera usb) {
 		// TODO: Actually make this work.
 		if (picture_thread_running == null) {
-			TakePictureThread tpt = new TakePictureThread(camera_session);
+			TakePictureThread tpt = new TakePictureThread(usb);
 			picture_thread_running = tpt;
 			new Thread(tpt).start();
 		} else if (picture_thread_running.picture_taken) {
@@ -43,8 +45,10 @@ public class CameraThreads {
 	/**
 	 * Saves the picture at the path in a new thread. Continuously call this until it returns true.
 	 * 
-	 * @param picture The NIVision Image to be saved (get this using takePicture)
-	 * @param path The full path and filename of the image to be written
+	 * @param picture
+	 *            The NIVision Image to be saved (get this using takePicture)
+	 * @param path
+	 *            The full path and filename of the image to be written
 	 * @return Whether or not the picture has been saved.
 	 */
 	public static boolean savePicture(Image picture, String path) {
@@ -63,7 +67,6 @@ public class CameraThreads {
 		}
 	}
 	
-	
 }
 
 /**
@@ -78,15 +81,17 @@ class WritePictureThread implements Runnable {
 	/**
 	 * Constructor for WritePictureThread.
 	 * 
-	 * @param picture The picture to write, an Image obtainable from takePicture
-	 * @param path The path and filename and extension to write it to
+	 * @param picture
+	 *            The picture to write, an Image obtainable from takePicture
+	 * @param path
+	 *            The path and filename and extension to write it to
 	 */
 	public WritePictureThread(Image picture, String path) {
 		
 		picture_written = false;
 		pic = picture;
-		picture_path = path; 
-	
+		picture_path = path;
+		
 	}
 	
 	/**
@@ -104,41 +109,29 @@ class WritePictureThread implements Runnable {
  */
 class TakePictureThread implements Runnable {
 	public Image pic;
-	int camera_session;
+	USBCamera cam;
 	boolean picture_taken;
 	
 	/**
 	 * Constructor for runnable TakePictureThread.
 	 * 
-	 * @param camera_session The camera session, obtainable from NIVision.IMAQdxOpenCamera
+	 * @param camera_session
+	 *            The camera session, obtainable from NIVision.IMAQdxOpenCamera
 	 */
-	public TakePictureThread(int camera_session) {
+	public TakePictureThread(USBCamera usb) {
 		pic = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 		picture_taken = false;
-		this.camera_session = camera_session;
+		cam = usb;
 	}
 	
 	/**
 	 * Runs the thread containing the camera.
 	 */
 	public void run() {
-		NIVision.IMAQdxStartAcquisition(camera_session);
-		NIVision.IMAQdxGrab(camera_session, pic, 1);
-		NIVision.IMAQdxStopAcquisition(camera_session);
+		cam.startCapture();
+		cam.getImage(pic);
+		cam.stopCapture();
 		picture_taken = true;
-	}
-	
-}
-
-/**
- * Run this at the beginning of teleop to put the camera feed on the dashboard
- */
-class DashboardThread implements Runnable {
-	public boolean enabled; //tells if we are connected to the robot
-	public void run() {
-		while (!Thread.interrupted() && enabled) {
-			
-		}
 	}
 	
 }
