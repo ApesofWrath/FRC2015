@@ -68,15 +68,16 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
  * Autonomous with one tote
  * Prettify
  * -> Remove magic numbers
- * Encoders <------------------------------------------- Written
+ * Encoders <------------------------------------------- Finished
+ * Get camera code to work <---------------------------- Finished =)
  */
 
 public class Robot extends IterativeRobot {
 	
 	// start robot variable declarations
 	
-	public static double versionNumber = 3.4;
-	public static String versionName = "PC Gorilla";
+	public static double versionNumber = 3.5;
+	public static String versionName = "Camera Gorilla";
 	
 	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -382,6 +383,7 @@ public class Robot extends IterativeRobot {
 ////		if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && RobotMap.isTestRobot &&
 ////				joystickOp.getRawButton(1) && !picture_taking && !picture_writing && !buttonOnePressed) {
 //			picture_taking = true;
+		
 //			buttonOnePressed = true;
 //		}
 //		if (joystickOp.getRawButton(1)) {
@@ -534,7 +536,7 @@ public class Robot extends IterativeRobot {
 			// }
 			// } else {
 			// System.out.println("HIT OPTICAL LIMIT!!!");
-			// if (encoderElevator.getDistance() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// if (encoderElevator.get() < RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Optical Limit?", "Bottom");
 			// encoderElevator.reset();
 			// double elevatorJoyVal = joystickOp.getY();
@@ -543,7 +545,7 @@ public class Robot extends IterativeRobot {
 			// } else {
 			// canTalonElevator.set(0);
 			// }
-			// } else if (encoderElevator.getDistance() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
+			// } else if (encoderElevator.get() > RobotMap.ELEVATOR_ENCODER_MAX_HEIGHT - RobotMap.ELEVATOR_ENCODER_DEADZONE) {
 			// SmartDashboard.putString("Hit Encoder Limit?", "Top");
 			// double elevatorJoyVal = joystickOp.getY();
 			// if (isFunction && elevatorJoyVal < 0) {
@@ -578,7 +580,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Joystick Y Axis", joystickRight.getY());
 		SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.get() * -1);
 		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.get() * 360 / 250);
-		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
+		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		// SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // Inverse needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
@@ -750,8 +752,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void smartDashboardOutputs() {
 		
-		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.getDistance());
-		// get distance seems to work.
+		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		SmartDashboard.putNumber("Left Encoder", encoderLeft.get() * -1);
 		SmartDashboard.putNumber("Right Encoder", encoderRight.get() * 360 / 250);
 		SmartDashboard.putBoolean("isTote", toteOptic.get());

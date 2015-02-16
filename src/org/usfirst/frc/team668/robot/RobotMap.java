@@ -260,7 +260,6 @@ public class RobotMap {
 	public static final int STOP = 100; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	public static final int TOTE_STOP = 125; //this is the distance in tote auton
 	public static final int TOTE_GRAB_TIME = 3000; // milliseconds TODO: move this
-
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
@@ -280,7 +279,7 @@ public class RobotMap {
 	public static final double ELEVATOR_ENCODER_PICKUP = 10; // pickup tote height
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	
-	public static final double MINIMIZING_FACTOR = 0.8;
+	public static final double MINIMIZING_FACTOR = 0.75;
 	
 	// debugging constant for test robot
 	public static boolean isTestRobot = false;
