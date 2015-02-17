@@ -16,13 +16,9 @@ public class Autonomous {
 	}
 	
 	public static void driveForwardAutonomous(Robot r) {
-		while (r.isAutonomous() && r.isEnabled()) {
-			if (Robot.encoderLeft.get() * -1 < RobotMap.STOP) {
-				Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-			}
-			if (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP) {
-				Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-			}
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
+			
 		}
 		return;
 	}
@@ -49,20 +45,40 @@ public class Autonomous {
 		
 		// timer
 		long toteGrabAutonTimer = System.currentTimeMillis();
-		while (r.isAutonomous() && r.isEnabled() && (System.currentTimeMillis() - toteGrabAutonTimer) < RobotMap.TOTE_GRAB_TIME) {
-			// intake tote
-			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); // TODO: Used to be 0.4 Remove when verified
-		}
+		// while (r.isAutonomous() && r.isEnabled() && (System.currentTimeMillis() - toteGrabAutonTimer) < RobotMap.TOTE_GRAB_TIME) {
+		// // intake tote
+		// Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); // TODO: Used to be 0.4 Remove when verified
+		// }
 		Intake.stop();
-		while (r.isAutonomous() && r.isEnabled()) { // goes until autonomous or robot is disabled
-			// drive robot - we only want to do this when intake is done
-			if (Robot.encoderLeft.get() * -1 < RobotMap.TOTE_STOP) {
-				Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.TOTE_CURVE); // Curve is 0
+		Robot.encoderLeft.reset();
+		Robot.encoderRight.reset();
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < Math.abs(RobotMap.TURN_DISTANCE))) {
+			if (Robot.encoderLeft.get() * -1 < RobotMap.TURN_DISTANCE) {
+				Robot.canTalonFrontLeft.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
+				Robot.canTalonRearLeft.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
+			} else {
+				Robot.canTalonFrontLeft.set(0.0);
+				Robot.canTalonRearLeft.set(0.0);
+				break;
 			}
-			if (Robot.encoderRight.get() * (360.0 / 250.0) < RobotMap.TOTE_STOP) {
-				Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.TOTE_CURVE); // Curve is 0
+			if ((Robot.encoderRight.get() * (360.0 / 250.0)) > RobotMap.TURN_DISTANCE * -1) {
+				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
+				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
+			} else {
+				Robot.canTalonFrontRight.set(0.0);
+				Robot.canTalonRearRight.set(0.0);
+				break;
 			}
+			System.out.println("TRYING!!!");
 		}
+		System.out.println("FINISHED!!!!!!");
+		Robot.encoderLeft.reset();
+		Robot.encoderRight.reset();
+		// driveForwardAutonomous(r); // Drive forward the same distance as driveForwardAutonomous
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
+		}
+		Robot.robotDrive.stopMotor();
 		return;
 	}
 	
@@ -99,8 +115,7 @@ public class Autonomous {
 			
 			// timer
 			long binGrabAutonTimer = System.currentTimeMillis();
-			while (r.isAutonomous() && r.isEnabled() &&
-					((System.currentTimeMillis() - binGrabAutonTimer) < RobotMap.BIN_GRAB_TIME)) {
+			while (r.isAutonomous() && r.isEnabled() && ((System.currentTimeMillis() - binGrabAutonTimer) < RobotMap.BIN_GRAB_TIME)) {
 				// intake tote
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 			}

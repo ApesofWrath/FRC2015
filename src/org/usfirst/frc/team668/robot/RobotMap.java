@@ -258,16 +258,22 @@ public class RobotMap {
 	public static double ELEVATOR_CURRENT_STOP = 0;
 	
 	// constants for autonomous
-	public static final double AUTONOMOUS_SPEED = 0.5;
-	public static final double AUTONOMOUS_CURVE = 0;
+	public static final double AUTONOMOUS_SPEED = -0.35; // Negative so that it moves forward
+														// under .50
+	public static final double AUTONOMOUS_CURVE = 0.0;
+	public static final double TURN_DISTANCE = 525.0; // For a 90 degree turn
+													// more than 500.0
+	public static final double AUTONOMOUS_CURVE_SPEED = 0.8;
+													// less than 1.0
 	public static final double TOTE_CURVE = 0.0;
 	public static final double BIN_CURVE = 0.0;
 	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function || Milliseconds
-	public static final int STOP = 100; // This is how far the robot should go in FORWARD_AUTONOMOUS
-	public static final int TOTE_STOP = 125; //this is the distance in tote auton
+	public static final int STOP = 1850; // This is how far the robot should go in FORWARD_AUTONOMOUS
+										// more than 1750 -- 1850 is good
+	public static final int TOTE_STOP = 500; //this is the distance in tote auton 125
 	public static final int BIN_STOP = 125; //this is the distance in bin auton
-	public static final int TOTE_GRAB_TIME = 3000; // milliseconds TODO: move this
-	public static final int BIN_GRAB_TIME = 3000; // milliseconds TODO: move this
+	public static final int TOTE_GRAB_TIME = 1000; // milliseconds TODO: move this
+	public static final int BIN_GRAB_TIME = 1000; // milliseconds TODO: move this
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
