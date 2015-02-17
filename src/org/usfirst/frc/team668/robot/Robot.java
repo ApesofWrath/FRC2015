@@ -70,6 +70,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
  * -> Remove magic numbers
  * Encoders <------------------------------------------- Finished
  * Get camera code to work <---------------------------- Finished =)
+ * HANG IN AUTONOMOUS LOSE TIME IN TELEOP
  */
 
 public class Robot extends IterativeRobot {
@@ -116,7 +117,6 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	public void robotInit() {
-		
 		// This is fancy camera code that only streams to the PC Dashboard.
 		
 		server = CameraServer.getInstance();
@@ -156,6 +156,10 @@ public class Robot extends IterativeRobot {
 		// piston initialization
 		hugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_RETRACTION);
 		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
+
+//		robotDrive.drive(0.0, 0.0); // Make sure motors are stopped
+//		Intake.stop();
+//		Elevator.stop();
 		
 		// TODO: Take photos
 		// creating images
@@ -266,6 +270,8 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Delay and Tote Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Tote and Bin Grab Autonomous", new Integer(RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Tote and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote Stack Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS));
 		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
@@ -301,12 +307,25 @@ public class Robot extends IterativeRobot {
 		clampStartChooser.addObject("Close Clamps", true);
 		
 		SmartDashboard.putData("State Machine Init Clamps Position", clampStartChooser);
-	}
+		
+		robotDrive.drive(0.0, 0.0);
+		Intake.stop();
+		Elevator.stop();
+		
+		intakePiston.set(DoubleSolenoid.Value.kReverse);
+		hugPiston.set(DoubleSolenoid.Value.kReverse);
+		
+	} // robotInit
 	
 	/**
 	 * This function is called at the start of autonomous
 	 */
 	public void autonomousInit() {
+		
+		robotDrive.drive(0.0, 0.0); // Make sure motors are stopped
+		Intake.stop();
+		Elevator.stop();
+		
 		debugWriter.println("Beginning autonomous\n");
 		
 		encoderLeft.reset();
@@ -337,13 +356,18 @@ public class Robot extends IterativeRobot {
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
 			Autonomous.binGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS) {
+			Autonomous.binAndToteGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS) {
+			Autonomous.delayAutonomous();
+			Autonomous.binAndToteGrabAutonomous(this);
 		} else if (RobotMap.autonomousMode == RobotMap.TOTE_STACK_AUTONOMOUS) {
 			Autonomous.toteStackAutonomous(this);
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
 			Autonomous.toteStackAutonomous(this);
 		}
-	}
+	} // autonomousInit
 	
 	/**
 	 * This function is called periodically during autonomous
@@ -355,13 +379,18 @@ public class Robot extends IterativeRobot {
 	 * This function is called once at the start of teleop
 	 */
 	public void teleopInit() {
+		
+		robotDrive.drive(0.0, 0.0); // Make sure motors are stopped
+		Intake.stop();
+		Elevator.stop();
+		
 		debugWriter.println("Beginning teleop\n");
 		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
 		RobotMap.itemCount = 0;
 		encoderLeft.reset();
 		encoderRight.reset();
 		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
-	}
+	} // teleopinit
 	
 	/**
 	 * This function is called periodically during operator control
@@ -504,7 +533,7 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if (isBackwardsIntake) { // outtake
-				Intake.spin(-0.75);
+				Intake.spin(-0.75); // TODO: magic number
 			} else if (isForwardIntake) { // intake
 				Intake.spin(0.75);
 			} else {
@@ -579,6 +608,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called when test mode starts.
 	 */
 	public void testInit() {
+		
 		debugWriter.println("Beginning test\n");
 		System.out.println("Test Initiation");
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
@@ -586,7 +616,7 @@ public class Robot extends IterativeRobot {
 		encoderRight.reset();
 		
 		robotDrive.setSafetyEnabled(true);
-	}
+	} // testInit
 	
 	/**
 	 * This function is called periodically during test mode. It contains test code for all the motors and pistons to be controlled individually.
@@ -761,6 +791,12 @@ public class Robot extends IterativeRobot {
 		debugWriter.println("Disabling");
 		debugWriter.close();
 		
+		robotDrive.drive(0.0, 0.0);
+		Intake.stop();
+		Elevator.stop();
+		intakePiston.set(DoubleSolenoid.Value.kReverse);	// TODO: Remove this later
+		hugPiston.set(DoubleSolenoid.Value.kReverse);
+		
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
 		// NIVision.IMAQdxStopAcquisition(camera_session);
 	}
@@ -769,7 +805,6 @@ public class Robot extends IterativeRobot {
 	 * This function is called in teleopPeriodic to print out all of the smartdashboard stuff
 	 */
 	public void smartDashboardOutputs() {
-		
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		SmartDashboard.putNumber("Left Encoder", encoderLeft.get() * -1);
 		SmartDashboard.putNumber("Right Encoder", encoderRight.get() * 360.0 / 250.0);

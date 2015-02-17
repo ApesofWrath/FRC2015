@@ -174,8 +174,10 @@ public class RobotMap {
 	public static final int DELAY_AND_TOTE_GRAB_AUTONOMOUS = 4;
 	public static final int BIN_GRAB_AUTONOMOUS = 5;
 	public static final int DELAY_AND_BIN_GRAB_AUTONOMOUS = 6;
-	public static final int TOTE_STACK_AUTONOMOUS = 7;
-	public static final int DELAY_AND_TOTE_STACK_AUTONOMOUS = 8;
+	public static final int TOTE_AND_BIN_GRAB_AUTONOMOUS = 7;
+	public static final int DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS = 8;
+	public static final int TOTE_STACK_AUTONOMOUS = 9;
+	public static final int DELAY_AND_TOTE_STACK_AUTONOMOUS = 10;
 	
 	// auto state machine
 	public static final int DRIVE_FOWARD = 0;
@@ -265,15 +267,16 @@ public class RobotMap {
 													// more than 500.0
 	public static final double AUTONOMOUS_CURVE_SPEED = 0.8;
 													// less than 1.0
-	public static final double TOTE_CURVE = 0.0;
-	public static final double BIN_CURVE = 0.0;
+	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
+	public static final double TOTE_CURVE = 0.0; // TODO: RM THIS
+	public static final double BIN_CURVE = 0.0; // TODO: RM THIS
 	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function || Milliseconds
 	public static final int STOP = 1850; // This is how far the robot should go in FORWARD_AUTONOMOUS
 										// more than 1750 -- 1850 is good
 	public static final int TOTE_STOP = 500; //this is the distance in tote auton 125
 	public static final int BIN_STOP = 125; //this is the distance in bin auton
-	public static final int TOTE_GRAB_TIME = 1000; // milliseconds TODO: move this
-	public static final int BIN_GRAB_TIME = 1000; // milliseconds TODO: move this
+	public static final int TOTE_GRAB_TIME = 500; // milliseconds TODO: move this // NOT USED!!!#$!#@$!#@$%
+	public static final int BIN_GRAB_TIME = 800; // milliseconds TODO: move this
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
@@ -282,14 +285,13 @@ public class RobotMap {
 	
 	// motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.65;
-	public static final double OUTTAKE_MOTOR_SPEED = -0.4; //Maybe -0.2?
+	public static final double OUTTAKE_MOTOR_SPEED = -0.4; // TODO: go to -0.4
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 202;
-	// Used to be 250 - New limit switch
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
 	// Used to be 15 - New limit switch
 	public static final double ELEVATOR_ENCODER_PICKUP = 0; // pickup tote height
