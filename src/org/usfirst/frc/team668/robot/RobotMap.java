@@ -55,13 +55,14 @@ public class RobotMap {
 	
 	// @formatter:off
 	// Joystick Left
-	public static final int MINIMIZE_DRIVE_SPEED_BUTTON			= 2;
+	public static final int MINIMIZE_DRIVE_SPEED_LEFT_BUTTON	= 2;
+	public static final int MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON	= 3;
 	
 	// Joystick Right
 	public static final int TANK_DRIVE_BUTTON					= 6;
 	public static final int ARCADE_DRIVE_BUTTON					= 7;
 	
-	// joystick Op // TODO: Reassign
+	// joystick Op
 	// NORMAL
 	public static final int REVERSING_BUTTON					= 1;
 	public static final int LIFT_BUTTON							= 2;
@@ -69,24 +70,24 @@ public class RobotMap {
 	public static final int GROUND_BUTTON						= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
 	public static final int PRETEND_BIN_DETECTED_BUTTON			= 6;
-	public static final int INTAKE_PISTON_BUTTON				= 7;	// SWEEPER ARM
-	public static final int EMPTY_OP_NORMAL_8_BUTTON			= 8;	// TODO: EMPTY
+	public static final int INTAKE_PISTON_CLOSE_BUTTON			= 7;	// Intake Piston Arm
+	public static final int INTAKE_PISTON_OPEN_BUTTON			= 8;
 	public static final int TOTE_HEIGHT_BUTTON					= 9;
-	public static final int EMPTY_OP_NORMAL_10_BUTTON			= 10;	// TODO: EMPTY
+	public static final int EMPTY_OP_NORMAL_10_BUTTON			= 10;
 	public static final int MANUAL_OVERRIDE_BUTTON				= 11;
 	public static final int ABORT_BUTTON						= 12;
 	// MANUAL OVERRIDE
-	public static final int EMPTY_OP_MANUAL_1_BUTTON			= 1;	// TODO: EMPTY //Don't use this though
-	public static final int EMPTY_OP_MANUAL_2_BUTTON			= 2;	// TODO: EMPTY
+	public static final int EMPTY_OP_MANUAL_1_BUTTON			= 1;
+	public static final int EMPTY_OP_MANUAL_2_BUTTON			= 2;
 	public static final int RETURN_TO_STATE_MACHINE_BUTTON		= 3;
 	public static final int MANUAL_INTAKE_BUTTON				= 4;
-	public static final int EMPTY_OP_MANUAL_5_BUTTON			= 5;	// TODO: EMPTY
+	public static final int EMPTY_OP_MANUAL_5_BUTTON			= 5;
 	public static final int MANUAL_OUTTAKE_BUTTON				= 6;	// at the request of Sean
-//																= 7;	// already used (sweeper)
-	public static final int EMPTY_OP_MANUAL_8_BUTTON			= 8;	// TODO: EMPTY
+//																= 7;	// already used (intake piston)
+//																= 8;	// already used (intake piston)
 	public static final int MANUAL_PISTON_ACTIVATE_BUTTON		= 9;	// close hug pistons
 	public static final int MANUAL_PISTON_DEACTIVATE_BUTTON		= 10;	// open hug pistons
-	public static final int EMPTY_OP_MANUAL_11_BUTTON			= 11;	// TODO: EMPTY
+	public static final int EMPTY_OP_MANUAL_11_BUTTON			= 11;
 	public static final int MANUAL_FUNCTION_BUTTON				= 12;
 	
 	// @formatter:on
@@ -96,7 +97,7 @@ public class RobotMap {
 	                                                          
 	 ____  _____ _____ _____ _____ _____    _____ ____  _____ 
 	|    \|   __|  |  |     |     |   __|  |     |    \|   __|
-	|  |  |   __|  |  |-   -|   --|   __|  |-   -|  |  |__   |
+	|  |  |   __|  |  ||   ||   --|   __|   |   ||     |__   |
 	|____/|_____|\___/|_____|_____|_____|  |_____|____/|_____|
  
 	 */
@@ -120,9 +121,9 @@ public class RobotMap {
 	public static final int PDP_CANID						= 20;
 	// @formatter:on
 	
-	// pdp ports for current finding; TODO: THESE MUST BE CHANGED
-	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 3; // Used to be 9, we aren't sure
-	public static final int CAN_TALON_INTAKE_RIGHT_PDP_PORT = 10; // TODO: Fix these (probably wrong)
+	// pdp ports for current finding; TODO: THESE MUST BE CHANGED -- THEY ARE PROBABLY WRONG
+	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 3;
+	public static final int CAN_TALON_INTAKE_RIGHT_PDP_PORT = 10;
 	public static final int CAN_TALON_INTAKE_LEFT_PDP_PORT = 11;
 	public static final int CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT = 12;
 	public static final int CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT = 13;
@@ -207,26 +208,26 @@ public class RobotMap {
 	// @formatter:on
 	
 	// Teleop State Machine Declarations
-	public static final int INIT_STATE = 0;
-	public static final int ELEVATOR_HEIGHT_TOTE_STATE = 1;
-	public static final int WAIT_FOR_BUTTON_STATE = 2;
-	public static final int WAIT_FOR_GAME_PIECE_STATE = 3;
-	public static final int ELEVATOR_ADJUST_STATE = 13; // happens before we open hug pistons to adjust elevator
-	public static final int OPEN_HUG_PISTONS_STATE = 4;
+	public static final int INIT_STATE = 1;
+	public static final int ELEVATOR_HEIGHT_TOTE_STATE = 2;
+	public static final int WAIT_FOR_BUTTON_STATE = 3;
+	public static final int WAIT_FOR_GAME_PIECE_STATE = 4;
+	public static final int ELEVATOR_ADJUST_STATE = 14; // happens before we open hug pistons to adjust elevator
+	public static final int OPEN_HUG_PISTONS_STATE = 5;
 	public static final int DRIVE_BACKWARDS_STATE = 1000;
-	public static final int ELEVATOR_DOWN_STATE = 5; // this now goes to the limit switch like init state
+	public static final int ELEVATOR_DOWN_STATE = 6; // this now goes to the limit switch like init state
 	public static final int DRIVE_FORWARDS_STATE = 1001;
-	public static final int CLOSE_HUG_PISTONS_STATE = 6;
-	public static final int ELEVATOR_HEIGHT_GROUND_STATE = 7;
-	public static final int ELEVATOR_HEIGHT_SCORING_STATE = 8;
-	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 9;
-	public static final int REVERSE_INTAKE_MOTORS_STATE = 10;
-	public static final int MANUAL_OVERRIDE_STATE = 11;
-	public static final int WAITING_FOR_REVERSE_INTAKE_STATE = 12;
-	public static final int ELEVATOR_ADJUST_UP_STATE = 14; // happens after init to keep elevator resting at encoder value slightly higher than limit switch
-	public static final int TIME_DELAY_AFTER_TOTE_SENSE_STATE = 15;
-	public static final int MANUAL_OVERRIDE_RETURN_STATE = 16;
-	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 17; // this happens after elevator down to go to lift height
+	public static final int CLOSE_HUG_PISTONS_STATE = 7;
+	public static final int ELEVATOR_HEIGHT_GROUND_STATE = 8;
+	public static final int ELEVATOR_HEIGHT_SCORING_STATE = 9;
+	public static final int ELEVATOR_HEIGHT_COOPERTITION_STATE = 10;
+	public static final int REVERSE_INTAKE_MOTORS_STATE = 11;
+	public static final int MANUAL_OVERRIDE_STATE = 12;
+	public static final int WAITING_FOR_REVERSE_INTAKE_STATE = 13;
+	public static final int ELEVATOR_ADJUST_UP_STATE = 15; // happens after init to keep elevator resting at encoder value slightly higher than limit switch
+	public static final int TIME_DELAY_AFTER_TOTE_SENSE_STATE = 16;
+	public static final int MANUAL_OVERRIDE_RETURN_STATE = 17;
+	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 18; // this happens after elevator down to go to lift height
 	
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
@@ -270,13 +271,14 @@ public class RobotMap {
 	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
 	public static final double TOTE_CURVE = 0.0; // TODO: RM THIS
 	public static final double BIN_CURVE = 0.0; // TODO: RM THIS
-	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function || Milliseconds
+	public static final long DELAY_TIME = 2000; // Timer for delayed autonomous function || Milliseconds
 	public static final int STOP = 1850; // This is how far the robot should go in FORWARD_AUTONOMOUS
 										// more than 1750 -- 1850 is good
 	public static final int TOTE_STOP = 500; //this is the distance in tote auton 125
 	public static final int BIN_STOP = 125; //this is the distance in bin auton
 	public static final int TOTE_GRAB_TIME = 500; // milliseconds TODO: move this // NOT USED!!!#$!#@$!#@$%
 	public static final int BIN_GRAB_TIME = 800; // milliseconds TODO: move this
+	public static final int TOTE_SPIT_TIME = 500; //milliseconds TODO: move this
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
@@ -298,7 +300,8 @@ public class RobotMap {
 	// Used to be 10 - New limit switch
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	
-	public static final double MINIMIZING_FACTOR = 0.75;
+	public static final double MINIMIZING_FACTOR_LEFT = 0.75;
+	public static final double MINIMIZING_FACTOR_RIGHT = 0.6;
 	
 	// debugging constant for test robot
 	public static boolean isTestRobot = false;

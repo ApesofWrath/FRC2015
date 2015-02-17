@@ -184,6 +184,8 @@ public class Autonomous {
 	}
 	
 	public static void binAndToteGrabAutonomous(Robot r) {
+		
+		// move elevator down
 		boolean elevatorCalibration = Elevator.calibration(-0.8);
 		while (!elevatorCalibration) {
 			elevatorCalibration = Elevator.calibration(-0.8);
@@ -193,6 +195,7 @@ public class Autonomous {
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
 		// timer
+		// drive forward to intake the bin
 		long binGrabAutonTimer = System.currentTimeMillis();
 		while (r.isAutonomous() && r.isEnabled() && (System.currentTimeMillis() - binGrabAutonTimer) < RobotMap.BIN_GRAB_TIME) {
 			// intake bin
@@ -208,7 +211,13 @@ public class Autonomous {
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 
-		while(!Elevator.move(-1.0, 410)) {}
+		// pick up bin
+		while(r.isEnabled() && r.isAutonomous()) {
+			boolean finished = Elevator.move(-1.0, 410);
+			if (finished) {
+				break; //leave the loop if we are finished moving
+			}
+		}
 		
 //		boolean elevatorMoveDone = false;
 //		while (!elevatorMoveDone) {
@@ -216,25 +225,24 @@ public class Autonomous {
 //			System.out.println("ELEVATOR");
 //		} Elevator.stop();
 		
-		// then it drives
-		if (Robot.encoderLeft.get() * -1 < RobotMap.STOP) {
-			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-		}
-		if (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP) {
-			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-		}
+		// then it drives no it doesn't because it's commented out because its old code
+//		if (Robot.encoderLeft.get() * -1 < RobotMap.STOP) {
+//			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
+//		}
+//		if (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP) {
+//			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
+//		}
 		
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		
-		while (Robot.encoderLeft.get() * -1 < RobotMap.TOTE_DISTANCE) {
+		// NOW we drive forward to take in tote
+		while (Robot.encoderLeft.get() * -1 < RobotMap.TOTE_DISTANCE && r.isEnabled() && r.isAutonomous()) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE);
-			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
-			System.out.println("IN");
+			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); //intake tote here
 		}
-		System.out.println("OUT");
 		
 		// timer
 //		long toteGrabAutonTimer = System.currentTimeMillis();
@@ -246,6 +254,8 @@ public class Autonomous {
 		
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
+		
+		// turn left
 		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 > Math.abs(RobotMap.TURN_DISTANCE) * -1)) {
 			if (Robot.encoderLeft.get() * -1 > RobotMap.TURN_DISTANCE * -1) {
 				Robot.canTalonFrontLeft.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
@@ -263,16 +273,19 @@ public class Autonomous {
 				Robot.canTalonRearRight.set(0.0);
 				break;
 			}
-			System.out.println("TRYING!!!");
 		}
-		System.out.println("FINISHED!!!!!!");
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
-		// driveForwardAutonomous(r); // Drive forward the same distance as driveForwardAutonomous
+		// drive forward to get into the auto zone
 		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
 		Robot.robotDrive.stopMotor();
+		long toteSpitAutonTimer = System.currentTimeMillis();
+		while ((r.isAutonomous()) && (r.isEnabled()) && ((System.currentTimeMillis() - toteSpitAutonTimer) < RobotMap.TOTE_SPIT_TIME)) {
+			Intake.spin(-RobotMap.INTAKE_MOTOR_SPEED); // TODO: Used to be 0.4 Remove when verified
+		}
+		Intake.stop();
 		return;
 	}
 	

@@ -191,9 +191,9 @@ public class TeleopStateMachine {
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
 				if (encoderCounter < 0) { // keeps track of elevator
-					encoderCounter = Robot.encoderElevator.getDistance();
+					encoderCounter = Robot.encoderElevator.get();
 				}
-				boolean downFinish = Elevator.move(RobotMap.elevatorMotorSpeed, encoderCounter - 5);
+				boolean downFinish = Elevator.move(RobotMap.elevatorMotorSpeed, encoderCounter - 20);
 				if (downFinish == true) {
 					Elevator.stop();
 					encoderCounter = -1;
@@ -225,7 +225,7 @@ public class TeleopStateMachine {
 				
 				break;
 			
-			case RobotMap.DRIVE_BACKWARDS_STATE: // not currently in use
+			case RobotMap.DRIVE_BACKWARDS_STATE: // not currently in use because it is useless
 				
 				if (encoderCounter < 0) {
 					encoderCounter = Robot.encoderLeft.getDistance();

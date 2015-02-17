@@ -130,13 +130,14 @@ public class Elevator {
 		} else if (!Robot.limitBottom.get() && up) {
 			System.out.println("elevator reset");
 			Robot.encoderElevator.reset();
-		} else if ((Robot.encoderElevator.get() <= -10) && (RobotMap.currentState != RobotMap.INIT_STATE)) {
+		}
+		/*else if ((Robot.encoderElevator.get() <= -10) && (RobotMap.currentState != RobotMap.INIT_STATE)) {
 //			we don't want our elevator to DO STUPID! the init exception is because our encoder starts at
 //			zero at the start of the match TODO:check with auton
 			System.out.println("THE LIMIT SWITCH IS NOT TRIGGERING!!");
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
 			return true;
-		}
+		}*/ // we commented this section out because when the encoer is not calibrated it stops the encoder
 		return false;
 	}
 	

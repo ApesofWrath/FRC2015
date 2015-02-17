@@ -69,15 +69,16 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
  * Prettify
  * -> Remove magic numbers
  * Encoders <------------------------------------------- Finished
- * Get camera code to work <---------------------------- Finished =)
- * HANG IN AUTONOMOUS LOSE TIME IN TELEOP
+ * Get camera code to work <---------------------------- Finished
+ * HANG IN AUTONOMOUS LOSE TIME IN TELEOP <------------- Finished =)
+ * DO THE FANCY CAMERA PIX_TAKERING JUST CUZ ITS KEWL
  */
 
 public class Robot extends IterativeRobot {
 	
 	// Versioning
-	public static String versionNumber = "3.6.0";
-	public static String versionName = "Communist Baboon";
+	public static String versionNumber = "3.7.0";
+	public static String versionName = "Creative Baboon";
 	
 	// Object Declaration
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -99,12 +100,14 @@ public class Robot extends IterativeRobot {
 	public static Timer t;
 	
 	// Camera
-	CameraServer server; // sends camera feed to screen
-	USBCamera usb;
-	int camera_session;
-	boolean picture_taking = false;
-	boolean picture_writing = false;
-	long cameraTimer = 0;
+	CameraServer server; // sends camera feed to screen -- Used for streaming 
+//	USBCamera usb; TODO: determine whether or not to keep this
+//	int camera_session;
+//	boolean picture_taking = false;
+//	boolean picture_writing = false;
+//	long cameraTimer = 0;
+    int session; // Used for picture-taking
+    Image frame;
 	
 	// Button Pressed?
 	boolean buttonOnePressed = false, buttonSevenPressed = false,
@@ -113,18 +116,37 @@ public class Robot extends IterativeRobot {
 	// Drive
 	boolean isTankDrive = true;
 	
+	static boolean weAreHoldingABin = false;
+	
 	/**
 	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	public void robotInit() {
-		// This is fancy camera code that only streams to the PC Dashboard.
 		
+		weAreHoldingABin = false;
+		
+		// START CAMERA STREAM CODE
+
+		// This is fancy camera code that only streams to the PC Dashboard.
 		server = CameraServer.getInstance();
-		server.setQuality(50);
+		server.setQuality(50); // 50 is currently perfect
 		// the camera name (ex "cam0") can be found through the roborio web interface
 		server.startAutomaticCapture("cam0");
 		
+		// STOP CAMERA STREAM CODE
+		
+		// START CAMERA PICTURE CODE
+		
+        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+
+        // the camera name (ex "cam0") can be found through the roborio web interface
+        session = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(session);
+		
 		// Object Initialization
+		
+		// Drive motors
 		
 		canTalonFrontLeft = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_LEFT_CANID);
 		canTalonFrontRight = new CANTalon(RobotMap.DRIVE_MOTOR_FRONT_RIGHT_CANID);
@@ -135,7 +157,11 @@ public class Robot extends IterativeRobot {
 		canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
 		canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
 		
+		// Elevator motor
+		
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
+		
+		// Sensors
 		
 		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
@@ -145,21 +171,20 @@ public class Robot extends IterativeRobot {
 		encoderRight.reset();
 		// we do not reset encoderElevator because it could and likely will start somewhere else
 		
-		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
-		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
-		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
-		
 		limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_CHANNEL);
 		limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_CHANNEL);
 		toteOptic = new DigitalInput(RobotMap.TOTE_OPTIC_DIO);
 		
-		// piston initialization
+		// Pistons
+		
 		hugPiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_HUG_PCMID_RETRACTION);
 		intakePiston = new DoubleSolenoid(RobotMap.PCM_CANID, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_EXPANSION, RobotMap.DOUBLE_SOLENOID_INTAKE_PCMID_RETRACTION);
-
-//		robotDrive.drive(0.0, 0.0); // Make sure motors are stopped
-//		Intake.stop();
-//		Elevator.stop();
+		
+		// Joysticks
+		
+		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
+		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
+		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
 		
 		// TODO: Take photos
 		// creating images
@@ -181,7 +206,7 @@ public class Robot extends IterativeRobot {
 		// System.out.println(e);
 		// RobotMap.cameraConnected = false;
 		// }
-		//
+		
 		// compressor initialization and turning on
 		compressor1 = new Compressor(RobotMap.PCM_CANID);
 		
@@ -191,10 +216,10 @@ public class Robot extends IterativeRobot {
 			compressor1.setClosedLoopControl(true);
 		}
 		
-		if (!RobotMap.isTestRobot) {
+		if (!RobotMap.isTestRobot) { // If it is not a test robot, there are four drive motors
 			robotDrive = new RobotDrive(canTalonFrontLeft, canTalonRearLeft, canTalonFrontRight, canTalonRearRight);
-			robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true); // TODO: Inverse
-			robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true); // should be good
+			robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true); // They should all be inversed
+			robotDrive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 			robotDrive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		} else {
@@ -202,10 +227,10 @@ public class Robot extends IterativeRobot {
 			
 		}
 		
-		if (!RobotMap.cameraConnected) {
-			server = CameraServer.getInstance();
-			server.startAutomaticCapture(usb);
-		}
+//		if (!RobotMap.cameraConnected) { // This is camera code that isn't necessary. It is a duplicate from above.
+//			server = CameraServer.getInstance();
+//			server.startAutomaticCapture(usb);
+//		}
 		
 		pdp = new PowerDistributionPanel();
 		
@@ -263,14 +288,14 @@ public class Robot extends IterativeRobot {
 		 */
 		autonomousChooser = new SendableChooser();
 		
-		autonomousChooser.addDefault("Stop Autonomous", new Integer(RobotMap.STOP_AUTONOMOUS));
+		autonomousChooser.addObject("Stop Autonomous", new Integer(RobotMap.STOP_AUTONOMOUS));
 		autonomousChooser.addObject("Drive Forward Autonomous", new Integer(RobotMap.DRIVE_FORWARD_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Drive Forward Autonomous", new Integer(RobotMap.DELAY_AND_DRIVE_FORWARD_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Grab Autonomous", new Integer(RobotMap.TOTE_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS));
-		autonomousChooser.addObject("Tote and Bin Grab Autonomous", new Integer(RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS));
+		autonomousChooser.addDefault("Tote and Bin Grab Autonomous", new Integer(RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote Stack Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS));
@@ -296,8 +321,8 @@ public class Robot extends IterativeRobot {
 		
 		manualChooser = new SendableChooser();
 		
-		manualChooser.addDefault("State Machine", RobotMap.INIT_STATE);
-		manualChooser.addObject("Manual Mode", RobotMap.MANUAL_OVERRIDE_STATE);
+		manualChooser.addObject("State Machine", RobotMap.INIT_STATE);
+		manualChooser.addDefault("Manual Mode", RobotMap.MANUAL_OVERRIDE_STATE);
 		
 		SmartDashboard.putData("Manual Mode Chooser", manualChooser);
 		
@@ -307,13 +332,6 @@ public class Robot extends IterativeRobot {
 		clampStartChooser.addObject("Close Clamps", true);
 		
 		SmartDashboard.putData("State Machine Init Clamps Position", clampStartChooser);
-		
-		robotDrive.drive(0.0, 0.0);
-		Intake.stop();
-		Elevator.stop();
-		
-		intakePiston.set(DoubleSolenoid.Value.kReverse);
-		hugPiston.set(DoubleSolenoid.Value.kReverse);
 		
 	} // robotInit
 	
@@ -353,14 +371,18 @@ public class Robot extends IterativeRobot {
 			Autonomous.toteGrabAutonomous(this);
 		} else if (RobotMap.autonomousMode == RobotMap.BIN_GRAB_AUTONOMOUS) {
 			Autonomous.binGrabAutonomous(this);
+			weAreHoldingABin = true; // set this to true so the state machine knows we are holding a bin
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
 			Autonomous.binGrabAutonomous(this);
+			weAreHoldingABin = true;
 		} else if (RobotMap.autonomousMode == RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS) {
 			Autonomous.binAndToteGrabAutonomous(this);
+			weAreHoldingABin = true;
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
 			Autonomous.binAndToteGrabAutonomous(this);
+			weAreHoldingABin = true;
 		} else if (RobotMap.autonomousMode == RobotMap.TOTE_STACK_AUTONOMOUS) {
 			Autonomous.toteStackAutonomous(this);
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS) {
@@ -373,6 +395,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
+		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
 	}
 	
 	/**
@@ -384,12 +407,17 @@ public class Robot extends IterativeRobot {
 		Intake.stop();
 		Elevator.stop();
 		
+		if (weAreHoldingABin) {
+			RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+		} else {
+			RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
+		}
+		
 		debugWriter.println("Beginning teleop\n");
-		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
+		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
 		RobotMap.itemCount = 0;
 		encoderLeft.reset();
 		encoderRight.reset();
-		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
 	} // teleopinit
 	
 	/**
@@ -408,14 +436,18 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (isTankDrive) { // tank drive
-			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_BUTTON)) {
-				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
+			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_LEFT, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_LEFT);
+			} else if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON)) {
+				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT);
 			} else {
 				robotDrive.tankDrive(joystickLeft, joystickRight);
 			}
 		} else { // split arcade
-			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_BUTTON)) {
-				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickLeft.getX() * RobotMap.MINIMIZING_FACTOR);
+			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_LEFT, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR_LEFT);
+			} else if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON)) {
+				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR_RIGHT);
 			} else {
 				robotDrive.drive(joystickRight.getY(), joystickLeft.getX() * -1);
 			}
@@ -512,9 +544,9 @@ public class Robot extends IterativeRobot {
 		// }
 		// }
 		// buttonSevenPressed = isIntake;
-		if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_BUTTON)) {
+		if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_CLOSE_BUTTON)) {
 			intakePiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(8)) {
+		} else if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_OPEN_BUTTON)) {
 			intakePiston.set(DoubleSolenoid.Value.kReverse);
 		}
 		
@@ -790,12 +822,6 @@ public class Robot extends IterativeRobot {
 		// TODO: make this work with enable/disabling multiple times
 		debugWriter.println("Disabling");
 		debugWriter.close();
-		
-		robotDrive.drive(0.0, 0.0);
-		Intake.stop();
-		Elevator.stop();
-		intakePiston.set(DoubleSolenoid.Value.kReverse);	// TODO: Remove this later
-		hugPiston.set(DoubleSolenoid.Value.kReverse);
 		
 		SmartDashboard.putNumber("Current", pdp.getCurrent(1));
 		// NIVision.IMAQdxStopAcquisition(camera_session);
