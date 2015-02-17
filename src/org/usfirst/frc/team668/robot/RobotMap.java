@@ -121,8 +121,8 @@ public class RobotMap {
 	// @formatter:on
 	
 	// pdp ports for current finding; TODO: THESE MUST BE CHANGED
-	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 9;
-	public static final int CAN_TALON_INTAKE_RIGHT_PDP_PORT = 10;
+	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 3; // Used to be 9, we aren't sure
+	public static final int CAN_TALON_INTAKE_RIGHT_PDP_PORT = 10; // TODO: Fix these (probably wrong)
 	public static final int CAN_TALON_INTAKE_LEFT_PDP_PORT = 11;
 	public static final int CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT = 12;
 	public static final int CAN_TALON_DRIVE_LEFT_FRONT_PDP_PORT = 13;
@@ -171,8 +171,11 @@ public class RobotMap {
 	public static final int DRIVE_FORWARD_AUTONOMOUS = 1;
 	public static final int DELAY_AND_DRIVE_FORWARD_AUTONOMOUS = 2;
 	public static final int TOTE_GRAB_AUTONOMOUS = 3;
-	public static final int BIN_GRAB_AUTONOMOUS = 4;
-	public static final int TOTE_STACK_AUTONOMOUS = 5;
+	public static final int DELAY_AND_TOTE_GRAB_AUTONOMOUS = 4;
+	public static final int BIN_GRAB_AUTONOMOUS = 5;
+	public static final int DELAY_AND_BIN_GRAB_AUTONOMOUS = 6;
+	public static final int TOTE_STACK_AUTONOMOUS = 7;
+	public static final int DELAY_AND_TOTE_STACK_AUTONOMOUS = 8;
 	
 	// auto state machine
 	public static final int DRIVE_FOWARD = 0;
@@ -183,10 +186,11 @@ public class RobotMap {
 	public static final int CELEBRATE_SUCCESS = 5;  // spin in circles like Atlas celebrating success
 													// recursion =)
 	
-	// autonomous tote grab state machine
-	public static int autonToteGrabState = 0;
-	public static final int AUTON_TOTE_GRAB_INTAKE_STATE = 0;
-	public static final int AUTON_TOTE_GRAB_DRIVE_STATE = 1;
+//	// autonomous tote grab state machine TODO: Remove this
+//	public static int autonToteGrabState = 0;
+//	public static final int AUTON_TOTE_GRAB_CLOSE_INTAKE_STATE = 0;
+//	public static final int AUTON_TOTE_GRAB_INTAKE_STATE = 1;
+//	public static final int AUTON_TOTE_GRAB_DRIVE_STATE = 2;
 	
 	// @formatter:off
 	
@@ -208,7 +212,7 @@ public class RobotMap {
 	public static final int ELEVATOR_ADJUST_STATE = 13; // happens before we open hug pistons to adjust elevator
 	public static final int OPEN_HUG_PISTONS_STATE = 4;
 	public static final int DRIVE_BACKWARDS_STATE = 1000;
-	public static final int ELEVATOR_DOWN_STATE = 5;
+	public static final int ELEVATOR_DOWN_STATE = 5; // this now goes to the limit switch like init state
 	public static final int DRIVE_FORWARDS_STATE = 1001;
 	public static final int CLOSE_HUG_PISTONS_STATE = 6;
 	public static final int ELEVATOR_HEIGHT_GROUND_STATE = 7;
@@ -220,6 +224,7 @@ public class RobotMap {
 	public static final int ELEVATOR_ADJUST_UP_STATE = 14; // happens after init to keep elevator resting at encoder value slightly higher than limit switch
 	public static final int TIME_DELAY_AFTER_TOTE_SENSE_STATE = 15;
 	public static final int MANUAL_OVERRIDE_RETURN_STATE = 16;
+	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 17; // this happens after elevator down to go to lift height
 	
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
@@ -256,10 +261,13 @@ public class RobotMap {
 	public static final double AUTONOMOUS_SPEED = 0.5;
 	public static final double AUTONOMOUS_CURVE = 0;
 	public static final double TOTE_CURVE = 0.0;
+	public static final double BIN_CURVE = 0.0;
 	public static final long DELAY_TIME = 5000; // Timer for delayed autonomous function || Milliseconds
 	public static final int STOP = 100; // This is how far the robot should go in FORWARD_AUTONOMOUS
 	public static final int TOTE_STOP = 125; //this is the distance in tote auton
+	public static final int BIN_STOP = 125; //this is the distance in bin auton
 	public static final int TOTE_GRAB_TIME = 3000; // milliseconds TODO: move this
+	public static final int BIN_GRAB_TIME = 3000; // milliseconds TODO: move this
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
@@ -274,9 +282,12 @@ public class RobotMap {
 	// encoder heights
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
-	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
-	public static final double ELEVATOR_ENCODER_GROUND = 15;
-	public static final double ELEVATOR_ENCODER_PICKUP = 10; // pickup tote height
+	public static final double ELEVATOR_ENCODER_COOPERTITION = 202;
+	// Used to be 250 - New limit switch
+	public static final double ELEVATOR_ENCODER_GROUND = 0;
+	// Used to be 15 - New limit switch
+	public static final double ELEVATOR_ENCODER_PICKUP = 0; // pickup tote height
+	// Used to be 10 - New limit switch
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	
 	public static final double MINIMIZING_FACTOR = 0.75;

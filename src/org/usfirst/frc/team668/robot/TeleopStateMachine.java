@@ -207,11 +207,21 @@ public class TeleopStateMachine {
 				
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
-				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kReverse)) {
+					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+				}
 				
-				Robot.debugWriter.println("Elevator Down State\n");
-				// RobotMap.currentState = RobotMap.DRIVE_BACKWARDS_STATE;
-				RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
+				if (reverseTimer <= 0) {
+					reverseTimer = System.currentTimeMillis();
+				}
+				
+				if ((System.currentTimeMillis() - reverseTimer) > 100) { // TODO: Magic number
+					reverseTimer = -1;
+
+					Robot.debugWriter.println("Elevator Down State\n");
+					// RobotMap.currentState = RobotMap.DRIVE_BACKWARDS_STATE;
+					RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
+				}
 				
 				break;
 			
@@ -235,16 +245,35 @@ public class TeleopStateMachine {
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
 				// sets intake piston to open if it isn't open yet
-				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+//				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+				boolean finishThis = Elevator.calibration(RobotMap.elevatorMotorSpeed);
 				if (finishThis == true) {
 					Elevator.stop();
-					Robot.debugWriter.println("Close Hug Pistons State\n");
+					Robot.debugWriter.println("Elevator Pickup Height State\n");
 					// RobotMap.currentState = RobotMap.DRIVE_FORWARDS_STATE;
-					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+//					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+					RobotMap.currentState = RobotMap.ELEVATOR_PICKUP_HEIGHT_STATE;
 				}
 				
 				break;
-			
+				
+			case RobotMap.ELEVATOR_PICKUP_HEIGHT_STATE:
+				SmartDashboard.putString("State:", "Elevator Pickup Height");
+				
+				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
+				
+				// sets intake piston to open if it isn't open yet
+//				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+				boolean finished = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+				if (finished == true) {
+					Elevator.stop();
+					Robot.debugWriter.println("Close Hug Pistons State\n");
+					// RobotMap.currentState = RobotMap.DRIVE_FORWARDS_STATE;
+//					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+				}
+				break;
+			 
 			case RobotMap.DRIVE_FORWARDS_STATE: // not currently in use
 				
 				if (encoderCounter < 0) {

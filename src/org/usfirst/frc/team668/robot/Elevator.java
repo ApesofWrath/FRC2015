@@ -26,7 +26,6 @@ public class Elevator {
 	{
 		/*in Robot.java we stop the function if we are done, this makes sure that done is switched to false
 		 * in Elevator.java, finally, we find out our direction*/
-		speed = -speed; //elevator: down is positive
 		if (done) {
 			direction(stop);
 		}
@@ -63,12 +62,13 @@ public class Elevator {
 		//this code requires proper sign on speed
 		if (speed > 0) {
 			up = true;
+			System.out.println("Calibrating up.");
 		} else if (speed < 0) {
 			up = false;
+			System.out.println("Calibrating down.");
 		} else {
 			return true;
 		}
-		System.out.println("calibrating " + up);
 		
 		//we make sure that we aren't hitting our limit switches
 		if (checkDemSwitches()) {
@@ -109,7 +109,9 @@ public class Elevator {
 			if (stop >= Robot.encoderElevator.get()) {
 				done = true;
 			}
-		} else if (checkDemSwitches()) {
+		}
+		
+		if (checkDemSwitches()) {
 			done = true;
 		}
 	}
@@ -128,6 +130,12 @@ public class Elevator {
 		} else if (!Robot.limitBottom.get() && up) {
 			System.out.println("elevator reset");
 			Robot.encoderElevator.reset();
+		} else if ((Robot.encoderElevator.get() <= -10) && (RobotMap.currentState != RobotMap.INIT_STATE)) {
+//			we don't want our elevator to DO STUPID! the init exception is because our encoder starts at
+//			zero at the start of the match TODO:check with auton
+			System.out.println("THE LIMIT SWITCH IS NOT TRIGGERING!!");
+			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
+			return true;
 		}
 		return false;
 	}

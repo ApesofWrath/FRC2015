@@ -76,46 +76,39 @@ public class Robot extends IterativeRobot {
 	
 	// start robot variable declarations
 	
-	public static double versionNumber = 3.5;
-	public static String versionName = "Camera Gorilla";
+	// Versioning
+	public static String versionNumber = "3.6.0";
+	public static String versionName = "Communist Baboon";
 	
-	public static Joystick joystickLeft, joystickRight, joystickOp;
-	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
-			canTalonRearLeft, canTalonRearRight, canTalonIntakeLeft,
-			canTalonIntakeRight, canTalonElevator;
-	public static Encoder encoderLeft, encoderRight, encoderElevator;
-	public static DigitalInput limitTop, limitBottom;
-	// limitTop is default true, limitBottom is default true
+	// Object Declaration
+	public static CANTalon canTalonFrontLeft, canTalonFrontRight, canTalonRearLeft, canTalonRearRight;
+	public static CANTalon canTalonIntakeLeft, canTalonIntakeRight, canTalonElevator;
 	public static Compressor compressor1;
-	public static DoubleSolenoid hugPiston, intakePiston;
-	// hug piston: kForward is closed
-	// intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move
-	public static RobotDrive robotDrive;
+	public static DigitalInput limitTop, limitBottom; // limitTop is default true, limitBottom is default true
+	public static DigitalInput correctionOptical, limitOptical, toteOptic; // senses if we have tote
+	public static DoubleSolenoid hugPiston, intakePiston; // hug : kForward - closed and intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move	public static Encoder encoderLeft, encoderRight, encoderElevator; // encoderRight will always be multiplied by 360.0 / 250.0 because the encoders have different ranges
+	public static Encoder encoderLeft, encoderRight, encoderElevator;
+	public static Joystick joystickLeft, joystickRight, joystickOp;
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
+	public static RobotDrive robotDrive;
 	public static Scanner continuousVarsReader;
+	public static SendableChooser autonomousChooser, elevatorChooser, manualChooser, clampStartChooser; // radio buttons: which autonomous subroutine, elevator speed, if manual upon start and if clamped upon start
 	public static Timer t;
-	public static DigitalInput correctionOptical, limitOptical;
-	public static DigitalInput toteOptic; // senses if we have tote
-	// camera variables
-	public static int camera_session;
-	
-	public static SendableChooser autonomousChooser, elevatorChooser,
-			manualChooser, clampStartChooser;
-	// for autonomous selection and elevator speed choosing. We added elevator speed selection radio buttons. This doesn't work yet.
-	// manual mode is to start teleop in manual control
-	
-	boolean buttonEightPressed = false; // for test to check if button 8 is
-										// pressed
+
+	// Camera
+	CameraServer server; // sends camera feed to screen
+	USBCamera usb;
+	int camera_session;
 	boolean picture_taking = false;
 	boolean picture_writing = false;
 	long cameraTimer = 0;
-	boolean isTankDrive = true;
-	boolean buttonOnePressed = false;
-	boolean buttonSevenPressed = false;
 	
-	CameraServer server; // sends camera feed to screen
-	USBCamera usb;
+	// Button Pressed?
+	boolean buttonOnePressed = false, buttonSevenPressed = false, buttonEightPressed = false;
+	
+	// Drive
+	boolean isTankDrive = true;
 	
 	// end declarations
 	
@@ -124,8 +117,9 @@ public class Robot extends IterativeRobot {
 	 */
 	public void robotInit() {
 		
-		// TODO: CAMERA CODE HERE. THIS SHOULD ONLY STREAM, NO PICTURE SUPPORT
-
+		// This is fancy camera code that only streams.
+		// TODO: Get 
+		
         server = CameraServer.getInstance();
         server.setQuality(50);
         //the camera name (ex "cam0") can be found through the roborio web interface
@@ -266,7 +260,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putString("Version", "Version " + versionNumber + ": " + versionName);
 		
 		/*
-		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of, as WPI wants us to do, running new commands that are scheduled with the RobotBuilder, we simply have the SendableChooser give us an Integer representing the selected program.
+		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of,
+		 * as WPI wants us to do, running new commands that are scheduled with the RobotBuilder,
+		 * we simply have the SendableChooser give us an Integer representing the selected program.
 		 * 
 		 * The strange syntax is because SendableChooser wants an object, not an integer, but just bear with it.
 		 * 
@@ -278,8 +274,11 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Drive Forward Autonomous", new Integer(RobotMap.DRIVE_FORWARD_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Drive Forward Autonomous", new Integer(RobotMap.DELAY_AND_DRIVE_FORWARD_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Grab Autonomous", new Integer(RobotMap.TOTE_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Tote Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Bin Grab Autonomous", new Integer(RobotMap.BIN_GRAB_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Tote Stack Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS));
 		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
 		
 		// Same with Elevator speed chooser. We will use this to find the
@@ -324,15 +323,41 @@ public class Robot extends IterativeRobot {
 		encoderLeft.reset();
 		encoderRight.reset();
 		
-		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue(); // stupidly complex piece of code that just sets
-																							// our autonomous mode
+		RobotMap.autonomousMode = ((Integer) (autonomousChooser.getSelected())).intValue();
+		// stupidly complex piece of code that just sets our autonomous mode
+		
+		// NOTE: "this" refers to the current instance. If you don't understand what I just said,
+		// ask someone.
+		
+		if (RobotMap.autonomousMode == RobotMap.STOP_AUTONOMOUS) {
+			Autonomous.stopAutonomous();
+		} else if (RobotMap.autonomousMode == RobotMap.DRIVE_FORWARD_AUTONOMOUS) {
+			Autonomous.driveForwardAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_DRIVE_FORWARD_AUTONOMOUS) {
+			Autonomous.delayAutonomous();
+			Autonomous.driveForwardAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.TOTE_GRAB_AUTONOMOUS) {
+			Autonomous.toteGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_GRAB_AUTONOMOUS) {
+			Autonomous.delayAutonomous();
+			Autonomous.toteGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.BIN_GRAB_AUTONOMOUS) {
+			Autonomous.binGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS) {
+			Autonomous.delayAutonomous();
+			Autonomous.binGrabAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.TOTE_STACK_AUTONOMOUS) {
+			Autonomous.toteStackAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS) {
+			Autonomous.delayAutonomous();
+			Autonomous.toteStackAutonomous(this);
+		}
 	}
 	
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		Autonomous.doAuton(); // runs the selected autonomous mode
 	}
 	
 	/**
@@ -579,7 +604,7 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Joystick Y Axis", joystickRight.getY());
 		SmartDashboard.putNumber("Left Drive Encoder", encoderLeft.get() * -1);
-		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.get() * 360 / 250);
+		SmartDashboard.putNumber("Right Drive Encoder", encoderRight.get() * 360.0 / 250.0);
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		// SmartDashboard.putBoolean("Limit Optical", limitOptical.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // Inverse needed
@@ -754,12 +779,14 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		SmartDashboard.putNumber("Left Encoder", encoderLeft.get() * -1);
-		SmartDashboard.putNumber("Right Encoder", encoderRight.get() * 360 / 250);
+		SmartDashboard.putNumber("Right Encoder", encoderRight.get() * 360.0 / 250.0);
 		SmartDashboard.putBoolean("isTote", toteOptic.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
-		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().equals(DoubleSolenoid.Value.kForward));
-		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().equals(DoubleSolenoid.Value.kForward));
+		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().value == DoubleSolenoid.Value.kForward_val);
+		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().value == DoubleSolenoid.Value.kForward_val);
+		SmartDashboard.putNumber("Elevator Current from PDP", pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
+		SmartDashboard.putNumber("Elevator Current from Talon", canTalonElevator.getOutputCurrent());
 		
 		SmartDashboard.putNumber("State", RobotMap.currentState);
 	}
