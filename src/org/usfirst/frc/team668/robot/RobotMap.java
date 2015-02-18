@@ -264,8 +264,8 @@ public class RobotMap {
 	public static final double AUTONOMOUS_SPEED = -0.35; // Negative so that it moves forward
 														// under .50
 	public static final double AUTONOMOUS_CURVE = 0.0;
-	public static final double TURN_DISTANCE = 535.0; // For a 90 degree turn
-													// more than 525.0
+	public static final double TURN_DISTANCE = 528.0; // For a 90 degree turn
+													// more than 525.0 under 535.0
 	public static final double AUTONOMOUS_CURVE_SPEED = 0.8;
 													// less than 1.0
 	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
@@ -290,13 +290,13 @@ public class RobotMap {
 	
 	// motor speeds
 	public static final double INTAKE_MOTOR_SPEED = 0.65;
-	public static final double OUTTAKE_MOTOR_SPEED = -0.4; // TODO: go to -0.4
+	public static final double OUTTAKE_MOTOR_SPEED = -0.4;
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
-	public static final double ELEVATOR_ENCODER_COOPERTITION = 202;
+	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
 	// Used to be 15 - New limit switch
 	public static final double ELEVATOR_ENCODER_PICKUP = 0; // pickup tote height

@@ -77,8 +77,8 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Robot extends IterativeRobot {
 	
 	// Versioning
-	public static String versionNumber = "4.0.1";
-	public static String versionName = "Communist Russian Space Chimp";
+	public static String versionNumber = "4.0.0";
+	public static String versionName = "Bag and Tag FINAL Robot Code";
 	
 	// Object Declaration
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -270,7 +270,6 @@ public class Robot extends IterativeRobot {
 			server.startAutomaticCapture("cam0");
 		} catch (VisionException e) {
 			System.out.println("VISION EXCEPTION ~ " + e);
-			debugWriter.println("VISION!@# <- No profanity included -: " + e);
 		}
 		
 		// STOP CAMERA STREAM CODE
