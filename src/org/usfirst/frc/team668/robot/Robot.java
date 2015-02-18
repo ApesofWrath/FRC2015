@@ -77,8 +77,8 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Robot extends IterativeRobot {
 	
 	// Versioning
-	public static String versionNumber = "3.7.0";
-	public static String versionName = "Creative Baboon";
+	public static String versionNumber = "4.0.1";
+	public static String versionName = "Communist Russian Space Chimp";
 	
 	// Object Declaration
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
@@ -135,14 +135,14 @@ public class Robot extends IterativeRobot {
 		
 		// STOP CAMERA STREAM CODE
 		
-		// START CAMERA PICTURE CODE
+		// TODO START CAMERA PICTURE CODE
 		
-        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-
-        // the camera name (ex "cam0") can be found through the roborio web interface
-        session = NIVision.IMAQdxOpenCamera("cam0",
-                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        NIVision.IMAQdxConfigureGrab(session);
+//        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+//
+//        // the camera name (ex "cam0") can be found through the roborio web interface
+//        session = NIVision.IMAQdxOpenCamera("cam0",
+//                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+//        NIVision.IMAQdxConfigureGrab(session);
 		
 		// Object Initialization
 		
@@ -274,7 +274,7 @@ public class Robot extends IterativeRobot {
 		 * 
 		 * Name each new version after a type of ape. This is to make programmers feel fancy like they work at a real programming company.
 		 */
-		debugWriter.println("Version " + versionNumber + ": " + versionName + "\n");
+		debugWriter.println("Version " + versionNumber + ": " + versionName + " \n");
 		SmartDashboard.putString("Version", "Version " + versionNumber + ": " + versionName);
 		
 		/*
@@ -297,9 +297,10 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Delay and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addDefault("Tote and Bin Grab Autonomous", new Integer(RobotMap.TOTE_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS));
-		autonomousChooser.addObject("Tote Stack Autonomous", new Integer(RobotMap.TOTE_STACK_AUTONOMOUS));
-		autonomousChooser.addObject("Delay and Tote Stack Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS));
-		SmartDashboard.putData("Autonomous Mode Selector", autonomousChooser);
+		autonomousChooser.addObject("Two Tote Bin Stacks Autonomous", new Integer(RobotMap.TWO_TOTE_BIN_STACKS_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Tote Bin Stacks Autonomous", new Integer(RobotMap.DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS));
+		
+		SmartDashboard.putData("Autonomous Mode Selection", autonomousChooser);
 		
 		// Same with Elevator speed chooser. We will use this to find the
 		// optimal elevator speed
@@ -339,6 +340,10 @@ public class Robot extends IterativeRobot {
 	 * This function is called at the start of autonomous
 	 */
 	public void autonomousInit() {
+		
+		if (pdp.getVoltage() < 14.0) { // TODO 12.0 teleop too
+			SmartDashboard.putString("THE BATTERY!!!@?!#?@!@?#!@?#", "FIXX ITT NOW!!@#!$!@#%!@#$");
+		}
 		
 		robotDrive.drive(0.0, 0.0); // Make sure motors are stopped
 		Intake.stop();
@@ -383,11 +388,11 @@ public class Robot extends IterativeRobot {
 			Autonomous.delayAutonomous();
 			Autonomous.binAndToteGrabAutonomous(this);
 			weAreHoldingABin = true;
-		} else if (RobotMap.autonomousMode == RobotMap.TOTE_STACK_AUTONOMOUS) {
-			Autonomous.toteStackAutonomous(this);
-		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TOTE_STACK_AUTONOMOUS) {
+		} else if (RobotMap.autonomousMode == RobotMap.TWO_TOTE_BIN_STACKS_AUTONOMOUS) {
+			Autonomous.twoToteBinStacksAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
-			Autonomous.toteStackAutonomous(this);
+			Autonomous.twoToteBinStacksAutonomous(this);
 		}
 	} // autonomousInit
 	

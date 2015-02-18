@@ -177,8 +177,8 @@ public class RobotMap {
 	public static final int DELAY_AND_BIN_GRAB_AUTONOMOUS = 6;
 	public static final int TOTE_AND_BIN_GRAB_AUTONOMOUS = 7;
 	public static final int DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS = 8;
-	public static final int TOTE_STACK_AUTONOMOUS = 9;
-	public static final int DELAY_AND_TOTE_STACK_AUTONOMOUS = 10;
+	public static final int TWO_TOTE_BIN_STACKS_AUTONOMOUS = 9;
+	public static final int DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS = 10;
 	
 	// auto state machine
 	public static final int DRIVE_FOWARD = 0;
@@ -264,13 +264,12 @@ public class RobotMap {
 	public static final double AUTONOMOUS_SPEED = -0.35; // Negative so that it moves forward
 														// under .50
 	public static final double AUTONOMOUS_CURVE = 0.0;
-	public static final double TURN_DISTANCE = 525.0; // For a 90 degree turn
-													// more than 500.0
+	public static final double TURN_DISTANCE = 535.0; // For a 90 degree turn
+													// more than 525.0
 	public static final double AUTONOMOUS_CURVE_SPEED = 0.8;
 													// less than 1.0
 	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
-	public static final double TOTE_CURVE = 0.0; // TODO: RM THIS
-	public static final double BIN_CURVE = 0.0; // TODO: RM THIS
+	public static final double BOX_DISTANCE = 700.0; // Distance from one box (tote and bin) to another in Autonomous
 	public static final long DELAY_TIME = 2000; // Timer for delayed autonomous function || Milliseconds
 	public static final int STOP = 1850; // This is how far the robot should go in FORWARD_AUTONOMOUS
 										// more than 1750 -- 1850 is good
@@ -279,6 +278,10 @@ public class RobotMap {
 	public static final int TOTE_GRAB_TIME = 500; // milliseconds TODO: move this // NOT USED!!!#$!#@$!#@$%
 	public static final int BIN_GRAB_TIME = 800; // milliseconds TODO: move this
 	public static final int TOTE_SPIT_TIME = 500; //milliseconds TODO: move this
+	
+	public static final double AUTON_FAST_SPEED = -0.5;
+	public static final double AUTON_DISTANCE_CONSTANT = 0.8;
+	public static final double AUTON_TURN_CONSTANT = 1.2;
 	
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
