@@ -100,14 +100,14 @@ public class Robot extends IterativeRobot {
 	public static Timer t;
 	
 	// Camera
-	CameraServer server; // sends camera feed to screen -- Used for streaming 
-//	USBCamera usb; TODO: determine whether or not to keep this
-//	int camera_session;
-//	boolean picture_taking = false;
-//	boolean picture_writing = false;
-//	long cameraTimer = 0;
-    int session; // Used for picture-taking
-    Image frame;
+	CameraServer server; // sends camera feed to screen -- Used for streaming
+	// USBCamera usb; TODO: determine whether or not to keep this
+	// int camera_session;
+	// boolean picture_taking = false;
+	// boolean picture_writing = false;
+	// long cameraTimer = 0;
+	int session; // Used for picture-taking
+	Image frame;
 	
 	// Button Pressed?
 	boolean buttonOnePressed = false, buttonSevenPressed = false,
@@ -116,33 +116,14 @@ public class Robot extends IterativeRobot {
 	// Drive
 	boolean isTankDrive = true;
 	
-	static boolean weAreHoldingABin = false;
+	static boolean weAreHoldingABin = false; // This variable tells us whether or not an autonomous that picks up a bin was called
 	
+	//
 	/**
 	 * This function is run when the robot is first started up and should be used for any initialization code.
 	 */
 	public void robotInit() {
-		
 		weAreHoldingABin = false;
-		
-		// START CAMERA STREAM CODE
-
-		// This is fancy camera code that only streams to the PC Dashboard.
-		server = CameraServer.getInstance();
-		server.setQuality(50); // 50 is currently perfect
-		// the camera name (ex "cam0") can be found through the roborio web interface
-		server.startAutomaticCapture("cam0");
-		
-		// STOP CAMERA STREAM CODE
-		
-		// TODO START CAMERA PICTURE CODE
-		
-//        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-//
-//        // the camera name (ex "cam0") can be found through the roborio web interface
-//        session = NIVision.IMAQdxOpenCamera("cam0",
-//                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-//        NIVision.IMAQdxConfigureGrab(session);
 		
 		// Object Initialization
 		
@@ -227,10 +208,10 @@ public class Robot extends IterativeRobot {
 			
 		}
 		
-//		if (!RobotMap.cameraConnected) { // This is camera code that isn't necessary. It is a duplicate from above.
-//			server = CameraServer.getInstance();
-//			server.startAutomaticCapture(usb);
-//		}
+		// if (!RobotMap.cameraConnected) { // This is camera code that isn't necessary. It is a duplicate from above.
+		// server = CameraServer.getInstance();
+		// server.startAutomaticCapture(usb);
+		// }
 		
 		pdp = new PowerDistributionPanel();
 		
@@ -274,8 +255,34 @@ public class Robot extends IterativeRobot {
 		 * 
 		 * Name each new version after a type of ape. This is to make programmers feel fancy like they work at a real programming company.
 		 */
-		debugWriter.println("Version " + versionNumber + ": " + versionName + " \n");
+		debugWriter.print("Version " + versionNumber + ": " + versionName + "\n");
+		debugWriter.println();
+		debugWriter.write("Version " + versionNumber + ": " + versionName + "\n");
 		SmartDashboard.putString("Version", "Version " + versionNumber + ": " + versionName);
+		
+		// START CAMERA STREAM CODE
+		
+		try {
+			// This is fancy camera code that only streams to the PC Dashboard.
+			server = CameraServer.getInstance();
+			server.setQuality(50); // 50 is currently perfect
+			// the camera name (ex "cam0") can be found through the roborio web interface
+			server.startAutomaticCapture("cam0");
+		} catch (VisionException e) {
+			System.out.println("VISION EXCEPTION ~ " + e);
+			debugWriter.println("VISION!@# <- No profanity included -: " + e);
+		}
+		
+		// STOP CAMERA STREAM CODE
+		
+		// TODO START CAMERA PICTURE CODE
+		
+		// frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		//
+		// // the camera name (ex "cam0") can be found through the roborio web interface
+		// session = NIVision.IMAQdxOpenCamera("cam0",
+		// NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+		// NIVision.IMAQdxConfigureGrab(session);
 		
 		/*
 		 * Fancyish code that can create choosers in the SmartDashboard for autonomous. Instead of,
@@ -341,7 +348,9 @@ public class Robot extends IterativeRobot {
 	 */
 	public void autonomousInit() {
 		
-		if (pdp.getVoltage() < 14.0) { // TODO 12.0 teleop too
+		weAreHoldingABin = false;
+		
+		if (pdp.getVoltage() < 14.0) { // TODO MAGYK 12.0 teleop too
 			SmartDashboard.putString("THE BATTERY!!!@?!#?@!@?#!@?#", "FIXX ITT NOW!!@#!$!@#%!@#$");
 		}
 		
@@ -350,6 +359,7 @@ public class Robot extends IterativeRobot {
 		Elevator.stop();
 		
 		debugWriter.println("Beginning autonomous\n");
+		debugWriter.write("YAY!!! Autonomous has begun to begin");
 		
 		encoderLeft.reset();
 		encoderRight.reset();
