@@ -77,8 +77,8 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Robot extends IterativeRobot {
 	
 	// Versioning
-	public static String versionNumber = "4.0.0";
-	public static String versionName = "Bag and Tag FINAL Robot Code";
+	public static String versionNumber = "5.0.0";
+	public static String versionName = "Evil Capulet Ape of Wrath";
 	
 	// Object Declaration
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
