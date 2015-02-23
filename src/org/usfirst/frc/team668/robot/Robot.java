@@ -349,7 +349,7 @@ public class Robot extends IterativeRobot {
 		
 		weAreHoldingABin = false;
 		
-		if (pdp.getVoltage() < 14.0) { // TODO MAGYK 12.0 teleop too
+		if (pdp.getVoltage() < RobotMap.PDP_AUTON_WARNING_VOLTAGE ) { // TODO MAGYK 12.0 teleop too --- no longer a MAGYK number
 			SmartDashboard.putString("THE BATTERY!!!@?!#?@!@?#!@?#", "FIXX ITT NOW!!@#!$!@#%!@#$");
 		}
 		
@@ -579,9 +579,9 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if (isBackwardsIntake) { // outtake
-				Intake.spin(-0.75); // TODO: magic number
+				Intake.spin(RobotMap.MANUAL_BACKWARDS_INTAKE_SPEED); // TODO: magic number -- no longer a MAGYK number
 			} else if (isForwardIntake) { // intake
-				Intake.spin(0.75);
+				Intake.spin(RobotMap.MANUAL_FORWARD_INTAKE_SPEED);
 			} else {
 				Intake.stop();
 			}
@@ -858,5 +858,4 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("State", RobotMap.currentState);
 	}
-	
 }

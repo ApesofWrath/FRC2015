@@ -306,6 +306,13 @@ public class RobotMap {
 	public static final double MINIMIZING_FACTOR_LEFT = 0.75;
 	public static final double MINIMIZING_FACTOR_RIGHT = 0.6;
 	
+	// This was a MAGYK numbert
+	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;
+	
+	public static final double MANUAL_FORWARD_INTAKE_SPEED = .75;
+	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.75;
+	
+	
 	// debugging constant for test robot
 	public static boolean isTestRobot = false;
 	public static boolean cameraConnected = false;
