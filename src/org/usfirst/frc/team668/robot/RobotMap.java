@@ -67,7 +67,7 @@ public class RobotMap {
 	public static final int REVERSING_BUTTON					= 1;
 	public static final int LIFT_BUTTON							= 2;
 	public static final int SCORING_BUTTON						= 3;
-	public static final int GROUND_BUTTON						= 4;
+	public static final int HP_START_BUTTON 					= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
 	public static final int PRETEND_BIN_DETECTED_BUTTON			= 6;
 	public static final int INTAKE_PISTON_CLOSE_BUTTON			= 7;	// Intake Piston Arm
@@ -228,6 +228,9 @@ public class RobotMap {
 	public static final int TIME_DELAY_AFTER_TOTE_SENSE_STATE = 16;
 	public static final int MANUAL_OVERRIDE_RETURN_STATE = 17;
 	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 18; // this happens after elevator down to go to lift height
+	public static final int HUMAN_PLAYER_STRATEGY_STATE_INIT = 19;
+	public static final int HUMAN_PLAYER_STRATEGY_WAIT_STATE = 20;
+	public static final int HUMAN_PLAYER_STRATEGY_STATE = 21;
 	
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
@@ -298,6 +301,7 @@ public class RobotMap {
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
+	public static final double ELEVATOR_ENCODER_HP_WAIT = 820;
 	// Used to be 15 - New limit switch
 	public static final double ELEVATOR_ENCODER_PICKUP = 0; // pickup tote height
 	// Used to be 10 - New limit switch
