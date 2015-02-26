@@ -34,7 +34,7 @@ public class TeleopStateMachine {
 	private static double encoderCounter = -1;
 	private static long reverseTimer = -1;
 	
-	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isGround, boolean isLift, boolean isManual, boolean isReversing, boolean isToteHeight, boolean isAbort) {
+	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isLift, boolean isManual, boolean isReversing, boolean isToteHeight, boolean isAbort, boolean isHPStrat) {
 		
 		// sets to manual override, which turns off the state machine
 		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
@@ -113,10 +113,10 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE;
 				}
 				
-				if (isGround) {
-					Robot.debugWriter.println("Elevator Height Ground State\n");
-					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
-				}
+				// if (isGround) {
+				// Robot.debugWriter.println("Elevator Height Ground State\n");
+				// RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_GROUND_STATE;
+				// }
 				if (isToteHeight) {
 					Robot.debugWriter.println("Elevator Tote Height State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_TOTE_STATE;
@@ -124,6 +124,11 @@ public class TeleopStateMachine {
 				if (isScoring) {
 					Robot.debugWriter.println("Elevator Height Scoring State\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_HEIGHT_SCORING_STATE;
+				}
+				
+				if (isHPStrat) {
+					Robot.debugWriter.println("Human Player Strategy Start State\n");
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT;
 				}
 				
 				break;
@@ -398,6 +403,39 @@ public class TeleopStateMachine {
 					RobotMap.itemCount = 0;
 					reverseTimer = -1;
 				}
+				
+				break;
+			
+			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
+				
+				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
+				
+				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+				
+				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				
+				RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				
+				break;
+			
+			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE:
+				
+				if (Robot.joystickOp.getRawButton(RobotMap.HP_START_BUTTON)) {
+					
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
+					
+				}
+				
+				break;
+			
+			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE:
+				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				
+				Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
+				
+				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				
+				RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
 				
 				break;
 			

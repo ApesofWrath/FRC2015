@@ -72,6 +72,8 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
  * Get camera code to work <---------------------------- Finished
  * HANG IN AUTONOMOUS LOSE TIME IN TELEOP <------------- Finished =)
  * DO THE FANCY CAMERA PIX_TAKERING JUST CUZ ITS KEWL
+ * Make new state for the new thingy ---- NEW!!! IMPORTANT!!!
+ * Make a second motor for the elevator ---- NEW!!!! IMPORTANT!!!!
  */
 
 public class Robot extends IterativeRobot {
@@ -531,7 +533,7 @@ public class Robot extends IterativeRobot {
 		// state machine
 		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
 		boolean isCoopertition = joystickOp.getRawButton(RobotMap.COOPERTITION_BUTTON);
-		boolean isGround = joystickOp.getRawButton(RobotMap.GROUND_BUTTON);
+		boolean isHPStrat = joystickOp.getRawButton(RobotMap.HP_START_BUTTON);
 		boolean isScoring = joystickOp.getRawButton(RobotMap.SCORING_BUTTON);
 		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
 		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
@@ -539,7 +541,8 @@ public class Robot extends IterativeRobot {
 		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
 		if (!RobotMap.isTestRobot) {
 			System.out.println(RobotMap.currentState);
-			TeleopStateMachine.stateMachine(isCoopertition, isScoring, isGround, isLift, isManual, isReversing, isToteHeight, isAbort);
+			TeleopStateMachine.stateMachine(isCoopertition, isScoring,  
+					isLift, isManual, isReversing, isToteHeight, isAbort, isHPStrat);
 		}
 		
 		// declaring buttons for intake pistons
