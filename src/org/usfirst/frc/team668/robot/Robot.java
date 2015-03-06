@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot {
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
 			canTalonRearLeft, canTalonRearRight;
 	public static CANTalon canTalonIntakeLeft, canTalonIntakeRight,
-			canTalonElevator;
+			canTalonElevator, canTalonElevatorTop;
 	public static Compressor compressor1;
 	public static DigitalInput limitTop, limitBottom; // limitTop is default true, limitBottom is default true
 	public static DigitalInput correctionOptical, limitOptical, toteOptic; // senses if we have tote
@@ -140,7 +140,9 @@ public class Robot extends IterativeRobot {
 		canTalonIntakeLeft = new CANTalon(RobotMap.INTAKE_MOTOR_LEFT_CANID);
 		canTalonIntakeRight = new CANTalon(RobotMap.INTAKE_MOTOR_RIGHT_CANID);
 		
-		// Elevator motor
+		// Elevator motors
+		
+		canTalonElevatorTop = new CANTalon(RobotMap.ELEVATOR_MOTOR_TWO_CANID);
 		
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
 		
@@ -149,6 +151,9 @@ public class Robot extends IterativeRobot {
 		encoderLeft = new Encoder(RobotMap.DRIVE_ENCODER_LEFT_A, RobotMap.DRIVE_ENCODER_LEFT_B);
 		encoderRight = new Encoder(RobotMap.DRIVE_ENCODER_RIGHT_A, RobotMap.DRIVE_ENCODER_RIGHT_B);
 		encoderElevator = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+		
+		//encoderElevatorTop = new Encoder(RobotMap.ELEVATOR2_ENCODER_A, RobotMap.ELEVATOR2_ENCODER_B);
+		// we are not using a top encoder for the top motor ^
 		
 		encoderLeft.reset();
 		encoderRight.reset();
@@ -351,7 +356,7 @@ public class Robot extends IterativeRobot {
 		
 		weAreHoldingABin = false;
 		
-		if (pdp.getVoltage() < RobotMap.PDP_AUTON_WARNING_VOLTAGE ) { // TODO MAGYK 12.0 teleop too --- no longer a MAGYK number
+		if (pdp.getVoltage() < RobotMap.PDP_AUTON_WARNING_VOLTAGE ) { // TODO MAGYK 12.0 teleop too --- no longer a MAGYK number but still set at 14.0
 			SmartDashboard.putString("THE BATTERY!!!@?!#?@!@?#!@?#", "FIXX ITT NOW!!@#!$!@#%!@#$");
 		}
 		
@@ -594,8 +599,10 @@ public class Robot extends IterativeRobot {
 				SmartDashboard.putString("Hit Switch Limit?", "No");
 				if (isFunction) {
 					canTalonElevator.set(joystickOp.getY());
+					canTalonElevatorTop.set(joystickOp.getY());
 				} else {
 					canTalonElevator.set(0);
+					canTalonElevatorTop.set(0);
 				}
 			} else {
 				System.out.println("HIT LIMIT SWITCH!!!");
@@ -605,16 +612,20 @@ public class Robot extends IterativeRobot {
 					double elevatorJoyVal = joystickOp.getY();
 					if (isFunction && (elevatorJoyVal > 0)) { // only allows you to move up away from the limit switch
 						canTalonElevator.set(elevatorJoyVal);
+						canTalonElevatorTop.set(elevatorJoyVal);
 					} else {
 						canTalonElevator.set(0);
+						canTalonElevatorTop.set(0);
 					}
 				} else if (!limitTop.get()) { // Hit top, because limit switches are default true
 					SmartDashboard.putString("Hit Switch Limit?", "Top");
 					double elevatorJoyVal = joystickOp.getY();
 					if (isFunction && (elevatorJoyVal < 0)) { // only allows you to move down away from the limit switch
 						canTalonElevator.set(elevatorJoyVal);
+						canTalonElevatorTop.set(elevatorJoyVal);
 					} else {
 						canTalonElevator.set(0);
+						canTalonElevatorTop.set(0);
 					}
 				} // end else if (!limitTop.get() ...
 			} // end else (limitTop.get()...
@@ -727,7 +738,9 @@ public class Robot extends IterativeRobot {
 		
 		if (joystickOp.getRawButton(7)) {
 			canTalonElevator.set(joystickOp.getY());
+			canTalonElevatorTop.set(joystickOp.getY());
 		} else {
+			canTalonElevator.set(0);
 			canTalonElevator.set(0);
 		}
 		
@@ -739,6 +752,7 @@ public class Robot extends IterativeRobot {
 			canTalonIntakeRight.set(0);
 			canTalonIntakeLeft.set(0);
 			canTalonElevator.set(0);
+			canTalonElevatorTop.set(0);
 		}
 		
 		// piston testing code
@@ -856,9 +870,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
 		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().value == DoubleSolenoid.Value.kForward_val);
 		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().value == DoubleSolenoid.Value.kForward_val);
-		SmartDashboard.putNumber("Elevator Current from PDP", pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
-		SmartDashboard.putNumber("Elevator Current from Talon", canTalonElevator.getOutputCurrent());
-		
+		SmartDashboard.putNumber("Bottom Elevator Current from PDP", pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR2_PDP_PORT));
+		SmartDashboard.putNumber("Bottom Elevator Current from Talon", canTalonElevator.getOutputCurrent());
+		SmartDashboard.putNumber("Top Elevator Current from PDP", pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR2_PDP_PORT));
+		SmartDashboard.putNumber("Top Elevator Current from Talon", canTalonElevator.getOutputCurrent());
 		SmartDashboard.putNumber("State", RobotMap.currentState);
 	}
 }

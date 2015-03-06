@@ -41,8 +41,10 @@ public class Elevator {
 				speed = -Math.abs(speed);
 			}
 			Robot.canTalonElevator.set(speed);
+			Robot.canTalonElevatorTop.set(speed); // top motor 
 		} else {
 			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0); // top motor 
 		}
 		
 		return done;
@@ -81,8 +83,10 @@ public class Elevator {
 		System.out.println("speed " + speed);
 		if (!done) {
 			Robot.canTalonElevator.set(speed);
+			Robot.canTalonElevatorTop.set(speed); // top motor
 		} else {
 			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0); // top motor
 		}
 
 		return done;
@@ -146,5 +150,6 @@ public class Elevator {
 	 */
 	public static void stop() {
 		Robot.canTalonElevator.set(0.0);
+		Robot.canTalonElevatorTop.set(0.0); // top motor 
 	}
 }

@@ -16,7 +16,7 @@ public class Autonomous {
 	}
 	
 	public static void driveForwardAutonomous(Robot r) {
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 			
 		}
@@ -33,7 +33,7 @@ public class Autonomous {
 		if (Robot.encoderLeft.get() * -1 < RobotMap.STOP) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
-		if (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP) {
+		if (Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
 		return;
@@ -62,7 +62,7 @@ public class Autonomous {
 				Robot.canTalonRearLeft.set(0.0);
 				break;
 			}
-			if ((Robot.encoderRight.get() * (360.0 / 250.0)) > RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT * -1) {
+			if ((Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR) > RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT * -1) {
 				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
 				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
 			} else {
@@ -76,7 +76,7 @@ public class Autonomous {
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		// driveForwardAutonomous(r); // Drive forward the same distance as driveForwardAutonomous
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
 		Robot.robotDrive.stopMotor();
@@ -106,7 +106,7 @@ public class Autonomous {
 				Robot.canTalonRearLeft.set(0.0);
 				break;
 			}
-			if ((Robot.encoderRight.get() * (360.0 / 250.0)) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
+			if ((Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
 				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 			} else {
@@ -120,7 +120,7 @@ public class Autonomous {
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		// driveForwardAutonomous(r); // Drive forward the same distance as driveForwardAutonomous
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
 		Robot.robotDrive.stopMotor();
@@ -187,9 +187,9 @@ public class Autonomous {
 
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 		// move elevator down
-		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		boolean elevatorCalibration = Elevator.calibration(RobotMap.AUTON_ELEVATOR_CALIBRATION_SPEED);
 		while (!elevatorCalibration) {
-			elevatorCalibration = Elevator.calibration(-0.8);
+			elevatorCalibration = Elevator.calibration(RobotMap.AUTON_ELEVATOR_CALIBRATION_SPEED);
 		}
 		
 		// close piston
@@ -266,7 +266,7 @@ public class Autonomous {
 				Robot.canTalonRearLeft.set(0.0);
 				break;
 			}
-			if ((Robot.encoderRight.get() * (360.0 / 250.0)) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
+			if ((Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
 				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 			} else {
@@ -278,7 +278,7 @@ public class Autonomous {
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		// drive forward to get into the auto zone
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
 		Robot.robotDrive.stopMotor();
@@ -299,9 +299,9 @@ public class Autonomous {
 		// open intake
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 		// move elevator down
-		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		boolean elevatorCalibration = Elevator.calibration(RobotMap.AUTON_ELEVATOR_CALIBRATION_SPEED);
 		while (!elevatorCalibration) {
-			elevatorCalibration = Elevator.calibration(-0.8);
+			elevatorCalibration = Elevator.calibration(RobotMap.AUTON_ELEVATOR_CALIBRATION_SPEED);
 		}
 		
 		// close piston
@@ -318,7 +318,7 @@ public class Autonomous {
 			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); // TODO: Used to be 0.4 Remove when verified
 		}
 		Robot.robotDrive.drive(0.0, 0.0);
-		Intake.stop(); // I have a bin -- Yo tengo un bine.
+		Intake.stop(); // I have a bin -- Yo tengo un bin.
 		
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 		
@@ -378,7 +378,8 @@ public class Autonomous {
 				Robot.canTalonRearLeft.set(0.0);
 				break;
 			}
-			if ((Robot.encoderRight.get() * (360.0 / 250.0)) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
+			
+			if ((Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
 				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * -1);
 			} else {
@@ -394,7 +395,7 @@ public class Autonomous {
 		ToteGrabber.moveHugPistons(false);
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 		
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR < RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT)) {
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 			Elevator.move(1.0, 0.0);
 		}
@@ -408,7 +409,7 @@ public class Autonomous {
 		}
 		Intake.stop();
 
-//		while (!Elevator.calibration(1.0)) {} // While the elevator isn't at the lower limit switch
+//		while (!Elevator.calibration(1.0)) {} // While the elevator isn't at the lower limit switch`
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
@@ -417,7 +418,7 @@ public class Autonomous {
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		// drive backwards to get out of the auto zone
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 > RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT * -1 || Robot.encoderRight.get() * 360.0 / 250.0 > RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT * -1)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 > RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT * -1 || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR > RobotMap.STOP * RobotMap.AUTON_DISTANCE_CONSTANT * -1)) {
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED * -1, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 			Intake.spin(-RobotMap.INTAKE_MOTOR_SPEED); // Spit out just so that we don't drag the tote
 		}
@@ -437,7 +438,7 @@ public class Autonomous {
 				Robot.canTalonRearLeft.set(0.0);
 				break;
 			}
-			if ((Robot.encoderRight.get() * (360.0 / 250.0)) > RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT * -1) {
+			if ((Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR) > RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT * -1) {
 				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
 				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED);
 			} else {
@@ -447,7 +448,7 @@ public class Autonomous {
 			}
 		}
 		
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.BOX_DISTANCE * RobotMap.AUTON_DISTANCE_CONSTANT || Robot.encoderRight.get() * 360.0 / 250.0 > RobotMap.BOX_DISTANCE * RobotMap.AUTON_DISTANCE_CONSTANT)) {
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.BOX_DISTANCE * RobotMap.AUTON_DISTANCE_CONSTANT || Robot.encoderRight.get() * RobotMap.ENCODER_CONVERSION_FACTOR > RobotMap.BOX_DISTANCE * RobotMap.AUTON_DISTANCE_CONSTANT)) {
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE);
 		}
 		Robot.robotDrive.drive(0.0, 0.0);

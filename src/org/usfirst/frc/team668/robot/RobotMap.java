@@ -65,7 +65,7 @@ public class RobotMap {
 	// joystick Op
 	// NORMAL
 	public static final int REVERSING_BUTTON					= 1;
-	public static final int LIFT_BUTTON							= 2;
+	public static final int LIFT_BUTTON				        	= 2;
 	public static final int SCORING_BUTTON						= 3;
 	public static final int HP_START_BUTTON 					= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
@@ -117,12 +117,14 @@ public class RobotMap {
 	public static final int INTAKE_MOTOR_LEFT_CANID			= 5;
 	public static final int INTAKE_MOTOR_RIGHT_CANID		= 6;
 	public static final int ELEVATOR_MOTOR_CANID			= 7;
+	public static final int ELEVATOR_MOTOR_TWO_CANID        = 8; //TODO: Change this to something that actually works
 	public static final int PCM_CANID						= 10;
 	public static final int PDP_CANID						= 20;
 	// @formatter:on
 	
 	// pdp ports for current finding; TODO: THESE MUST BE CHANGED -- THEY ARE PROBABLY WRONG
 	public static final int CAN_TALON_ELEVATOR_PDP_PORT = 3;
+	public static final int CAN_TALON_ELEVATOR2_PDP_PORT = 0; //TODO: find the pdp port for this motor
 	public static final int CAN_TALON_INTAKE_RIGHT_PDP_PORT = 10;
 	public static final int CAN_TALON_INTAKE_LEFT_PDP_PORT = 11;
 	public static final int CAN_TALON_DRIVE_RIGHT_FRONT_PDP_PORT = 12;
@@ -133,10 +135,13 @@ public class RobotMap {
 	// encoder PWMs
 	public static final int DRIVE_ENCODER_LEFT_A = 8;
 	public static final int DRIVE_ENCODER_LEFT_B = 9;
-	public static final int DRIVE_ENCODER_RIGHT_A = 0;
+	public static final int DRIVE_ENCODER_RIGHT_A = 0; 
 	public static final int DRIVE_ENCODER_RIGHT_B = 1;
 	public static final int ELEVATOR_ENCODER_A = 2;
 	public static final int ELEVATOR_ENCODER_B = 3;
+//  we are not using a top encoder for the second motor	
+//	public static final int ELEVATOR2_ENCODER_A = 4;
+//	public static final int ELEVATOR2_ENCODER_B = 5;
 	public static final int CORRECTION_INPUT = 6; // TODO Optical
 	public static final int LIMIT_INPUT = 7;
 	// piston pcmIDs
@@ -310,11 +315,16 @@ public class RobotMap {
 	public static final double MINIMIZING_FACTOR_LEFT = 0.75;
 	public static final double MINIMIZING_FACTOR_RIGHT = 0.6;
 	
-	// This was a MAGYK numbert
+	// This was a MAGYK number
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;
 	
 	public static final double MANUAL_FORWARD_INTAKE_SPEED = .75;
 	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.75;
+	
+	public static final double ENCODER_CONVERSION_FACTOR = (360/250);
+	
+	public static final double AUTON_ELEVATOR_CALIBRATION_SPEED = -0.8;
+	
 	
 	
 	// debugging constant for test robot

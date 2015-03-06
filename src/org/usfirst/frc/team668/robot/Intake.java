@@ -27,3 +27,4 @@ public class Intake {
 		Robot.canTalonIntakeRight.set(0);
 	}
 }
+
