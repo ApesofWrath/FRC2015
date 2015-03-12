@@ -117,6 +117,7 @@ public class RobotMap {
 	public static final int INTAKE_MOTOR_LEFT_CANID			= 5;
 	public static final int INTAKE_MOTOR_RIGHT_CANID		= 6;
 	public static final int ELEVATOR_MOTOR_CANID			= 7;
+	public static final int ELEVATOR_TOP_MOTOR_CANID        = 8;
 	public static final int PCM_CANID						= 10;
 	public static final int PDP_CANID						= 20;
 	// @formatter:on
@@ -229,8 +230,10 @@ public class RobotMap {
 	public static final int MANUAL_OVERRIDE_RETURN_STATE = 17;
 	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 18; // this happens after elevator down to go to lift height
 	public static final int HUMAN_PLAYER_STRATEGY_STATE_INIT = 19;
-	public static final int HUMAN_PLAYER_STRATEGY_WAIT_STATE = 20;
-	public static final int HUMAN_PLAYER_STRATEGY_STATE = 21;
+	public static final int HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE = 20;
+	public static final int HUMAN_PLAYER_STRATEGY_WAIT_STATE = 21;
+	public static final int HUMAN_PLAYER_STRATEGY_STATE = 22;
+	public static final int HUMAN_PLAYER_STRATEGY_RESET_STATE = 23;
 	
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
@@ -271,6 +274,13 @@ public class RobotMap {
 													// more than 525.0 under 535.0
 	public static final double AUTONOMOUS_CURVE_SPEED = 0.8;
 													// less than 1.0
+	//spin away autonomous:
+	public static final double FIRST_TOTE_DISTANCE = 400; // first tote distance
+	public static final double FIRST_BIN_DISTANCE = 200; // distance from first tote to the first bin
+	public static final double SECOND_TOTE_DISTANCE = 1600; // distance from the first bin to the second tote
+	public static final double SECOND_BIN_DISTANCE = 200; // distance from the second tote to the bin 
+	public static final double THIRD_TOTE_DISTANCE = 1600; // distance from the second bin to the third tote
+	
 	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
 	public static final double BOX_DISTANCE = 700.0; // Distance from one box (tote and bin) to another in Autonomous
 	public static final long DELAY_TIME = 2000; // Timer for delayed autonomous function || Milliseconds
@@ -281,11 +291,14 @@ public class RobotMap {
 	public static final int TOTE_GRAB_TIME = 500; // milliseconds TODO: move this // NOT USED!!!#$!#@$!#@$%
 	public static final int BIN_GRAB_TIME = 800; // milliseconds TODO: move this
 	public static final int TOTE_SPIT_TIME = 500; //milliseconds TODO: move this
+	public static final int SPIN_AWAY_TIME = 400; //TODO: check this (milliseconds)
+	public static final int TURN_IN_PLACE_TIME = 500; //TODO: check the time, this is not right
+	
 	
 	public static final double AUTON_FAST_SPEED = -0.5;
 	public static final double AUTON_DISTANCE_CONSTANT = 0.8;
 	public static final double AUTON_TURN_CONSTANT = 1.2;
-	
+	public static final double TURN_IN_PLACE_CURVE = 0; // TODO: find the real value to this.
 	// non-final values change throughout code
 	public static int currentState = DEFAULT_STATE;
 	public static int itemCount = 0; // Bins count as totes. Duh.

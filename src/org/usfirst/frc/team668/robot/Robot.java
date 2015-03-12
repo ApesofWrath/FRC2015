@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot {
 	public static CANTalon canTalonFrontLeft, canTalonFrontRight,
 			canTalonRearLeft, canTalonRearRight;
 	public static CANTalon canTalonIntakeLeft, canTalonIntakeRight,
-			canTalonElevator;
+			canTalonElevator, canTalonElevatorTop;
 	public static Compressor compressor1;
 	public static DigitalInput limitTop, limitBottom; // limitTop is default true, limitBottom is default true
 	public static DigitalInput correctionOptical, limitOptical, toteOptic; // senses if we have tote
@@ -143,6 +143,7 @@ public class Robot extends IterativeRobot {
 		// Elevator motor
 		
 		canTalonElevator = new CANTalon(RobotMap.ELEVATOR_MOTOR_CANID);
+		canTalonElevatorTop = new CANTalon(RobotMap.ELEVATOR_TOP_MOTOR_CANID);
 		
 		// Sensors
 		

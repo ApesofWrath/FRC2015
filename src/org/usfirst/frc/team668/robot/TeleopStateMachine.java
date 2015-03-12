@@ -61,7 +61,6 @@ public class TeleopStateMachine {
 				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kReverse)) {
 					ToteGrabber.moveHugPistons(false);
 				}
-				
 				boolean finish = Elevator.calibration(-0.8); // TODO: magic number
 				
 				if (finish == true) {
@@ -408,13 +407,22 @@ public class TeleopStateMachine {
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
 				
-				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
+				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
 				
-				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+				if (finishInit == true) {
+					Elevator.stop();
+					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;	
+				}
+				break;
+			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE:
 				
-				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				boolean finishWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
 				
-				RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				if (finishWait == true) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				}
 				
 				break;
 			
@@ -423,19 +431,31 @@ public class TeleopStateMachine {
 				if (Robot.joystickOp.getRawButton(RobotMap.HP_START_BUTTON)) {
 					
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
-					
 				}
 				
 				break;
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE:
-				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
 				
-				Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
+				if (strategyTote == true) {	
+					Elevator.stop();
+					
+					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
+					
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE;
+				}
 				
-				Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				break;
+			
+			case RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE:
+				boolean backToWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
 				
-				RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				if (backToWait) {
+					Elevator.stop();
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+					
+				}
 				
 				break;
 			

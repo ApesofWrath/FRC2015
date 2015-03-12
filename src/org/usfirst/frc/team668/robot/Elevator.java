@@ -13,7 +13,7 @@ public class Elevator {
 	 * move elevator up from anywhere to the stop height provided that stop is
 	 * between the two limit switches. It decides to finish if it hits a limit
 	 * switch or if it is at or past the encoder value. It returns true when it
-	 * decides to finish. Otherwise it returns false.
+	 * decides to finish. Otherwise, it returns false.
 	 * 
 	 * @param speed
 	 *            the speed of the elevator from 0.0 to 1.0
@@ -41,8 +41,10 @@ public class Elevator {
 				speed = -Math.abs(speed);
 			}
 			Robot.canTalonElevator.set(speed);
+			Robot.canTalonElevatorTop.set(speed);
 		} else {
 			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0);
 		}
 		
 		return done;
@@ -81,8 +83,12 @@ public class Elevator {
 		System.out.println("speed " + speed);
 		if (!done) {
 			Robot.canTalonElevator.set(speed);
+			Robot.canTalonElevatorTop.set(speed);
+			
 		} else {
 			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0);
+			
 		}
 
 		return done;
@@ -146,5 +152,6 @@ public class Elevator {
 	 */
 	public static void stop() {
 		Robot.canTalonElevator.set(0.0);
+		Robot.canTalonElevatorTop.set(0.0);
 	}
 }
