@@ -214,7 +214,7 @@ public class Autonomous {
 
 		// pick up bin
 		while(r.isEnabled() && r.isAutonomous()) {
-			boolean finished = Elevator.move(-1.0, 410);
+			boolean finished = Elevator.move(-1.0, 410); //TODO: make a constant for this
 			if (finished) {
 				break; //leave the loop if we are finished moving
 			}
@@ -286,15 +286,15 @@ public class Autonomous {
 		while ((r.isAutonomous()) && (r.isEnabled()) && ((System.currentTimeMillis() - toteSpitAutonTimer) < RobotMap.TOTE_SPIT_TIME)) {
 			Intake.spin(-RobotMap.INTAKE_MOTOR_SPEED); // TODO: Used to be 0.4 Remove when verified
 		}
-		Intake.stop();		return;
+		Intake.stop();
+		return;
 	}
 	
 	public static void toteStackAutonomous(Robot r) {
 		// GET THIS FROM GIT 2/17/15 2:07 PM If you really want it
-	
 	}
 	
-	public static void SpinAwayAutonomous(Robot r){
+	public static void spinAwayAutonomous(Robot r){
 		// This autonomous code will spin away the bins in the way of the totes and stack all three totes
 		//opens the intake TODO: may want to have it closed
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
@@ -317,7 +317,7 @@ public class Autonomous {
 			
 			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); // intakes the first yellow tote
 		}
-		Robot.robotDrive.drive(0.0, 0.0);
+		Robot.robotDrive.drive(0.0, 0.0); //TODO: sudden stops may jerk the tote out of the robot. we may need a gradual slowdown
 		Intake.stop();
 		
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
@@ -325,14 +325,12 @@ public class Autonomous {
 		Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 		
 		while(r.isEnabled() && r.isAutonomous()) {  // lifts the tote to 410 encoder height
-			boolean finished = Elevator.move(-1.0, 410);
+			boolean finished = Elevator.move(-1.0, 410); //TODO: please make a constant for this
 			if (finished) {
 				break; 
 			}
 		}
 		
-		
-        Robot.encoderElevator.reset();
 		Robot.encoderLeft.reset();
 		Robot.encoderRight.reset();
 		
@@ -349,7 +347,7 @@ public class Autonomous {
 		
 		long spinAwayTimer1 = System.currentTimeMillis();
 		while (r.isAutonomous() && r.isEnabled() && (System.currentTimeMillis() - spinAwayTimer1) < RobotMap.SPIN_AWAY_TIME){
-			Intake.spinAway(RobotMap.INTAKE_MOTOR_SPEED); 
+			Intake.spinAway(RobotMap.INTAKE_MOTOR_SPEED);
 		}
 		
 		Intake.stop();
@@ -361,7 +359,7 @@ public class Autonomous {
 			Intake.spin(RobotMap.INTAKE_MOTOR_SPEED); // intakes the second yellow tote
 		}	
 		
-	    Robot.robotDrive.drive(0.0, 0.0);
+	    	Robot.robotDrive.drive(0.0, 0.0);
 	    
 		Intake.stop();
 		
@@ -370,32 +368,28 @@ public class Autonomous {
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 		
+		//picks up tote
+		elevatorCalibration = Elevator.calibration(-0.8);
 		while (!elevatorCalibration) {
 			elevatorCalibration = Elevator.calibration(-0.8);
 		}
-		
-		
-		Robot.encoderElevator.reset();
-		
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
 		
 		while (r.isAutonomous() && r.isEnabled()) { // lifts the second tote to 410 encoder height
 			
-			boolean finished = Elevator.move(-1.0, 410);
+			boolean finished = Elevator.move(-1.0, 410); //TODO: Magic number
 			if (finished) {
 				break; 
 			}
 			
 		}
 		
-		Robot.encoderElevator.reset();
-		
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
 		while (Robot.encoderLeft.get() * -1 < RobotMap.SECOND_BIN_DISTANCE * RobotMap.AUTON_DISTANCE_CONSTANT && r.isAutonomous() && r.isEnabled()) {
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE);
-			}
+		}
 		
 		Robot.robotDrive.drive(0.0, 0.0);
 		
@@ -425,14 +419,14 @@ public class Autonomous {
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kReverse); // unclamps the two totes on the top so it can go down and clamp the next
 		
+		elevatorCalibration = Elevator.calibration(-0.8);
 		while (!elevatorCalibration) {
 			elevatorCalibration = Elevator.calibration(-0.8);
 		}
-	
-		Robot.encoderElevator.reset();
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kForward); // clamps the bottom of the stack. IT will not go up, we are just going to drag it.
 		
+		//TODO: use encoders here. Just copy code from other autonomous
 		double turnInPlaceTimer = System.currentTimeMillis(); // turns in place towards the auto zone
 		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.TURN_IN_PLACE_CURVE);
@@ -440,12 +434,12 @@ public class Autonomous {
 		
 		Robot.robotDrive.drive(0.0, 0.0);
 		
+		//TODO: use encoders
 		double driveToAutoZone = System.currentTimeMillis();// driving towards the auto zone
 		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
 			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE);
 		}
 		 Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
-		 
 		 Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 	
 		 
