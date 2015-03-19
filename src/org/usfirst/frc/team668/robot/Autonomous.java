@@ -18,7 +18,6 @@ public class Autonomous {
 	public static void driveForwardAutonomous(Robot r) {
 		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-			
 		}
 		return;
 	}
@@ -426,19 +425,43 @@ public class Autonomous {
 		
 		Robot.hugPiston.set(DoubleSolenoid.Value.kForward); // clamps the bottom of the stack. IT will not go up, we are just going to drag it.
 		
-		//TODO: use encoders here. Just copy code from other autonomous
-		double turnInPlaceTimer = System.currentTimeMillis(); // turns in place towards the auto zone
-		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
-			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.TURN_IN_PLACE_CURVE);
+		// turns in place to the RIGHT
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * 1 > Math.abs(RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) * -1)) {
+			if (Robot.encoderLeft.get() * -1 > RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT * -1) {
+				Robot.canTalonFrontLeft.set(RobotMap.AUTONOMOUS_CURVE_SPEED * 1); //TODO:Make sure these motors are flipped n stuff
+				Robot.canTalonRearLeft.set(RobotMap.AUTONOMOUS_CURVE_SPEED * 1);
+			} else {
+				Robot.canTalonFrontLeft.set(0.0);
+				Robot.canTalonRearLeft.set(0.0);
+				break;
+			}
+			if ((Robot.encoderRight.get() * (-360.0 / 250.0)) < RobotMap.TURN_DISTANCE * RobotMap.AUTON_TURN_CONSTANT) {
+				Robot.canTalonFrontRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * 1);
+				Robot.canTalonRearRight.set(RobotMap.AUTONOMOUS_CURVE_SPEED * 1);
+			} else {
+				Robot.canTalonFrontRight.set(0.0);
+				Robot.canTalonRearRight.set(0.0);
+				break;
+			}
 		}
+//		double turnInPlaceTimer = System.currentTimeMillis(); // turns in place towards the auto zone
+//		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
+//			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.TURN_IN_PLACE_CURVE);
+//		}
 		
 		Robot.robotDrive.drive(0.0, 0.0);
 		
-		//TODO: use encoders
-		double driveToAutoZone = System.currentTimeMillis();// driving towards the auto zone
-		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
-			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE);
+		// drives to the auto zone. 
+		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
+		Robot.robotDrive.stopMotor();
+		
+//		double driveToAutoZone = System.currentTimeMillis();// driving towards the auto zone
+//		while (r.isEnabled() && r.isAutonomous() && (System.currentTimeMillis() - turnInPlaceTimer) < RobotMap.TURN_IN_PLACE_TIME){
+//			Robot.robotDrive.drive(RobotMap.AUTON_FAST_SPEED, RobotMap.AUTONOMOUS_CURVE);
+//		}
+		
 		 Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 		 Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 	

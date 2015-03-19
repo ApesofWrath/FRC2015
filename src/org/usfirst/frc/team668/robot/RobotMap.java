@@ -67,13 +67,13 @@ public class RobotMap {
 	public static final int REVERSING_BUTTON					= 1;
 	public static final int LIFT_BUTTON							= 2;
 	public static final int SCORING_BUTTON						= 3;
-	public static final int HP_START_BUTTON 					= 4;
+	public static final int HP_PICKUP_BUTTON 					= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
 	public static final int PRETEND_BIN_DETECTED_BUTTON			= 6;
 	public static final int INTAKE_PISTON_CLOSE_BUTTON			= 7;	// Intake Piston Arm
 	public static final int INTAKE_PISTON_OPEN_BUTTON			= 8;
 	public static final int TOTE_HEIGHT_BUTTON					= 9;
-	public static final int EMPTY_OP_NORMAL_10_BUTTON			= 10;
+	public static final int HP_START_BUTTON						= 10;
 	public static final int MANUAL_OVERRIDE_BUTTON				= 11;
 	public static final int ABORT_BUTTON						= 12;
 	// MANUAL OVERRIDE
@@ -190,7 +190,7 @@ public class RobotMap {
 	public static final int DRIVE_THE_OTHER_WAY = 3;
 	public static final int EJECT_BIN = 4;
 	public static final int CELEBRATE_SUCCESS = 5;  // spin in circles like Atlas celebrating success
-													// recursion =)
+													// recursion =)DELAY_AND_SPIN_AWAY_AUTONOMOUS
 	
 //	// autonomous tote grab state machine TODO: Remove this
 //	public static int autonToteGrabState = 0;
@@ -290,11 +290,13 @@ public class RobotMap {
 										// more than 1750 -- 1850 is good
 	public static final int TOTE_STOP = 500; //this is the distance in tote auton 125
 	public static final int BIN_STOP = 125; //this is the distance in bin auton
+	
+	// timers for auton
 	public static final int TOTE_GRAB_TIME = 500; // milliseconds TODO: move this // NOT USED!!!#$!#@$!#@$%
 	public static final int BIN_GRAB_TIME = 800; // milliseconds TODO: move this
 	public static final int TOTE_SPIT_TIME = 500; //milliseconds TODO: move this
-	public static final int SPIN_AWAY_TIME = 400; //TODO: check this (milliseconds)
-	public static final int TURN_IN_PLACE_TIME = 500; //TODO: check the time, this is not right
+	public static final int SPIN_AWAY_TIME = 1000; 
+	
 	
 	
 	public static final double AUTON_FAST_SPEED = -0.5;

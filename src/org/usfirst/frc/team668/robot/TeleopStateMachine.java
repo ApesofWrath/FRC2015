@@ -129,7 +129,6 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Human Player Strategy Start State\n");
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT;
 				}
-				
 				break;
 			
 			case RobotMap.WAIT_FOR_GAME_PIECE_STATE: // waits for the objective to be within sight of their respective optical sensor
@@ -405,6 +404,7 @@ public class TeleopStateMachine {
 				
 				break;
 			
+			//added so we can sit near the alliance station and make huge stacks
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
 				
 				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
@@ -414,7 +414,9 @@ public class TeleopStateMachine {
 					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;	
 				}
+				
 				break;
+				
 			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE:
 				
 				boolean finishWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
@@ -428,21 +430,21 @@ public class TeleopStateMachine {
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE:
 				
-				if (Robot.joystickOp.getRawButton(RobotMap.HP_START_BUTTON)) {
-					
+				if (Robot.joystickOp.getRawButton(RobotMap.HP_PICKUP_BUTTON)) {
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
 				}
 				
 				break;
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE:
-				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
 				
+				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+			
 				if (strategyTote == true) {	
+	
 					Elevator.stop();
-					
 					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
-					
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE;
 				}
 				
@@ -454,7 +456,6 @@ public class TeleopStateMachine {
 				if (backToWait) {
 					Elevator.stop();
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
-					
 				}
 				
 				break;

@@ -308,6 +308,8 @@ public class Robot extends IterativeRobot {
 		autonomousChooser.addObject("Delay and Tote and Bin Grab Autonomous", new Integer(RobotMap.DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS));
 		autonomousChooser.addObject("Two Tote Bin Stacks Autonomous", new Integer(RobotMap.TWO_TOTE_BIN_STACKS_AUTONOMOUS));
 		autonomousChooser.addObject("Delay and Tote Bin Stacks Autonomous", new Integer(RobotMap.DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS));
+		autonomousChooser.addObject("Spin Away Autonomous", new Integer(RobotMap.SPIN_AWAY_AUTONOMOUS));
+		autonomousChooser.addObject("Delay and Spin Away Autonomous", new Integer(RobotMap.DELAY_AND_SPIN_AWAY_AUTONOMOUS));
 		
 		SmartDashboard.putData("Autonomous Mode Selection", autonomousChooser);
 		
