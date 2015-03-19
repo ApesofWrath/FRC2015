@@ -180,6 +180,8 @@ public class RobotMap {
 	public static final int DELAY_AND_TOTE_AND_BIN_GRAB_AUTONOMOUS = 8;
 	public static final int TWO_TOTE_BIN_STACKS_AUTONOMOUS = 9;
 	public static final int DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS = 10;
+	public static final int SPIN_AWAY_AUTONOMOUS = 11;
+	public static final int DELAY_AND_SPIN_AWAY_AUTONOMOUS = 12;
 	
 	// auto state machine
 	public static final int DRIVE_FOWARD = 0;

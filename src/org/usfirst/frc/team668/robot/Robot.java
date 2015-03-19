@@ -405,6 +405,11 @@ public class Robot extends IterativeRobot {
 		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_TWO_TOTE_BIN_STACKS_AUTONOMOUS) {
 			Autonomous.delayAutonomous();
 			Autonomous.twoToteBinStacksAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.SPIN_AWAY_AUTONOMOUS){
+			Autonomous.spinAwayAutonomous(this);
+		} else if (RobotMap.autonomousMode == RobotMap.DELAY_AND_SPIN_AWAY_AUTONOMOUS){
+			Autonomous.delayAutonomous();
+			Autonomous.spinAwayAutonomous(this);
 		}
 	} // autonomousInit
 	
