@@ -319,9 +319,9 @@ public class RobotMap {
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
 	public static final double ELEVATOR_ENCODER_HP_WAIT = 820;
-	// Used to be 15 - New limit switch
-	public static final double ELEVATOR_ENCODER_PICKUP = 0; // pickup tote height
-	// Used to be 10 - New limit switch
+	// Used to be 15, then 0 - New elevator, now it's 22; made it 17 so that it will stop on 17
+	public static final double ELEVATOR_ENCODER_PICKUP = 18; // pickup tote height
+	public static final double ELEVATOR_ENCODER_PICKUP_ADJUST = 16;
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	
 	public static final double MINIMIZING_FACTOR_LEFT = 0.75;

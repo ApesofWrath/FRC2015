@@ -1,5 +1,7 @@
 package org.usfirst.frc.team668.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Class to move the elevator to encoder values and calibrate encoder based on limit switches
  * 
@@ -48,6 +50,45 @@ public class Elevator {
 		}
 		
 		return done;
+	}
+	
+	public static boolean moveP(double stop) {
+		
+		double p = 0.05;
+		
+		double error = 1 * (Robot.encoderElevator.get() - stop);
+		double speed = -1.0 * p * error;
+		if (Math.abs(speed) > 1.0) {
+			if (speed < 0) {
+				speed = -1.0;
+			} else if (speed > 0) {
+				speed = 1.0;
+			}
+		}
+		
+		SmartDashboard.putNumber("current", Robot.encoderElevator.get());
+		SmartDashboard.putNumber("desired", stop);
+		SmartDashboard.putNumber("error", error);
+		SmartDashboard.putNumber("speed", speed);
+		
+		Robot.canTalonElevator.set(speed);
+		Robot.canTalonElevatorTop.set(speed);
+		
+		if (!Robot.limitTop.get()) {
+			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0);
+			SmartDashboard.putNumber("speed", 0);
+			return true;
+		} else {
+			if (Math.abs(error) <= 1) {
+				Robot.canTalonElevator.set(0.0);
+				Robot.canTalonElevatorTop.set(0.0);
+				SmartDashboard.putNumber("speed", 0);
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/**

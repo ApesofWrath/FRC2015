@@ -33,8 +33,11 @@ public class TeleopStateMachine {
 	
 	private static double encoderCounter = -1;
 	private static long reverseTimer = -1;
+	public static boolean startingAtBottom = true;
 	
 	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isLift, boolean isManual, boolean isReversing, boolean isToteHeight, boolean isAbort, boolean isHPStrat) {
+		
+		SmartDashboard.putBoolean("startingAtBottom", startingAtBottom);
 		
 		// sets to manual override, which turns off the state machine
 		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
@@ -61,10 +64,12 @@ public class TeleopStateMachine {
 				if (!Robot.hugPiston.get().equals(DoubleSolenoid.Value.kReverse)) {
 					ToteGrabber.moveHugPistons(false);
 				}
-				boolean finish = Elevator.calibration(-0.8); // TODO: magic number
+//				boolean finish = Elevator.calibration(-0.8); // TODO: magic number
+				boolean finish = Elevator.moveP(0);
 				
 				if (finish == true) {
 					Elevator.stop();
+					startingAtBottom = true;
 					Robot.debugWriter.println("Adjust up state\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_UP_STATE;
 					// changed at request of Weissman to go down but not up when we have no totes
@@ -75,7 +80,9 @@ public class TeleopStateMachine {
 			case RobotMap.ELEVATOR_ADJUST_UP_STATE: // makes elevator go up a bit after init
 				SmartDashboard.putString("State:", "Elevator Adjust Up");
 				
-				boolean moveFinish = Elevator.move(0.5, RobotMap.ELEVATOR_ENCODER_PICKUP); // should be about 10
+//				boolean moveFinish = Elevator.move(0.5, RobotMap.ELEVATOR_ENCODER_PICKUP_ADJUST); // should be about 10
+				boolean moveFinish = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_PICKUP_ADJUST);
+				
 				if (moveFinish == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Wait for button state\n");
@@ -90,7 +97,8 @@ public class TeleopStateMachine {
 				// RobotMap.elevatorMotorEmptyDraw = Robot.pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT);
 				// }
 				SmartDashboard.putString("State:", "Elevator Height Tote");
-				boolean done = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+//				boolean done = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				boolean done = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
 				
 				if (done == true) {
 					Elevator.stop();
@@ -126,7 +134,7 @@ public class TeleopStateMachine {
 				}
 				
 				if (isHPStrat) {
-					Robot.debugWriter.println("Human Player Strategy Start State\n");
+					System.out.println("Human Player Strategy Start State\n");
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT;
 				}
 				break;
@@ -180,7 +188,8 @@ public class TeleopStateMachine {
 					// Intake.stop();
 					// to be done in closehugpistons state
 					SmartDashboard.putNumber("Number of Items", RobotMap.itemCount);
-					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_STATE;
+//					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_STATE;
+					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
 				}
 				break;
 			
@@ -219,7 +228,15 @@ public class TeleopStateMachine {
 					
 					Robot.debugWriter.println("Elevator Down State\n");
 					// RobotMap.currentState = RobotMap.DRIVE_BACKWARDS_STATE;
-					RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
+					if (startingAtBottom==false) {
+						RobotMap.currentState = RobotMap.ELEVATOR_PICKUP_HEIGHT_STATE;
+						SmartDashboard.putBoolean("Going to Pickup Height", true);
+					} else {
+						//this
+						RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+						SmartDashboard.putBoolean("Going to Pickup Height", false);
+						startingAtBottom = false;
+					}
 				}
 				
 				break;
@@ -238,6 +255,7 @@ public class TeleopStateMachine {
 				}
 				break;
 			
+			//currently not in use
 			case RobotMap.ELEVATOR_DOWN_STATE:// brings elevator down
 				SmartDashboard.putString("State:", "Elevator Down");
 				
@@ -245,7 +263,7 @@ public class TeleopStateMachine {
 				
 				// sets intake piston to open if it isn't open yet
 				// boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
-				boolean finishThis = Elevator.calibration(RobotMap.elevatorMotorSpeed);
+				boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, 27); //TODO Magic #
 				if (finishThis == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Elevator Pickup Height State\n");
@@ -263,7 +281,8 @@ public class TeleopStateMachine {
 				
 				// sets intake piston to open if it isn't open yet
 				// boolean finishThis = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
-				boolean finished = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+//				boolean finished = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_PICKUP);
+				boolean finished = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_PICKUP);
 				if (finished == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Close Hug Pistons State\n");
@@ -328,7 +347,8 @@ public class TeleopStateMachine {
 			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform height
 				SmartDashboard.putString("State:", "Elevator Height Scoring");
 				
-				boolean finishScore = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_SCORING);
+//				boolean finishScore = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_SCORING);
+				boolean finishScore = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_SCORING);
 				
 				if (finishScore == true) {
 					Elevator.stop();
@@ -345,8 +365,9 @@ public class TeleopStateMachine {
 			case RobotMap.ELEVATOR_HEIGHT_GROUND_STATE:// sets to ground height
 				SmartDashboard.putString("State:", "Elevator Height Ground");
 				
-				boolean finishGround = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
-				
+//				boolean finishGround = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
+				boolean finishGround = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_GROUND);
+
 				if (finishGround == true) {
 					Elevator.stop();
 					Robot.debugWriter.println("Waiting for Reverse Intake State\n");
@@ -404,15 +425,16 @@ public class TeleopStateMachine {
 				
 				break;
 			
-			//added so we can sit near the alliance station and make huge stacks
+			//added so we can sit near the human station and make stacks
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
-				
+				SmartDashboard.putString("State:", "Human Player Strategy");
+
 				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
-				
+				// TODO: CHange sooon
 				if (finishInit == true) {
 					Elevator.stop();
 					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
-					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;	
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE;	
 				}
 				
 				break;
@@ -486,10 +508,12 @@ public class TeleopStateMachine {
 				if (!Robot.intakePiston.get().equals(DoubleSolenoid.Value.kReverse)) {
 					Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
 				}
-				boolean overrideFinish = Elevator.calibration(-0.8); // TODO: magic number
+//				boolean overrideFinish = Elevator.calibration(-0.8); // TODO: magic number
+				boolean overrideFinish = Elevator.moveP(0);
 				
 				if (overrideFinish == true) {
 					Elevator.stop();
+					startingAtBottom = true;
 					Robot.debugWriter.println("Adjust up state\n");
 					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_UP_STATE;
 					// changed at request of Weissman to go down but not up when we have no totes

@@ -304,7 +304,7 @@ public class Autonomous {
 			elevatorCalibration = Elevator.calibration(-0.8);
 		}
 		 
-		Robot.encoderElevator.reset();
+	
 		
 		// closes piston 
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
