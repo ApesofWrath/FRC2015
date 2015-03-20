@@ -79,7 +79,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Robot extends IterativeRobot {
 	
 	// Versioning
-	public static String versionNumber = "5.0.0";
+	public static String versionNumber = "6.0.0";
 	public static String versionName = "Evil Capulet Ape of Wrath";
 	
 	// Object Declaration
@@ -90,6 +90,7 @@ public class Robot extends IterativeRobot {
 	public static Compressor compressor1;
 	public static DigitalInput limitTop, limitBottom; // limitTop is default true, limitBottom is default true
 	public static DigitalInput correctionOptical, limitOptical, toteOptic; // senses if we have tote
+	// tote optic is normally true
 	public static DoubleSolenoid hugPiston, intakePiston; // hug : kForward - closed and intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move public static Encoder encoderLeft, encoderRight, encoderElevator; // encoderRight will always be multiplied by 360.0 / 250.0 because the encoders have different ranges
 	public static Encoder encoderLeft, encoderRight, encoderElevator;
 	public static Joystick joystickLeft, joystickRight, joystickOp;
@@ -442,6 +443,12 @@ public class Robot extends IterativeRobot {
 		RobotMap.itemCount = 0;
 		encoderLeft.reset();
 		encoderRight.reset();
+		
+		for(int i = 0; i < RobotMap.stateLog.length; i++) {
+			RobotMap.stateLog[i] = "";
+		}
+		RobotMap.stateIndex = 0;
+		
 	} // teleopinit
 	
 	/**
@@ -859,7 +866,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Elevator Encoder", encoderElevator.get());
 		SmartDashboard.putNumber("Left Encoder", encoderLeft.get() * -1);
 		SmartDashboard.putNumber("Right Encoder", encoderRight.get() * 360.0 / 250.0);
-		SmartDashboard.putBoolean("isTote", toteOptic.get());
+		SmartDashboard.putBoolean("isTote", !toteOptic.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
 		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().value == DoubleSolenoid.Value.kForward_val);
@@ -868,5 +875,12 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Elevator Current from Talon", canTalonElevator.getOutputCurrent());
 		
 		SmartDashboard.putNumber("State", RobotMap.currentState);
+		
+		int count = 0;
+		for (String s : RobotMap.stateLog) {
+			SmartDashboard.putString(count+" state ", s);
+			count++;
+		}
+		SmartDashboard.putNumber("Last state index", RobotMap.stateIndex);
 	}
 }

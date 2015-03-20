@@ -148,7 +148,7 @@ public class RobotMap {
 	
 	// pwms for the optical sensors used in the intake
 	public static final int BIN_OPTIC_DIO = 1;
-	public static final int TOTE_OPTIC_DIO = 7;
+	public static final int TOTE_OPTIC_DIO = 6;
 	
 	// limit switch channels
 	public static final int ELEVATOR_LIMIT_TOP_CHANNEL = 5;
@@ -255,6 +255,7 @@ public class RobotMap {
 	
 	// @formatter:on
 	
+	
 	// CURRENT STUFF: {
 	// DEFAULT VALUES of empty and full draws on the intake/elevator motors
 	// these should not be final
@@ -286,7 +287,7 @@ public class RobotMap {
 	public static final double TOTE_DISTANCE = 360.0; // Distance from the robot to tote in Tote Grab Auton
 	public static final double BOX_DISTANCE = 700.0; // Distance from one box (tote and bin) to another in Autonomous
 	public static final long DELAY_TIME = 2000; // Timer for delayed autonomous function || Milliseconds
-	public static final int STOP = 1850; // This is how far the robot should go in FORWARD_AUTONOMOUS
+	public static final int STOP = 1800; // This is how far the robot should go in FORWARD_AUTONOMOUS
 										// more than 1750 -- 1850 is good
 	public static final int TOTE_STOP = 500; //this is the distance in tote auton 125
 	public static final int BIN_STOP = 125; //this is the distance in bin auton
@@ -314,18 +315,22 @@ public class RobotMap {
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
+	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 347;
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
 	public static final double ELEVATOR_ENCODER_HP_WAIT = 820;
 	// Used to be 15, then 0 - New elevator, now it's 22; made it 17 so that it will stop on 17
-	public static final double ELEVATOR_ENCODER_PICKUP = 18; // pickup tote height
-	public static final double ELEVATOR_ENCODER_PICKUP_ADJUST = 16;
+	public static final double ELEVATOR_ENCODER_PICKUP = 24; // pickup tote height
+	public static final double ELEVATOR_ENCODER_PICKUP_ADJUST = 24;
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	
-	public static final double MINIMIZING_FACTOR_LEFT = 0.75;
-	public static final double MINIMIZING_FACTOR_RIGHT = 0.6;
+	public static final double ELEVATOR_MIN_ENCODER_VAL = ELEVATOR_ENCODER_PICKUP - 2.0;
+	// this is a "soft hard stop" so that our elevator can't go lower than the pickup after we calibrate
+	
+	public static final double MINIMIZING_FACTOR_LEFT = 0.8;
+	public static final double MINIMIZING_FACTOR_RIGHT = 0.8;
 	
 	// This was a MAGYK numbert
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;
@@ -337,4 +342,14 @@ public class RobotMap {
 	// debugging constant for test robot
 	public static boolean isTestRobot = false;
 	public static boolean cameraConnected = false;
+	
+	// we are doing this to keep track of state transitions
+	// this is a circular buffer / circular array, meaning that we keep track of the last 10 states
+	public static String[] stateLog = new String[10];
+	public static int stateIndex = 0;
+	
+	
+	
+	
+	
 }

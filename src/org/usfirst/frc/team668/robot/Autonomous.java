@@ -12,10 +12,20 @@ public class Autonomous {
 	 */
 	
 	public static void stopAutonomous() {
+		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
+		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		while (!elevatorCalibration) {
+			elevatorCalibration = Elevator.calibration(-0.8);
+		}
 		return;
 	}
 	
 	public static void driveForwardAutonomous(Robot r) {
+		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
+		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		while (!elevatorCalibration) {
+			elevatorCalibration = Elevator.calibration(-0.8);
+		}
 		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
@@ -39,6 +49,12 @@ public class Autonomous {
 	}
 	
 	public static void toteGrabAutonomous(Robot r) {
+		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
+		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		while (!elevatorCalibration) {
+			elevatorCalibration = Elevator.calibration(-0.8);
+		}
+		
 		// close piston
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
@@ -83,6 +99,12 @@ public class Autonomous {
 	}
 	
 	public static void binGrabAutonomous(Robot r) {
+		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
+		boolean elevatorCalibration = Elevator.calibration(-0.8);
+		while (!elevatorCalibration) {
+			elevatorCalibration = Elevator.calibration(-0.8);
+		}
+		
 		// close piston
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
@@ -185,12 +207,11 @@ public class Autonomous {
 	public static void binAndToteGrabAutonomous(Robot r) {
 
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);
-		// move elevator down
 		boolean elevatorCalibration = Elevator.calibration(-0.8);
 		while (!elevatorCalibration) {
 			elevatorCalibration = Elevator.calibration(-0.8);
 		}
-		
+
 		// close piston
 		Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 		
@@ -294,6 +315,8 @@ public class Autonomous {
 	}
 	
 	public static void spinAwayAutonomous(Robot r){
+		
+		
 		// This autonomous code will spin away the bins in the way of the totes and stack all three totes
 		//opens the intake TODO: may want to have it closed
 		Robot.intakePiston.set(DoubleSolenoid.Value.kReverse);

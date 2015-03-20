@@ -75,6 +75,20 @@ public class TeleopStateMachine {
 					// changed at request of Weissman to go down but not up when we have no totes
 				}
 				
+				int checkState;
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Init State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Init State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.ELEVATOR_ADJUST_UP_STATE: // makes elevator go up a bit after init
@@ -89,6 +103,20 @@ public class TeleopStateMachine {
 					// RobotMap.currentState = RobotMap.DRIVE_FORWARDS_STATE;
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Adjust Up State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Adjust Up State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_TOTE_STATE: // Lifts the elevator to one tote height
@@ -104,6 +132,19 @@ public class TeleopStateMachine {
 					Elevator.stop();
 					Robot.debugWriter.println("Wait for Button State\n");
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Height Tote State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Height Tote State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
 				}
 				
 				break;
@@ -137,13 +178,27 @@ public class TeleopStateMachine {
 					System.out.println("Human Player Strategy Start State\n");
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Wait for Button State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Wait for Button State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.WAIT_FOR_GAME_PIECE_STATE: // waits for the objective to be within sight of their respective optical sensor
 				SmartDashboard.putString("State:", "Wait for Game Piece");
 				Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
 				
-				if (Robot.toteOptic.get() || Robot.joystickOp.getRawButton(RobotMap.PRETEND_BIN_DETECTED_BUTTON) == true) {
+				if (!Robot.toteOptic.get() || Robot.joystickOp.getRawButton(RobotMap.PRETEND_BIN_DETECTED_BUTTON) == true) {
 					RobotMap.currentState = RobotMap.TIME_DELAY_AFTER_TOTE_SENSE_STATE;
 				}
 				
@@ -175,6 +230,19 @@ public class TeleopStateMachine {
 					break;
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Wait for Game Piece State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Wait for Game Piece State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.TIME_DELAY_AFTER_TOTE_SENSE_STATE: // waits after getting a game piece
@@ -191,6 +259,20 @@ public class TeleopStateMachine {
 //					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_STATE;
 					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Time Delay After Tote Sense State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Time Delay After Tote Sense State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.ELEVATOR_ADJUST_STATE:
@@ -209,6 +291,22 @@ public class TeleopStateMachine {
 					// RobotMap.currentState = RobotMap.DRIVE_FORWARDS_STATE;
 					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Adjust State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Adjust State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
+				break;
+				
 				
 			case RobotMap.OPEN_HUG_PISTONS_STATE:// opens the pistons on the elevator
 				SmartDashboard.putString("State:", "Open Hug Pistons");
@@ -239,6 +337,19 @@ public class TeleopStateMachine {
 					}
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Open Hug Pistons State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Open Hug Pistons State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.DRIVE_BACKWARDS_STATE: // not currently in use because it is useless
@@ -253,6 +364,20 @@ public class TeleopStateMachine {
 					encoderCounter = -1.0;
 					RobotMap.currentState = RobotMap.ELEVATOR_DOWN_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Drive Backwards State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Drive Backwards State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			//currently not in use
@@ -270,6 +395,19 @@ public class TeleopStateMachine {
 					// RobotMap.currentState = RobotMap.DRIVE_FORWARDS_STATE;
 					// RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
 					RobotMap.currentState = RobotMap.ELEVATOR_PICKUP_HEIGHT_STATE;
+				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Down State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Down State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
 				}
 				
 				break;
@@ -290,6 +428,20 @@ public class TeleopStateMachine {
 					// RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
 					RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Pickup Height State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Pickup Height State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.DRIVE_FORWARDS_STATE: // not currently in use
@@ -325,6 +477,20 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Wait for Button State\n");
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;// sets to one tote height
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Close Hug Pistons State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Close Hug Pistons State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_COOPERTITION_STATE:// sets to coopertition plate height
@@ -342,6 +508,20 @@ public class TeleopStateMachine {
 					Intake.stop();
 					break;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Height Coopertition State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Height Coopertition State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.ELEVATOR_HEIGHT_SCORING_STATE:// sets to scoring platform height
@@ -359,6 +539,19 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
 					Intake.stop();
 					break;
+				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Height Scoring State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Height Scoring State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
 				}
 				break;
 			
@@ -378,6 +571,20 @@ public class TeleopStateMachine {
 					Intake.stop();
 					break;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Elevator Height Ground State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Elevator Height Ground State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE:
@@ -392,6 +599,18 @@ public class TeleopStateMachine {
 					break;
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Waiting for Reverse Intake State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Waiting for Reverse Intake State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
 				// TODO: make sure the intake piston is open here
 				
 				break;
@@ -423,29 +642,70 @@ public class TeleopStateMachine {
 					reverseTimer = -1;
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Reverse Intake Motors State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Reverse Inte Motors State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			//added so we can sit near the human station and make stacks
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
 				SmartDashboard.putString("State:", "Human Player Strategy");
 
-				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
-				// TODO: CHange sooon
+//				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
+				boolean finishInit = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_GROUND);
+				
 				if (finishInit == true) {
 					Elevator.stop();
 					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE;	
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Human Player Strategy State Init")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Human Player Strategy State Init";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 				
 			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE:
 				
-				boolean finishWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+//				boolean finishWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				boolean finishWait = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_WAIT);
 				
 				if (finishWait == true) {
 					Elevator.stop();
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Human Player Strategy Wait Height State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Human Player Strategy Wait Height State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
 				}
 				
 				break;
@@ -456,13 +716,28 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Human Player Strategy Wait State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Human Player Strategy Wait State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE:
 				
 				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
-				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
-			
+//				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
+				boolean strategyTote = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
+
+				
 				if (strategyTote == true) {	
 	
 					Elevator.stop();
@@ -470,14 +745,41 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE;
 				}
 				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Human Player Strategy State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Human Player Strategy State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE:
-				boolean backToWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+//				boolean backToWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);
+				boolean backToWait = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_WAIT);
 				
 				if (backToWait) {
 					Elevator.stop();
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE;
+				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Human Player Strategy Reset State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Human Player Strategy Reset State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
 				}
 				
 				break;
@@ -492,6 +794,20 @@ public class TeleopStateMachine {
 					Robot.debugWriter.println("Returning to state machine\n");
 					RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_RETURN_STATE;
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Manual Override State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Manual Override State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 			
 			case RobotMap.MANUAL_OVERRIDE_RETURN_STATE: // Init with closing the clamps optional
@@ -518,6 +834,20 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_UP_STATE;
 					// changed at request of Weissman to go down but not up when we have no totes
 				}
+				
+				if (RobotMap.stateIndex == 0) {
+					checkState = RobotMap.stateLog.length - 1;
+				} else {
+					checkState = RobotMap.stateIndex - 1;
+				}
+				if (!RobotMap.stateLog[checkState].equals("Manual Override Return State")) {
+					RobotMap.stateLog[RobotMap.stateIndex] = "Manual Override Return State";
+					RobotMap.stateIndex++;
+					if (RobotMap.stateIndex >= RobotMap.stateLog.length) {
+						RobotMap.stateIndex = 0;
+					}
+				}
+				
 				break;
 		}
 	}

@@ -74,7 +74,7 @@ public class Elevator {
 		Robot.canTalonElevator.set(speed);
 		Robot.canTalonElevatorTop.set(speed);
 		
-		if (!Robot.limitTop.get()) {
+		if (!Robot.limitTop.get() || (Robot.encoderElevator.get() < RobotMap.ELEVATOR_MIN_ENCODER_VAL && stop < Robot.encoderElevator.get())) {
 			Robot.canTalonElevator.set(0.0);
 			Robot.canTalonElevatorTop.set(0.0);
 			SmartDashboard.putNumber("speed", 0);
@@ -185,6 +185,12 @@ public class Elevator {
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
 			return true;
 		}*/ // we commented this section out because when the encoer is not calibrated it stops the encoder
+		
+		//added as a soft stop to stop the elevator from going too far down
+		if (Robot.encoderElevator.get() < RobotMap.ELEVATOR_MIN_ENCODER_VAL && !up) {
+			return true;
+		}
+		
 		return false;
 	}
 	
