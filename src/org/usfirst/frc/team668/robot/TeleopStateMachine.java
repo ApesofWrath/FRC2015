@@ -597,7 +597,7 @@ public class TeleopStateMachine {
 					RobotMap.currentState = RobotMap.REVERSE_INTAKE_MOTORS_STATE;
 				}
 				if (isAbort) {
-					RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+					RobotMap.currentState = RobotMap.INIT_STATE; //after we finish getting rid of totes
 					Intake.stop();
 					break;
 				}
@@ -640,7 +640,9 @@ public class TeleopStateMachine {
 					Intake.stop();
 					Robot.debugWriter.println("Ejected " + RobotMap.itemCount + " items\n");
 					Robot.debugWriter.println("Elevator Height Tote State\n");
-					RobotMap.currentState = RobotMap.INIT_STATE; // when we remove totes, go down but not up
+					RobotMap.currentState = RobotMap.WAITING_FOR_REVERSE_INTAKE_STATE;
+					// go back to waiting for reverse intake in case we aren't done getting rid of totes
+					// if we are, press the abort button
 					RobotMap.itemCount = 0;
 					reverseTimer = -1;
 				}
