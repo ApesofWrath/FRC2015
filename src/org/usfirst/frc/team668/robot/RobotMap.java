@@ -55,8 +55,7 @@ public class RobotMap {
 	
 	// @formatter:off
 	// Joystick Left
-	public static final int MINIMIZE_DRIVE_SPEED_LEFT_BUTTON	= 2;
-	public static final int MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON	= 3;
+	public static final int MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON	= 3;
 	
 	// Joystick Right
 	public static final int TANK_DRIVE_BUTTON					= 6;
@@ -318,7 +317,7 @@ public class RobotMap {
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
-	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 333;
+	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 340;
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
@@ -332,8 +331,7 @@ public class RobotMap {
 	public static final double ELEVATOR_MIN_ENCODER_VAL = ELEVATOR_ENCODER_PICKUP - 2.0;
 	// this is a "soft hard stop" so that our elevator can't go lower than the pickup after we calibrate
 	
-	public static final double MINIMIZING_FACTOR_LEFT = 0.8;
-	public static final double MINIMIZING_FACTOR_RIGHT = 0.8;
+	public static final double MINIMIZING_FACTOR = 0.8;
 	
 	// This was a MAGYK numbert
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;

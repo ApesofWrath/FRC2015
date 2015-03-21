@@ -467,22 +467,17 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (isTankDrive) { // tank drive
-			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_LEFT, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_LEFT);
-			} else if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON)) {
-				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT);
+			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+				robotDrive.tankDrive(joystickLeft.getY(), joystickRight.getY());
 			} else {
-				robotDrive.tankDrive(joystickLeft, joystickRight);
+				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
 			}
 		} else { // split arcade
-			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_LEFT, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR_LEFT);
-			} else if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_RIGHT_BUTTON)) {
-				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_RIGHT, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR_RIGHT);
-			} else {
+			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
 				robotDrive.drive(joystickRight.getY(), joystickLeft.getX() * -1);
+			} else {
+				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR);
 			}
-			
 		}
 		
 		// // camera code beginning
@@ -609,8 +604,10 @@ public class Robot extends IterativeRobot {
 				SmartDashboard.putString("Hit Switch Limit?", "No");
 				if (isFunction) {
 					canTalonElevator.set(joystickOp.getY());
+					canTalonElevatorTop.set(joystickOp.getY());
 				} else {
 					canTalonElevator.set(0);
+					canTalonElevatorTop.set(0);
 				}
 			} else {
 				System.out.println("HIT LIMIT SWITCH!!!");
@@ -620,16 +617,20 @@ public class Robot extends IterativeRobot {
 					double elevatorJoyVal = joystickOp.getY();
 					if (isFunction && (elevatorJoyVal > 0)) { // only allows you to move up away from the limit switch
 						canTalonElevator.set(elevatorJoyVal);
+						canTalonElevatorTop.set(elevatorJoyVal);
 					} else {
 						canTalonElevator.set(0);
+						canTalonElevatorTop.set(0);
 					}
 				} else if (!limitTop.get()) { // Hit top, because limit switches are default true
 					SmartDashboard.putString("Hit Switch Limit?", "Top");
 					double elevatorJoyVal = joystickOp.getY();
 					if (isFunction && (elevatorJoyVal < 0)) { // only allows you to move down away from the limit switch
 						canTalonElevator.set(elevatorJoyVal);
+						canTalonElevatorTop.set(elevatorJoyVal);
 					} else {
 						canTalonElevator.set(0);
+						canTalonElevatorTop.set(0);
 					}
 				} // end else if (!limitTop.get() ...
 			} // end else (limitTop.get()...
