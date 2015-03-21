@@ -34,6 +34,7 @@ public class TeleopStateMachine {
 	private static double encoderCounter = -1;
 	private static long reverseTimer = -1;
 	public static boolean startingAtBottom = true;
+	public static boolean humanToNormal = false; //going from human player to normal state machine
 	
 	public static void stateMachine(boolean isCoopertition, boolean isScoring, boolean isLift, boolean isManual, boolean isReversing, boolean isToteHeight, boolean isAbort, boolean isHPStrat) {
 		
@@ -42,6 +43,8 @@ public class TeleopStateMachine {
 		// sets to manual override, which turns off the state machine
 		if (isManual && !(RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)) {
 			Robot.debugWriter.println("Manual Override State\n");
+			Elevator.stop();
+			Intake.stop();
 			RobotMap.currentState = RobotMap.MANUAL_OVERRIDE_STATE;
 		}
 		
@@ -661,6 +664,7 @@ public class TeleopStateMachine {
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE_INIT:
 				SmartDashboard.putString("State:", "Human Player Strategy");
 
+				Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
 //				boolean finishInit = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_GROUND);
 				boolean finishInit = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_GROUND);
 				
@@ -684,6 +688,18 @@ public class TeleopStateMachine {
 				}
 				
 				break;
+			case RobotMap.HUMAN_PLAYER_BIN_GRAB_STATE:
+				
+				boolean finishBin = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
+				
+				if (finishBin){
+					Elevator.stop();
+					Robot.intakePiston.set(DoubleSolenoid.Value.kForward);
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE;
+				}
+				
+				
+			break;
 				
 			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE:
 				
@@ -712,8 +728,18 @@ public class TeleopStateMachine {
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_WAIT_STATE:
 				
+				if (Robot.toteOptic.get()) {
+					Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
+				} else {
+					Intake.stop();
+				}
+				
 				if (Robot.joystickOp.getRawButton(RobotMap.HP_PICKUP_BUTTON)) {
-					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
+					humanToNormal = false;
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_DROP_STATE;
+				} else if (isAbort) { // exit human player state machine
+					humanToNormal = true;
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_DROP_STATE;
 				}
 				
 				if (RobotMap.stateIndex == 0) {
@@ -730,19 +756,49 @@ public class TeleopStateMachine {
 				}
 				
 				break;
-			
+				
+			case RobotMap.HUMAN_PLAYER_STRATEGY_DROP_STATE:
+				
+				if (Robot.toteOptic.get()) {
+					Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
+				} else {
+					Intake.stop();
+				}
+				boolean dropTote = Elevator.moveP(718);
+				if (dropTote == true) {
+					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
+				}
+				break;
+				
 			case RobotMap.HUMAN_PLAYER_STRATEGY_STATE:
 				
-				Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 //				boolean strategyTote = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
-				boolean strategyTote = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
+			//	Robot.intakePiston.set(DoubleSolenoid.Value.kReverse); // TODO: uncomment
+				
+				if (Robot.toteOptic.get()) {
+					Intake.spin(RobotMap.INTAKE_MOTOR_SPEED);
+				} else {
+					Intake.stop();
+				}
 
+				boolean strategyTote;
+				if (humanToNormal) {
+					strategyTote = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_PICKUP);
+				} else {
+					strategyTote = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_HP_PICKUP_HEIGHT);
+				}
 				
 				if (strategyTote == true) {	
 	
 					Elevator.stop();
+					Intake.stop();
 					Robot.hugPiston.set(DoubleSolenoid.Value.kForward);
-					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE;
+					if (humanToNormal) {
+						RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
+					} else {
+						RobotMap.currentState = RobotMap.HUMAN_PLAYER_DELAY_STATE;
+					}
 				}
 				
 				if (RobotMap.stateIndex == 0) {
@@ -759,6 +815,18 @@ public class TeleopStateMachine {
 				}
 				
 				break;
+				
+
+			case RobotMap.HUMAN_PLAYER_DELAY_STATE:
+				
+				if (reverseTimer <= 0) {
+					reverseTimer = System.currentTimeMillis();
+				}
+				if (System.currentTimeMillis() - reverseTimer > 100) {
+					reverseTimer = -1;
+					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE;
+				}
+			break;
 			
 			case RobotMap.HUMAN_PLAYER_STRATEGY_RESET_STATE:
 //				boolean backToWait = Elevator.move(RobotMap.elevatorMotorSpeed, RobotMap.ELEVATOR_ENCODER_HP_WAIT);

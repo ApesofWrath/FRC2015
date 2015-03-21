@@ -26,9 +26,10 @@ public class Autonomous {
 		while (!elevatorCalibration) {
 			elevatorCalibration = Elevator.calibration(-0.8);
 		}
-		while (r.isAutonomous() && r.isEnabled() && (Robot.encoderLeft.get() * -1 < RobotMap.STOP || Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP)) {
+		while (r.isAutonomous() && r.isEnabled() && ((Robot.encoderLeft.get() * -1 < RobotMap.STOP) || (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP))) {
 			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
 		}
+		Robot.robotDrive.drive(0.0, 0.0);
 		return;
 	}
 	
@@ -37,14 +38,6 @@ public class Autonomous {
 		while ((System.currentTimeMillis() - delayTimer) < RobotMap.DELAY_TIME) { // in milliseconds
 			SmartDashboard.putNumber("Autonomous Timer", delayTimer);
 		} // just waits and prints time on SmartDashboard
-		
-		// then it drives
-		if (Robot.encoderLeft.get() * -1 < RobotMap.STOP) {
-			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-		}
-		if (Robot.encoderRight.get() * 360.0 / 250.0 < RobotMap.STOP) {
-			Robot.robotDrive.drive(RobotMap.AUTONOMOUS_SPEED, RobotMap.AUTONOMOUS_CURVE); // Curve is 0 (this still doesn't work properly with a curve)
-		}
 		return;
 	}
 	

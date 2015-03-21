@@ -269,7 +269,7 @@ public class Robot extends IterativeRobot {
 		try {
 			// This is fancy camera code that only streams to the PC Dashboard.
 			server = CameraServer.getInstance();
-			server.setQuality(50); // 50 is currently perfect
+			server.setQuality(RobotMap.CAMERA_QUALITY); // 50 is currently perfect
 			// the camera name (ex "cam0") can be found through the roborio web interface
 			server.startAutomaticCapture("cam0");
 		} catch (VisionException e) {

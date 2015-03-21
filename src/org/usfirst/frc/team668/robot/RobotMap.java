@@ -232,10 +232,13 @@ public class RobotMap {
 	public static final int MANUAL_OVERRIDE_RETURN_STATE = 17;
 	public static final int ELEVATOR_PICKUP_HEIGHT_STATE = 18; // this happens after elevator down to go to lift height
 	public static final int HUMAN_PLAYER_STRATEGY_STATE_INIT = 19;
-	public static final int HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE = 20;
-	public static final int HUMAN_PLAYER_STRATEGY_WAIT_STATE = 21;
-	public static final int HUMAN_PLAYER_STRATEGY_STATE = 22;
-	public static final int HUMAN_PLAYER_STRATEGY_RESET_STATE = 23;
+	public static final int HUMAN_PLAYER_BIN_GRAB_STATE = 20;
+	public static final int HUMAN_PLAYER_STRATEGY_WAIT_HEIGHT_STATE = 21;
+	public static final int HUMAN_PLAYER_STRATEGY_WAIT_STATE = 22;
+	public static final int HUMAN_PLAYER_DELAY_STATE = 23;
+	public static final int HUMAN_PLAYER_STRATEGY_STATE = 24;
+	public static final int HUMAN_PLAYER_STRATEGY_RESET_STATE = 25;
+	public static final int HUMAN_PLAYER_STRATEGY_DROP_STATE = 26;
 	
 	public static final int DEFAULT_STATE = INIT_STATE; // this is the starting state; change to manual override if testing
 	
@@ -310,17 +313,17 @@ public class RobotMap {
 	public static int autonomousMode = STOP_AUTONOMOUS; // default is stop autonomous for now
 	
 	// motor speeds
-	public static final double INTAKE_MOTOR_SPEED = 0.65;
+	public static final double INTAKE_MOTOR_SPEED = 0.9;
 	public static final double OUTTAKE_MOTOR_SPEED = -0.4;
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
-	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 347;
+	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 333;
 	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
-	public static final double ELEVATOR_ENCODER_HP_WAIT = 820;
+	public static final double ELEVATOR_ENCODER_HP_WAIT = 871;
 	// Used to be 15, then 0 - New elevator, now it's 22; made it 17 so that it will stop on 17
 	public static final double ELEVATOR_ENCODER_PICKUP = 24; // pickup tote height
 	public static final double ELEVATOR_ENCODER_PICKUP_ADJUST = 24;
@@ -348,7 +351,7 @@ public class RobotMap {
 	public static String[] stateLog = new String[10];
 	public static int stateIndex = 0;
 	
-	
+	public static final int CAMERA_QUALITY = 30;
 	
 	
 	
