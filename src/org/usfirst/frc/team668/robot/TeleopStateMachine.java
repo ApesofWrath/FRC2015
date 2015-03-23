@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 /**
  * Wrapper class for the state machine function during teleop
  * 
- * @author The 668 FRC 2015 Programming Team
+ * @author The 668 FRC 2015 Programming Team and their overlord Wasay
  */
 public class TeleopStateMachine {
 	
