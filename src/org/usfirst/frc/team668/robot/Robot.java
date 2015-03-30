@@ -93,7 +93,7 @@ public class Robot extends IterativeRobot {
 	// tote optic is normally true
 	public static DoubleSolenoid hugPiston, intakePiston; // hug : kForward - closed and intake piston: kForward is intake mode, kBackward is open mode to allow elevator to move public static Encoder encoderLeft, encoderRight, encoderElevator; // encoderRight will always be multiplied by 360.0 / 250.0 because the encoders have different ranges
 	public static Encoder encoderLeft, encoderRight, encoderElevator;
-	public static Joystick joystickLeft, joystickRight, joystickOp;
+	public static Joystick joystickLeft, joystickRight, joystickOp, joystickWheel;
 	public static PowerDistributionPanel pdp;
 	public static PrintWriter debugWriter, continuousVarsWriter; // this for debug files saved to the flashdrive
 	public static RobotDrive robotDrive;
@@ -117,7 +117,7 @@ public class Robot extends IterativeRobot {
 			buttonEightPressed = false;
 	
 	// Drive
-	boolean isTankDrive = true;
+	boolean isSplitArcade = true;
 	
 	static boolean weAreHoldingABin = false; // This variable tells us whether or not an autonomous that picks up a bin was called
 	
@@ -170,6 +170,7 @@ public class Robot extends IterativeRobot {
 		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
 		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
+		joystickWheel = new Joystick(RobotMap.JOYSTICK_WHEEL_PORT);
 		
 		// TODO: Take photos
 		// creating images
@@ -457,28 +458,45 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		
 		smartDashboardOutputs();
-		
+		// drive code starts here {
 		// drive switch
-		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
-			isTankDrive = true;
-		}
 		if (joystickRight.getRawButton(RobotMap.ARCADE_DRIVE_BUTTON)) {
-			isTankDrive = false;
+			isSplitArcade = true;
+		}
+		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
+			isSplitArcade = false;
 		}
 		
-		if (isTankDrive) { // tank drive
+		if (isSplitArcade) { // split arcade 
+			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+				robotDrive.drive(joystickRight.getY(), joystickWheel.getX() * -1);
+			} else {
+				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickWheel.getX() * -1 * RobotMap.MINIMIZING_FACTOR);
+			}
+		} else { // tank drive 
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
 				robotDrive.tankDrive(joystickLeft.getY(), joystickRight.getY());
 			} else {
 				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
 			}
-		} else { // split arcade
-			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.drive(joystickRight.getY(), joystickLeft.getX() * -1);
-			} else {
-				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickLeft.getX() * -1 * RobotMap.MINIMIZING_FACTOR);
-			}
 		}
+		
+	// } ends here
+	
+	// this was commented out because we are now defaulting to split arcade for the preference of the driver 
+//		if (isTankDrive) { // tank drive
+//			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+//				robotDrive.tankDrive(joystickLeft.getY(), joystickRight.getY());
+//			} else {
+//				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
+//			}
+//		} else { // split arcade
+//			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+//				robotDrive.drive(joystickRight.getY(), joystickLeft.getX() * -1);
+//			} else {
+//				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickWheel.getX() * -1 * RobotMap.MINIMIZING_FACTOR);
+//			}
+//		}
 		
 		// // camera code beginning
 		// if (joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON) && joystickOp.getRawButton(1)

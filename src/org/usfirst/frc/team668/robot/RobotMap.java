@@ -106,6 +106,7 @@ public class RobotMap {
 	public static final int JOYSTICK_LEFT_PORT = 0;
 	public static final int JOYSTICK_RIGHT_PORT = 1;
 	public static final int JOYSTICK_OP_PORT = 2;
+	public static final int JOYSTICK_WHEEL_PORT = 3;
 	
 	// @formatter:off
 	// canIDs
