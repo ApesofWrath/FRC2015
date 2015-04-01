@@ -469,9 +469,9 @@ public class Robot extends IterativeRobot {
 		
 		if (isSplitArcade) { // split arcade 
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.drive(joystickRight.getY(), joystickWheel.getX());
+				robotDrive.drive(joystickLeft.getY(), joystickWheel.getX());
 			} else {
-				robotDrive.drive(joystickRight.getY() * RobotMap.MINIMIZING_FACTOR, joystickWheel.getX() * RobotMap.MINIMIZING_FACTOR);
+				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickWheel.getX() * RobotMap.MINIMIZING_FACTOR);
 			}
 		} else { // tank drive 
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
