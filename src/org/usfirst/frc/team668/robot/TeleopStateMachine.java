@@ -260,8 +260,16 @@ public class TeleopStateMachine {
 					// to be done in closehugpistons state
 					SmartDashboard.putNumber("Number of Items", RobotMap.itemCount);
 //					RobotMap.currentState = RobotMap.ELEVATOR_ADJUST_STATE;
-					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE;
-				}
+//					RobotMap.currentState = RobotMap.OPEN_HUG_PISTONS_STATE; //for now, don't open hug pistons
+					if (startingAtBottom==false) {
+						RobotMap.currentState = RobotMap.ELEVATOR_PICKUP_HEIGHT_STATE;
+						SmartDashboard.putBoolean("Going to Pickup Height", true);
+					} else {
+						//this
+						RobotMap.currentState = RobotMap.CLOSE_HUG_PISTONS_STATE;
+						SmartDashboard.putBoolean("Going to Pickup Height", false);
+						startingAtBottom = false;
+					}				}
 				
 				if (RobotMap.stateIndex == 0) {
 					checkState = RobotMap.stateLog.length - 1;
@@ -768,7 +776,7 @@ public class TeleopStateMachine {
 				}
 				boolean dropTote = Elevator.moveP(718);
 				if (dropTote == true) {
-					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
+//					Robot.hugPiston.set(DoubleSolenoid.Value.kReverse);
 					RobotMap.currentState = RobotMap.HUMAN_PLAYER_STRATEGY_STATE;
 				}
 				break;

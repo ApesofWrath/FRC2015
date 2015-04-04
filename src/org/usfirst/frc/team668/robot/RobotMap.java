@@ -77,7 +77,7 @@ public class RobotMap {
 	public static final int ABORT_BUTTON						= 12;
 	// MANUAL OVERRIDE
 	public static final int EMPTY_OP_MANUAL_1_BUTTON			= 1;
-	public static final int EMPTY_OP_MANUAL_2_BUTTON			= 2;
+	public static final int OTHER_MANUAL_INTAKE_BUTTON			= 2; //another manual button for sean
 	public static final int RETURN_TO_STATE_MACHINE_BUTTON		= 3;
 	public static final int MANUAL_INTAKE_BUTTON				= 4;
 	public static final int EMPTY_OP_MANUAL_5_BUTTON			= 5;
@@ -106,7 +106,7 @@ public class RobotMap {
 	public static final int JOYSTICK_LEFT_PORT = 0;
 	public static final int JOYSTICK_RIGHT_PORT = 1;
 	public static final int JOYSTICK_OP_PORT = 2;
-	public static final int JOYSTICK_WHEEL_PORT = 3;
+	//public static final int JOYSTICK_WHEEL_PORT = 3;
 	
 	// @formatter:off
 	// canIDs
@@ -323,9 +323,9 @@ public class RobotMap {
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
-	public static final double ELEVATOR_ENCODER_HP_WAIT = 871;
+	public static final double ELEVATOR_ENCODER_HP_WAIT = 964;
 	// Used to be 15, then 0 - New elevator, now it's 22; made it 17 so that it will stop on 17
-	public static final double ELEVATOR_ENCODER_PICKUP = 24; // pickup tote height
+	public static final double ELEVATOR_ENCODER_PICKUP = 35; // pickup tote height
 	public static final double ELEVATOR_ENCODER_PICKUP_ADJUST = 24;
 	public static final double ELEVATOR_ENCODER_MAX_HEIGHT = Double.MAX_VALUE; // TODO: LO TODO
 	

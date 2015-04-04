@@ -170,7 +170,7 @@ public class Robot extends IterativeRobot {
 		joystickLeft = new Joystick(RobotMap.JOYSTICK_LEFT_PORT);
 		joystickRight = new Joystick(RobotMap.JOYSTICK_RIGHT_PORT);
 		joystickOp = new Joystick(RobotMap.JOYSTICK_OP_PORT);
-		joystickWheel = new Joystick(RobotMap.JOYSTICK_WHEEL_PORT);
+		//joystickWheel = new Joystick(RobotMap.JOYSTICK_WHEEL_PORT);
 		
 		// TODO: Take photos
 		// creating images
@@ -460,18 +460,18 @@ public class Robot extends IterativeRobot {
 		smartDashboardOutputs();
 		// drive code starts here {
 		// drive switch
-		if (joystickRight.getRawButton(RobotMap.ARCADE_DRIVE_BUTTON)) {
+		if (joystickLeft.getRawButton(RobotMap.ARCADE_DRIVE_BUTTON)) {
 			isSplitArcade = true;
 		}
-		if (joystickRight.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
+		if (joystickLeft.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
 			isSplitArcade = false;
 		}
 		
-		if (isSplitArcade) { // split arcade 
-			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.drive(joystickLeft.getY(), joystickWheel.getX());
+		if (isSplitArcade) { // split arcade: make sure that the wheel is ID 2
+			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) { // the 1.20 value is the increase in sensitivity that Riley has requested
+				robotDrive.drive(joystickLeft.getY(), joystickRight.getX()* 1.20); //use the wheel, joystickRight is only used because it has the same ID. The wheel and the joystick are interchangable. 
 			} else {
-				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickWheel.getX() * RobotMap.MINIMIZING_FACTOR);
+				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getX() * RobotMap.MINIMIZING_FACTOR * 1.25); 
 			}
 		} else { // tank drive 
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
@@ -600,6 +600,7 @@ public class Robot extends IterativeRobot {
 			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON); // button 9
 			boolean isHugPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);// button 10
 			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);// button 7
+			boolean isOtherForwardIntake = joystickOp.getRawButton(RobotMap.OTHER_MANUAL_INTAKE_BUTTON); //button 2
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
 			
@@ -610,8 +611,8 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if (isBackwardsIntake) { // outtake
-				Intake.spin(RobotMap.MANUAL_BACKWARDS_INTAKE_SPEED); // TODO: magic number -- no longer a MAGYK number
-			} else if (isForwardIntake) { // intake
+				Intake.spin(RobotMap.MANUAL_BACKWARDS_INTAKE_SPEED);
+			} else if (isForwardIntake || isOtherForwardIntake) { // intake
 				Intake.spin(RobotMap.MANUAL_FORWARD_INTAKE_SPEED);
 			} else {
 				Intake.stop();
