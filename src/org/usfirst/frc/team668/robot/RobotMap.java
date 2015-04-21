@@ -333,6 +333,7 @@ public class RobotMap {
 	// this is a "soft hard stop" so that our elevator can't go lower than the pickup after we calibrate
 	
 	public static final double MINIMIZING_FACTOR = 0.8;
+	public static final double MINIMIZING_FACTOR_TWO = .65;
 	
 	// This was a MAGYK numbert
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;

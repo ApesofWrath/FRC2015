@@ -469,13 +469,13 @@ public class Robot extends IterativeRobot {
 		
 		if (isSplitArcade) { // split arcade: make sure that the wheel is ID 2
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) { // the 1.20 value is the increase in sensitivity that Riley has requested
-				robotDrive.drive(joystickLeft.getY(), joystickRight.getX()* 1.20); //use the wheel, joystickRight is only used because it has the same ID. The wheel and the joystick are interchangable. 
+				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_TWO, joystickRight.getX() * RobotMap.MINIMIZING_FACTOR_TWO * 1.25); //use the wheel, joystickRight is only used because it has the same ID. The wheel and the joystick are interchangable. 
 			} else {
 				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getX() * RobotMap.MINIMIZING_FACTOR * 1.25); 
 			}
 		} else { // tank drive 
 			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.tankDrive(joystickLeft.getY(), joystickRight.getY());
+				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_TWO, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_TWO);
 			} else {
 				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
 			}
