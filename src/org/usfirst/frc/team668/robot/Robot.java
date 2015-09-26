@@ -1,6 +1,7 @@
 package org.usfirst.frc.team668.robot;
 
 import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -335,8 +336,8 @@ public class Robot extends IterativeRobot {
 		
 		manualChooser = new SendableChooser();
 		
-		manualChooser.addObject("State Machine", RobotMap.INIT_STATE);
-		manualChooser.addDefault("Manual Mode", RobotMap.MANUAL_OVERRIDE_STATE);
+		manualChooser.addObject("State Machine", RobotMap.INITIAL_STATE);
+		manualChooser.addDefault("Manual Mode", RobotMap.MANUAL_STATE);
 		
 		SmartDashboard.putData("Manual Mode Chooser", manualChooser);
 		
@@ -421,7 +422,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
+		RobotMap.currentStateNew = ((Integer) manualChooser.getSelected()).intValue();
 	}
 	
 	/**
@@ -433,11 +434,11 @@ public class Robot extends IterativeRobot {
 		Intake.stop();
 		Elevator.stop();
 		
-		if (weAreHoldingABin) {
-			RobotMap.currentState = RobotMap.WAIT_FOR_BUTTON_STATE;
-		} else {
-			RobotMap.currentState = ((Integer) manualChooser.getSelected()).intValue();
-		}
+//		if (weAreHoldingABin) {
+//			RobotMap.currentStateNew = RobotMap.WAIT_FOR_BUTTON_STATE;
+//		} else {
+//			RobotMap.currentStateNew = ((Integer) manualChooser.getSelected()).intValue();
+//		}
 		
 		debugWriter.println("Beginning teleop\n");
 		// stupid code meaning we set the start state to whatever's on the smartdashboard chooser
@@ -463,23 +464,23 @@ public class Robot extends IterativeRobot {
 		if (joystickLeft.getRawButton(RobotMap.ARCADE_DRIVE_BUTTON)) {
 			isSplitArcade = true;
 		}
-		if (joystickLeft.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
-			isSplitArcade = false;
-		}
+//		if (joystickLeft.getRawButton(RobotMap.TANK_DRIVE_BUTTON)) {
+//			isSplitArcade = false;
+//		}
 		
 		if (isSplitArcade) { // split arcade: make sure that the wheel is ID 2
-			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) { // the 1.20 value is the increase in sensitivity that Riley has requested
+			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) { // the 1.20 value is the increase in sensitivity that Riley has requested
 				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_TWO, joystickRight.getX() * RobotMap.MINIMIZING_FACTOR_TWO * 1.25); //use the wheel, joystickRight is only used because it has the same ID. The wheel and the joystick are interchangable. 
 			} else {
 				robotDrive.drive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getX() * RobotMap.MINIMIZING_FACTOR * 1.25); 
-			}
-		} else { // tank drive 
-			if (joystickLeft.getRawButton(RobotMap.MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
-				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_TWO, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_TWO);
-			} else {
-				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
-			}
-		}
+			}}
+//		} else { // tank drive 
+//			if (joystickLeft.getRawButton(RobotMap.MINIMIZE_DRIVE_SPEED_LEFT_BUTTON)) {
+//				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR_TWO, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR_TWO);
+//			} else {
+//				robotDrive.tankDrive(joystickLeft.getY() * RobotMap.MINIMIZING_FACTOR, joystickRight.getY() * RobotMap.MINIMIZING_FACTOR);
+//			}
+//		}
 		
 	// } ends here
 	
@@ -559,20 +560,21 @@ public class Robot extends IterativeRobot {
 		// } // end if(cameraConnected)
 		
 		// state machine
-		boolean isManual = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
-		boolean isCoopertition = joystickOp.getRawButton(RobotMap.COOPERTITION_BUTTON);
-		boolean isHPStrat = joystickOp.getRawButton(RobotMap.HP_START_BUTTON);
-		boolean isScoring = joystickOp.getRawButton(RobotMap.SCORING_BUTTON);
-		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
-		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
-		boolean isToteHeight = joystickOp.getRawButton(RobotMap.TOTE_HEIGHT_BUTTON);
-		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
-		if (!RobotMap.isTestRobot) {
-			System.out.println(RobotMap.currentState);
-			TeleopStateMachine.stateMachine(isCoopertition, isScoring,  
-					isLift, isManual, isReversing, isToteHeight, isAbort, isHPStrat);
-		}
-		
+//		boolean isDoneScoring = joystickOp.getRawButton(RobotMap.DONE_WITH_SCORING_BUTTON);
+//		boolean isManualNew = joystickOp.getRawButton(RobotMap.MANUAL_OVERRIDE_BUTTON);
+//		boolean isCoopertition = joystickOp.getRawButton(RobotMap.COOPERTITION_BUTTON);
+//		boolean isHPStrat = joystickOp.getRawButton(RobotMap.HP_START_BUTTON);
+//		boolean isScoring = joystickOp.getRawButton(RobotMap.SCORING_BUTTON);
+//		boolean isLift = joystickOp.getRawButton(RobotMap.LIFT_BUTTON);
+//		boolean isReversing = joystickOp.getRawButton(RobotMap.REVERSING_BUTTON);
+//		boolean isToteHeight = joystickOp.getRawButton(RobotMap.TOTE_HEIGHT_BUTTON);
+//		boolean isAbort = joystickOp.getRawButton(RobotMap.ABORT_BUTTON);
+//		if (!RobotMap.isTestRobot) { 
+//			System.out.println(RobotMap.currentStateNew);
+//			TeleopStateMachineNew.stateMachine(isDoneScoring, isScoring,  
+//					isLift, isManualNew, isReversing);
+//		}
+//		
 		// declaring buttons for intake pistons
 		
 		/*
@@ -589,27 +591,57 @@ public class Robot extends IterativeRobot {
 		// }
 		// }
 		// buttonSevenPressed = isIntake;
-		if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_CLOSE_BUTTON)) {
-			intakePiston.set(DoubleSolenoid.Value.kForward);
-		} else if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_OPEN_BUTTON)) {
-			intakePiston.set(DoubleSolenoid.Value.kReverse);
-		}
+//		if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_CLOSE_BUTTON)) {
+//			
+//			intakePiston.set(DoubleSolenoid.Value.kForward);
+//			
+//		} else if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_OPEN_BUTTON)) {
+//			
+//			intakePiston.set(DoubleSolenoid.Value.kReverse);
+//			
+//		}
+		
+		
+
 		
 		// manual control
-		if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE) {
-			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON); // button 9
-			boolean isHugPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);// button 10
+	//	if (RobotMap.currentStateNew == RobotMap.MANUAL_STATE) {
+//			boolean isHugPistonOn = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_ACTIVATE_BUTTON); // button 9
+//			boolean isHugPistonOff = joystickOp.getRawButton(RobotMap.MANUAL_PISTON_DEACTIVATE_BUTTON);// button 10
 			boolean isForwardIntake = joystickOp.getRawButton(RobotMap.MANUAL_INTAKE_BUTTON);// button 7
 			boolean isOtherForwardIntake = joystickOp.getRawButton(RobotMap.OTHER_MANUAL_INTAKE_BUTTON); //button 2
 			boolean isBackwardsIntake = joystickOp.getRawButton(RobotMap.MANUAL_OUTTAKE_BUTTON);// button 7
 			boolean isFunction = joystickOp.getRawButton(RobotMap.MANUAL_FUNCTION_BUTTON);// button 12
+			boolean isHeight = joystickOp.getRawButton(3);
+			boolean isScoringButton = joystickOp.getRawButton(9);
+			boolean zeroOut = limitBottom.get();
 			
-			if (isHugPistonOn) { // closes piston
-				hugPiston.set(DoubleSolenoid.Value.kForward);
-			} else if (isHugPistonOff) { // opens piston
-				hugPiston.set(DoubleSolenoid.Value.kReverse);
+			if (!zeroOut){
+				encoderElevator.reset();
 			}
-			
+			if (isHeight){
+				SmartDashboard.putString("Moving?", "Height");
+				boolean isDone = Elevator.movePID(RobotMap.ELEVATOR_ENCODER_ONE_TOTE_HEIGHT);
+				if (isDone){
+					Elevator.stop();
+				}
+			}
+			if (isScoringButton){
+				SmartDashboard.putString("Moving?", "Scoring");
+				boolean isFinish = Elevator.moveP(RobotMap.ELEVATOR_ENCODER_SCORING);
+				if(isFinish){
+					Elevator.stop();
+				}
+			}
+			if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_CLOSE_BUTTON)) {
+				
+				intakePiston.set(DoubleSolenoid.Value.kForward);
+				
+			} else if (joystickOp.getRawButton(RobotMap.INTAKE_PISTON_OPEN_BUTTON)) {
+				
+				intakePiston.set(DoubleSolenoid.Value.kReverse);
+				
+			}
 			if (isBackwardsIntake) { // outtake
 				Intake.spin(RobotMap.MANUAL_BACKWARDS_INTAKE_SPEED);
 			} else if (isForwardIntake || isOtherForwardIntake) { // intake
@@ -619,8 +651,9 @@ public class Robot extends IterativeRobot {
 			}
 			
 			// start elevator limit switch moving code
-			if (limitTop.get() && limitBottom.get()) { // Neither limit switch is hit because limit switches are default true
+			if (limitTop.get() && limitBottom.get() && !isHeight && !isScoringButton) { // Neither limit switch is hit because limit switches are default true
 				SmartDashboard.putString("Hit Switch Limit?", "No");
+				SmartDashboard.putString("Moving?", "Manual");
 				if (isFunction) {
 					canTalonElevator.set(joystickOp.getY());
 					canTalonElevatorTop.set(joystickOp.getY());
@@ -655,6 +688,8 @@ public class Robot extends IterativeRobot {
 			} // end else (limitTop.get()...
 				// end of elevator moving code
 			
+			
+			
 			// TODO: OPTICAL STOP
 			// if (!limitOptical.get()) {
 			// SmartDashboard.putString("Hit Optical Limit?", "No");
@@ -685,7 +720,7 @@ public class Robot extends IterativeRobot {
 			// }
 			// }
 			// end optical stop code
-		} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
+	//	} // end if (RobotMap.currentState == RobotMap.MANUAL_OVERRIDE_STATE)
 	}// end function teleopPeriodic
 	
 	/**
@@ -889,12 +924,12 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("isTote", !toteOptic.get());
 		SmartDashboard.putBoolean("Limit Top", !limitTop.get()); // inverts needed
 		SmartDashboard.putBoolean("Limit Bottom", !limitBottom.get());
-		SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().value == DoubleSolenoid.Value.kForward_val);
-		SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().value == DoubleSolenoid.Value.kForward_val);
+		//SmartDashboard.putBoolean("Hug Piston Closed", hugPiston.get().value == DoubleSolenoid.Value.kForward_val);
+		//SmartDashboard.putBoolean("Intake Piston Closed", intakePiston.get().value == DoubleSolenoid.Value.kForward_val);
 		SmartDashboard.putNumber("Elevator Current from PDP", pdp.getCurrent(RobotMap.CAN_TALON_ELEVATOR_PDP_PORT));
 		SmartDashboard.putNumber("Elevator Current from Talon", canTalonElevator.getOutputCurrent());
 		
-		SmartDashboard.putNumber("State", RobotMap.currentState);
+		SmartDashboard.putNumber("State", RobotMap.currentStateNew);
 		
 		int count = 0;
 		for (String s : RobotMap.stateLog) {
