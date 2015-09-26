@@ -7,12 +7,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author The 668 FRC 2015 Programming Team 
  */
+
 public class Elevator {
+	public static long lastT = System.currentTimeMillis();
+	public static double lastE = 0;
+	public static double i = 0;
+	//public static double Kp = .075, Kd = .01, Ki = .0000002;
+	public static double Kp = .079, Kd = .03, Ki = .000000003;
+	public static double error = 0;
+	public static double d = 0;
 	private static boolean up, done = true;
+	//HELLO
 
 	/**
 	 * Moves the elevator up at a specified speed to a specified stop. Meant to
-	 * move elevator up from anywhere to the stop height provided that stop is
+	 * move elevator up from anywhere to the stop height provide that stop is
 	 * between the two limit switches. It decides to finish if it hits a limit
 	 * switch or if it is at or past the encoder value. It returns true when it
 	 * decides to finish. Otherwise, it returns false.
@@ -51,7 +60,53 @@ public class Elevator {
 		
 		return done;
 	}
-	
+	public static boolean movePID(double ref){
+		error = ref - Robot.encoderElevator.get();
+		
+		long currentT = System.currentTimeMillis(); //current time
+		
+		i = i + error*(currentT - lastT); // integral of reference
+		
+		d = (error - lastE) / (currentT - lastT); // derivative of reference
+		
+		double P = Kp * error; // p values multiplying the error
+		double D = Kd * d; // d value times the derivative
+		double I = Ki * i; // i value times the integral
+		
+		double speed = P + I + D; // speed is the sum of P I and D
+		if (Math.abs(speed) > 1){ // if speed is over one, set it to one. below -1, set it to -1
+			if (speed >1){
+				speed = 1;
+			}
+			else if (speed <-1){
+					speed = -1;
+			}
+		}
+		//set the speed
+		Robot.canTalonElevatorTop.set(speed);
+		Robot.canTalonElevator.set(speed);
+		
+		lastT = currentT; //sets last time to the last current time
+		lastE = error; //sets last error to the current error
+		
+		//limit switches and minimum values check
+		if (!Robot.limitTop.get() || (Robot.encoderElevator.get() < RobotMap.ELEVATOR_MIN_ENCODER_VAL && ref < Robot.encoderElevator.get())) {
+			Robot.canTalonElevator.set(0.0);
+			Robot.canTalonElevatorTop.set(0.0);
+			SmartDashboard.putNumber("speed", 0);
+			return true;
+		} else {
+			if (Math.abs(error) <= 4) {
+				Robot.canTalonElevator.set(0.0);
+				Robot.canTalonElevatorTop.set(0.0);
+				SmartDashboard.putNumber("speed", 0);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+	}
 	public static boolean moveP(double stop) {
 		
 		double p = 0.05;

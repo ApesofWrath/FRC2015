@@ -55,10 +55,10 @@ public class RobotMap {
 	
 	// @formatter:off
 	// Joystick Left
-	public static final int MAXIMIZE_DRIVE_SPEED_LEFT_BUTTON	= 3;
+	public static final int MINIMIZE_DRIVE_SPEED_LEFT_BUTTON	= 3;
 	
 	// Joystick Right
-	public static final int TANK_DRIVE_BUTTON					= 6;
+	//public static final int TANK_DRIVE_BUTTON					= 6;
 	public static final int ARCADE_DRIVE_BUTTON					= 7;
 	
 	// joystick Op
@@ -66,7 +66,7 @@ public class RobotMap {
 	public static final int REVERSING_BUTTON					= 1;
 	public static final int LIFT_BUTTON							= 2;
 	public static final int SCORING_BUTTON						= 3;
-	public static final int HP_PICKUP_BUTTON 					= 4;
+	public static final int DONE_WITH_SCORING_BUTTON 			= 4;
 	public static final int COOPERTITION_BUTTON					= 5;
 	public static final int PRETEND_BIN_DETECTED_BUTTON			= 6;
 	public static final int INTAKE_PISTON_CLOSE_BUTTON			= 7;	// Intake Piston Arm
@@ -248,6 +248,23 @@ public class RobotMap {
 	
 	// @formatter:off
 	
+	//TELEOP STATE MACHINE
+	
+	public static final int INITIAL_STATE = 1;
+	public static final int ELEVATOR_ADJUST_UP_STATE_NEW = 2;
+	public static final int CLOSE_INTAKE_STATE = 3;
+	public static final int TOTE_EATING_STATE = 4;
+	public static final int CLOSE_HUG_PISTON_STATE = 5;
+	public static final int ELEVATOR_DOWN_TO_TOTE_STATE = 6;
+	public static final int LIFT_TOTE_STATE = 7;
+	public static final int SCORING_STATE = 8;
+	public static final int MANUAL_STATE = 9;
+	public static final int MANUAL_RETURN_STATE = 10;
+	
+	
+	
+	public static final int FIRST_STATE = MANUAL_STATE;
+	
 	/*
 	 _____ _____ _____ _____ _____ _____ __       _____ _____ __    _____ _____ _____ 
 	|   __|  _  |   __|     |     |  _  |  |     |  |  |  _  |  |  |  |  |   __|   __|
@@ -308,18 +325,19 @@ public class RobotMap {
 	public static final double AUTON_TURN_CONSTANT = 1.2;
 	public static final double TURN_IN_PLACE_CURVE = 0; // TODO: find the real value to this.
 	// non-final values change throughout code
+	public static int currentStateNew = FIRST_STATE;
 	public static int currentState = DEFAULT_STATE;
 	public static int itemCount = 0; // Bins count as totes. Duh.
 	public static int autonomousMode = STOP_AUTONOMOUS; // default is stop autonomous for now
 	
 	// motor speeds
-	public static final double INTAKE_MOTOR_SPEED = 0.9;
-	public static final double OUTTAKE_MOTOR_SPEED = -0.4;
+	public static final double INTAKE_MOTOR_SPEED = 1;
+	public static final double OUTTAKE_MOTOR_SPEED = -1;
 	public static double elevatorMotorSpeed = -1.0; // This is not final (SmartDashboard radio buttons)
 	
 	// encoder heights
 	public static final double ELEVATOR_ENCODER_HP_PICKUP_HEIGHT = 340;
-	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 400;
+	public static final double ELEVATOR_ENCODER_ONE_TOTE_HEIGHT = 500;
 	public static final double ELEVATOR_ENCODER_SCORING = 115;
 	public static final double ELEVATOR_ENCODER_COOPERTITION = 250;
 	public static final double ELEVATOR_ENCODER_GROUND = 0;
@@ -332,14 +350,14 @@ public class RobotMap {
 	public static final double ELEVATOR_MIN_ENCODER_VAL = ELEVATOR_ENCODER_PICKUP - 2.0;
 	// this is a "soft hard stop" so that our elevator can't go lower than the pickup after we calibrate
 	
-	public static final double MINIMIZING_FACTOR = 0.8;
-	public static final double MINIMIZING_FACTOR_TWO = .65;
+	public static final double MINIMIZING_FACTOR = 1;
+	public static final double MINIMIZING_FACTOR_TWO = .8;
 	
 	// This was a MAGYK numbert
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;
 	
-	public static final double MANUAL_FORWARD_INTAKE_SPEED = .75;
-	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.75;
+	public static final double MANUAL_FORWARD_INTAKE_SPEED = .5;
+	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.5;
 	
 	
 	// debugging constant for test robot
