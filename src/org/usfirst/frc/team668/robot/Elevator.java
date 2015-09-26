@@ -17,7 +17,7 @@ public class Elevator {
 	public static double error = 0;
 	public static double d = 0;
 	private static boolean up, done = true;
-	//HELLO
+	//HELL
 
 	/**
 	 * Moves the elevator up at a specified speed to a specified stop. Meant to
