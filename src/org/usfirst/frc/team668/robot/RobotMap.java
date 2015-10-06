@@ -356,8 +356,8 @@ public class RobotMap {
 	// This was a MAGYK numbert
 	public static final double PDP_AUTON_WARNING_VOLTAGE = 14.0;
 	
-	public static final double MANUAL_FORWARD_INTAKE_SPEED = .5;
-	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.5;
+	public static final double MANUAL_FORWARD_INTAKE_SPEED = .9;
+	public static final double MANUAL_BACKWARDS_INTAKE_SPEED = -.9;
 	
 	
 	// debugging constant for test robot
